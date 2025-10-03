@@ -1,6 +1,6 @@
 <section class="login-container min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-200 to-sky-950">
     <div class="w-max h-auto m-auto p-4 ">
-        <h1 class="text-7xl font-bold bg-gradient-to-r from-gray-950  to-emerald-800 bg-clip-text text-transparent animate-gradient tracking-wider mt-auto mb-6">
+        <h1 class="text-6xl font-bold bg-gradient-to-r from-gray-950  to-emerald-800 bg-clip-text text-transparent animate-gradient tracking-wider mt-auto mb-6">
             MIGasto
         </h1>    
         <p class="text-3xl text-gray-800 text-center mb-6 bg-cover bg-center p-4 rounded-lg drop-shadow-[0_0_3px_rgba(255,255,255,0.5)]">
@@ -11,44 +11,49 @@
     
     <div class="w-1/3 flex justify-center bg-slate-300 h-screen ml-auto p-4 ">
         
-        <form  class="flex flex-col space-y-5 w-full max-w-sm m-auto">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="flex flex-col space-y-5 w-full max-w-sm m-auto">
             <h2 class="text-3xl font-semibold text-left text-gray-700 mb-1 tracking-wide ">
                 Login
             </h2>
             <p class="text-gray-400 m-none">
                 Accede a tu cuenta y gestiona tus finanzas de manera eficiente.
             </p>
+
             <!-- Email Input --> 
             <div class="flex justify-center">
                 <input
-                    type="email"
-                    placeholder="Correo electrónico"
-                    formControlName="email"
-                    class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
+                type="email"
+                placeholder="Correo electrónico"
+                formControlName="email"
+                class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                 />
             </div>
+
             <!-- Password Input -->
             <div>
                 <input
-                    type="password"
-                    placeholder="Contraseña"
-                    formControlName="password"
-                    class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
+                type="password"
+                placeholder="Contraseña"
+                formControlName="password"
+                class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
                 />
             </div>
+
             <!-- login Button --> 
             <button
                 type="submit"
                 class="w-full bg-[#3da9fc] text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium"
-                >
+            >
                 Iniciar sesión
             </button>
+
             <!-- forgot password -->
             <p>
                 <a routerLink="/forgot-password" class="text-blue-500 hover:underline text-sm font-medium cursor-pointer">
                 ¿Olvidaste tu contraseña?
                 </a>
             </p>
+
             <!-- Register Link -->
             <p class="text-center text-gray-600 text-sm mt-4">
                 ¿No tienes cuenta?
@@ -56,6 +61,6 @@
                 Regístrate
                 </a>
             </p>
-        </form>
+            </form>
     </div>
 </section>
