@@ -34,7 +34,7 @@ export class Login {
       
       next: (res) => {
   console.log('Respuesta del backend:', res);
-  this.router.navigate(['/dashboard']);
+  this.router.navigate(['/home']);
 },
       error: (err) => {
         console.error(err);
