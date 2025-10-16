@@ -1,0 +1,62 @@
+<header
+    class="w-full flex justify-between items-center p-4 bg-sky-900 shadow-lg relative"
+    >
+    <!-- Lado izquierdo: logo + botón hamburguesa -->
+    <div class="flex items-center space-x-3">
+        <!-- Botón hamburguesa -->
+        <button
+        class="text-white focus:outline-none md:hidden"
+        (click)="isMenuOpen = !isMenuOpen"
+        >
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+        >
+            <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16m0 6H4"
+            />
+        </svg>
+        </button>
+
+        <!-- Nombre de la app -->
+        <h1 class="text-2xl font-bold">MiGasto</h1>
+    </div>
+
+    <!-- Menú normal (versión escritorio) -->
+    <nav class="hidden md:flex space-x-4">
+        <a routerLink="/" class="hover:text-sky-300">Inicio</a>
+        <a routerLink="/gastos" class="hover:text-sky-300">Gastos</a>
+        <a routerLink="/ingresos" class="hover:text-sky-300">Ingresos</a>
+    </nav>
+
+    <!-- Menú desplegable móvil -->
+    <nav
+        class="absolute top-16 left-0 w-full bg-sky-800 flex flex-col md:hidden text-center transition-all duration-300"
+        [class.hidden]="!isMenuOpen"
+    >
+        <a
+        routerLink="/"
+        class="py-2 hover:bg-sky-700 border-b border-sky-700"
+        (click)="closeMenu()"
+        >Inicio</a
+        >
+        <a
+        routerLink="/gastos"
+        class="py-2 hover:bg-sky-700 border-b border-sky-700"
+        (click)="closeMenu()"
+        >Gastos</a
+        >
+        <a
+        routerLink="/ingresos"
+        class="py-2 hover:bg-sky-700"
+        (click)="closeMenu()"
+        >Ingresos</a
+        >
+    </nav>
+</header>
