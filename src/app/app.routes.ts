@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
+import { Dashboard } from './components/dashboard/dashboard';
+import { Navbar } from './components/navbar/navbar';
 import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
-import { Dashboard } from './pages/dashboard/dashboard';
+import { Gastos } from './pages/gastos/gastos';
 import { Home } from './pages/home/home';
+import { Ingresos } from './pages/ingresos/ingresos';
 import { Profile } from './pages/profile/profile';
 
 export const routes: Routes = [
@@ -11,6 +14,9 @@ export const routes: Routes = [
     {path:'login', component: Login},
     {path:'register', component: Register},
     {path:'dashboard', component: Dashboard},
+    {path:'navbar', component: Navbar},
     {path:'profile', component: Profile},
+    {path:'gastos', component: Gastos},
+    {path:'ingresos', component: Ingresos},
     {path:'**', component: Login}, // Manejo de rutas desconocidas
 ];
