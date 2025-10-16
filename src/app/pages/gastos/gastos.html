@@ -1,1 +1,75 @@
-<p>gastos works!</p>
+<section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-white">
+    <!-- Navbar reutilizable -->
+    <app-navbar></app-navbar>
+
+    <!-- Contenido principal -->
+    <main class="flex-grow flex flex-col items-center p-8">
+        <h2 class="text-4xl font-extrabold mb-6 text-center">Gestión de Gastos</h2>
+        <p class="text-lg mb-8 text-sky-100 text-center max-w-xl">
+        Aquí podrás registrar, editar y eliminar tus <span class="font-semibold">gastos personales</span>.
+        </p>
+
+        <!-- Contenedor de acciones -->
+        <div class="w-full max-w-3xl bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-semibold">Lista de Gastos</h3>
+            <button
+            class="bg-sky-500 hover:bg-sky-600 px-4 py-2 rounded-lg text-white font-medium transition"
+            (click)="agregarGasto()"
+            >
+            ➕ Añadir Gasto
+            </button>
+        </div>
+
+        <!-- Tabla de gastos -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sky-100">
+            <thead>
+                <tr class="border-b border-sky-700">
+                <th class="py-2 px-3">#</th>
+                <th class="py-2 px-3">Descripción</th>
+                <th class="py-2 px-3">Monto</th>
+                <th class="py-2 px-3">Fecha</th>
+                <th class="py-2 px-3 text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr
+                *ngFor="let gasto of gastos; let i = index"
+                class="border-b border-sky-800 hover:bg-sky-800/40 transition"
+                >
+                <td class="py-2 px-3">{{ i + 1 }}</td>
+                <td class="py-2 px-3">{{ gasto.descripcion }}</td>
+                <td class="py-2 px-3">${{ gasto.monto }}</td>
+                <td class="py-2 px-3">{{ gasto.fecha | date:'shortDate' }}</td>
+                <td class="py-2 px-3 text-center space-x-2">
+                    <button
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
+                    (click)="editarGasto(gasto)"
+                    >
+                    ✏️ Editar
+                    </button>
+                    <button
+                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
+                    (click)="eliminarGasto(gasto)"
+                    >
+                    🗑️ Eliminar
+                    </button>
+                </td>
+                </tr>
+            </tbody>
+            </table>
+
+            <!-- Si no hay gastos -->
+            <p *ngIf="gastos.length === 0" class="text-center text-sky-200 mt-4">
+            No tienes gastos registrados aún.
+            </p>
+        </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="p-4 bg-sky-900 text-center text-sm">
+        © 2025 MiGasto - Todos los derechos reservados
+    </footer>
+</section>
