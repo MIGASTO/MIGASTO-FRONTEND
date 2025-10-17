@@ -10,5 +10,12 @@ import { Navbar } from '../../components/navbar/navbar';
   styleUrl: './home.css'
 })
 export class Home {
+  resumen = {
+    ingresos: 1800,
+    gastos: 1250,
+  };
 
+  get balance() {
+    return this.resumen.ingresos - this.resumen.gastos;
+  }
 }
