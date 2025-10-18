@@ -1,0 +1,64 @@
+
+<form (ngSubmit)="guardarGasto()" class="flex flex-col space-y-4">
+    <div>
+        <label class="block text-sky-100 mb-1">Descripción</label>
+        <input
+        [(ngModel)]="gasto.descripcion"
+        name="descripcion"
+        type="text"
+        class="w-full p-2 rounded bg-sky-800 text-white"
+        placeholder="Ej. Transporte, Comida..."
+        required
+        />
+    </div>
+
+    <div>
+        <label class="block text-sky-100 mb-1">Monto</label>
+        <input
+        [(ngModel)]="gasto.monto"
+        name="monto"
+        type="number"
+        class="w-full p-2 rounded bg-sky-800 text-white"
+        placeholder="Ej. 15000"
+        required
+        />
+    </div>
+
+    <div>
+        <label class="block text-sky-100 mb-1">Categoría</label>
+        <input
+        [(ngModel)]="gasto.categoria"
+        name="categoria"
+        type="text"
+        class="w-full p-2 rounded bg-sky-800 text-white"
+        placeholder="Ej. Alimentación, Transporte..."
+        />
+    </div>
+
+    <div>
+        <label class="block text-sky-100 mb-1">Fecha</label>
+        <input
+        [(ngModel)]="gasto.fecha"
+        name="fecha"
+        type="date"
+        class="w-full p-2 rounded bg-sky-800 text-white"
+        />
+    </div>
+
+    <div class="flex justify-end space-x-3">
+        <button
+        type="button"
+        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition"
+        (click)="cancelarEdicion()"
+        >
+        Cancelar
+        </button>
+
+        <button
+        type="submit"
+        class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition"
+        >
+        {{ gasto.id ? 'Actualizar' : 'Guardar' }}
+        </button>
+    </div>
+</form>

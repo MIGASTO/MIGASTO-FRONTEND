@@ -1,32 +1,46 @@
+
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
 import { Navbar } from '../../components/navbar/navbar';
+import { GastoForm } from './gastos-form/gastos-form';
 
 @Component({
   selector: 'app-gastos',
-  imports: [RouterModule, Navbar, CommonModule],
+  standalone: true,
+  imports: [CommonModule, GastoForm, Navbar],
   templateUrl: './gastos.html',
-  styleUrl: './gastos.css'
 })
 export class Gastos {
-gastos = [
-    { descripcion: 'Almuerzo', monto: 15000, fecha: new Date() },
-    { descripcion: 'Transporte', monto: 8000, fecha: new Date() },
+  gastos = [
+    { id: 1, descripcion: 'Transporte', monto: 8000, fecha: '2025-10-17' },
+    { id: 2, descripcion: 'Comida', monto: 15000, fecha: '2025-10-16' },
   ];
 
-  agregarGasto() {
-    console.log('Agregar nuevo gasto');
-    // Aquí abrirías un modal o redirigirías al formulario de agregar gasto
+  mostrarFormulario = false;
+  gastoSeleccionado: any = null;
+
+  guardarGasto(gasto: any) {
+    if (gasto.id) {
+      const index = this.gastos.findIndex(g => g.id === gasto.id);
+      this.gastos[index] = gasto;
+    } else {
+      gasto.id = this.gastos.length + 1;
+      this.gastos.push(gasto);
+    }
+    this.cerrarFormulario();
   }
 
   editarGasto(gasto: any) {
-    console.log('Editar gasto:', gasto);
-    // Aquí abrirías el formulario con los datos del gasto seleccionado
+    this.gastoSeleccionado = { ...gasto };
+    this.mostrarFormulario = true;
   }
 
   eliminarGasto(gasto: any) {
-    console.log('Eliminar gasto:', gasto);
-    // Aquí podrías mostrar una confirmación antes de eliminarlo
+    this.gastos = this.gastos.filter(g => g.id !== gasto.id);
+  }
+
+  cerrarFormulario() {
+    this.gastoSeleccionado = null;
+    this.mostrarFormulario = false;
   }
 }
