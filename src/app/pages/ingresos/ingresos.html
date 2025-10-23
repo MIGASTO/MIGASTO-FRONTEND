@@ -1,75 +1,78 @@
 <section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-white">
-    <!-- Navbar reutilizable -->
-    <app-navbar></app-navbar>
+  <app-navbar></app-navbar>
 
-    <!-- Contenido principal -->
-    <main class="flex-grow flex flex-col items-center p-8">
-        <h2 class="text-4xl font-extrabold mb-6 text-center">Gestión de Ingresos</h2>
-        <p class="text-lg mb-8 text-sky-100 text-center max-w-xl">
-        Aquí podrás registrar, editar y eliminar tus <span class="font-semibold">Ingresos</span>.
-        </p>
+  <main class="flex-grow flex flex-col items-center p-8">
+    <h2 class="text-4xl font-extrabold mb-6 text-center">Gestión de Ingresos</h2>
+  <p class="text-lg mb-8 text-sky-100 text-center max-w-xl">
+      Aquí podrás registrar, editar y eliminar tus
+      <span class="font-semibold">ingresos personales</span>.
+    </p>
 
-        <!-- Contenedor de acciones -->
-        <div class="w-full max-w-3xl bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-2xl font-semibold">Lista de Ingresos</h3>
-            <button
-            class="bg-sky-500 hover:bg-sky-600 px-4 py-2 rounded-lg text-white font-medium transition"
-            (click)="agregarIngreso()"
+  <div class="w-full max-w-3xl bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl font-semibold">Lista de Ingresos</h3>
+        <button
+          class="bg-sky-500 hover:bg-sky-600 px-4 py-2 rounded-lg text-white font-medium transition"
+          (click)="mostrarFormulario = !mostrarFormulario"
+        >
+          {{ mostrarFormulario ? 'Cerrar' : 'Añadir Ingreso' }}
+        </button>
+      </div>
+
+  <div *ngIf="mostrarFormulario" class="mb-6 border border-sky-700 rounded-lg p-4 bg-sky-800/30">
+        <app-ingreso-form
+          [ingresoEditado]="ingresoSeleccionado"
+          (guardar)="guardarIngreso($event)"
+          (cancelar)="cerrarFormulario()"
+        ></app-ingreso-form>
+      </div>
+
+      <div class="overflow-x-auto">
+  <table class="w-full text-left text-sky-100">
+          <thead>
+            <tr class="border-b border-sky-700">
+              <th class="py-2 px-3">#</th>
+              <th class="py-2 px-3">Descripción</th>
+              <th class="py-2 px-3">Monto</th>
+              <th class="py-2 px-3">Fecha</th>
+              <th class="py-2 px-3 text-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let ingreso of ingresos; let i = index"
+              class="border-b border-sky-800 hover:bg-sky-800/40 transition"
             >
-            ➕ Añadir Ingreso
-            </button>
-        </div>
-
-        <!-- Tabla deIngreso -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sky-100">
-            <thead>
-                <tr class="border-b border-sky-700">
-                <th class="py-2 px-3">#</th>
-                <th class="py-2 px-3">Descripción</th>
-                <th class="py-2 px-3">Monto</th>
-                <th class="py-2 px-3">Fecha</th>
-                <th class="py-2 px-3 text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                *ngFor="let Ingreso of ingresos; let i = index"
-                class="border-b border-sky-800 hover:bg-sky-800/40 transition"
+              <td class="py-2 px-3">{{ i + 1 }}</td>
+              <td class="py-2 px-3">{{ ingreso.descripcion }}</td>
+              <td class="py-2 px-3">${{ ingreso.monto }}</td>
+              <td class="py-2 px-3">{{ ingreso.fecha | date: 'shortDate' }}</td>
+              <td class="py-2 px-3 text-center space-x-2">
+                <button
+                  class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
+                  (click)="editarIngreso(ingreso)"
                 >
-                <td class="py-2 px-3">{{ i + 1 }}</td>
-                <td class="py-2 px-3">{{ Ingreso.descripcion }}</td>
-                <td class="py-2 px-3">${{ Ingreso.monto }}</td>
-                <td class="py-2 px-3">{{ Ingreso.fecha | date:'shortDate' }}</td>
-                <td class="py-2 px-3 text-center space-x-2">
-                    <button
-                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
-                    (click)="editarIngreso(Ingreso)"
-                    >
-                    ✏️ Editar
-                    </button>
-                    <button
-                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
-                    (click)="eliminarIngreso(Ingreso)"
-                    >
-                    🗑️ Eliminar
-                    </button>
-                </td>
-                </tr>
-            </tbody>
-            </table>
+                  ✏ Editar
+                </button>
+                <button
+                  class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
+                  (click)="eliminarIngreso(ingreso)"
+                >
+                  ❌ Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-            <!-- Si no hay Ingresos -->
-            <p *ngIf="ingresos.length === 0" class="text-center text-sky-200 mt-4">
-            No tienes ingresos registrados aún.
-            </p>
-        </div>
-        </div>
-    </main>
+        <p *ngIf="ingresos.length === 0" class="text-center text-sky-200 mt-4">
+          No tienes ingresos registrados aún.
+        </p>
+      </div>
+    </div>
+  </main>
 
-    <!-- Footer -->
-    <footer class="p-4 bg-sky-900 text-center text-sm">
-        © 2025 MiGasto - Todos los derechos reservados
-    </footer>
+  <footer class="p-4 bg-sky-900 text-center text-sm">
+    © 2025 MiGasto - Todos los derechos reservados
+  </footer>
 </section>
