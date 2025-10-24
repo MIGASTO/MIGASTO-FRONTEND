@@ -1,7 +1,7 @@
-
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
+import { Gasto, GastoService } from '../../services/gasto.service';
 import { GastoForm } from './gastos-form/gastos-form';
 
 @Component({
@@ -10,33 +10,41 @@ import { GastoForm } from './gastos-form/gastos-form';
   imports: [CommonModule, GastoForm, Navbar],
   templateUrl: './gastos.html',
 })
-export class Gastos {
-  gastos = [
-    { id: 1, descripcion: 'Transporte', monto: 8000, fecha: '2025-10-17' },
-    { id: 2, descripcion: 'Comida', monto: 15000, fecha: '2025-10-16' },
-  ];
-
+export class Gastos implements OnInit {
+  gastos: Gasto[] = [];
   mostrarFormulario = false;
-  gastoSeleccionado: any = null;
+  gastoSeleccionado: Gasto | null = null;
 
-  guardarGasto(gasto: any) {
+  constructor(private gastoService: GastoService) {}
+
+  ngOnInit() {
+    this.cargarGastos();
+  }
+
+  cargarGastos() {
+    this.gastoService.obtenerGastos().subscribe((data) => {
+      this.gastos = data;
+    });
+  }
+
+  guardarGasto(gasto: Gasto) {
     if (gasto.id) {
-      const index = this.gastos.findIndex(g => g.id === gasto.id);
-      this.gastos[index] = gasto;
+      this.gastoService.actualizarGasto(gasto.id, gasto).subscribe(() => this.cargarGastos());
     } else {
-      gasto.id = this.gastos.length + 1;
-      this.gastos.push(gasto);
+      this.gastoService.agregarGasto(gasto).subscribe(() => this.cargarGastos());
     }
     this.cerrarFormulario();
   }
 
-  editarGasto(gasto: any) {
+  editarGasto(gasto: Gasto) {
     this.gastoSeleccionado = { ...gasto };
     this.mostrarFormulario = true;
   }
 
-  eliminarGasto(gasto: any) {
-    this.gastos = this.gastos.filter(g => g.id !== gasto.id);
+  eliminarGasto(gasto: Gasto) {
+    if (confirm('¿Deseas eliminar este gasto?')) {
+      this.gastoService.eliminarGasto(gasto.id!).subscribe(() => this.cargarGastos());
+    }
   }
 
   cerrarFormulario() {

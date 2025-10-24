@@ -1,6 +1,8 @@
+// src/app/pages/ingresos/ingresos.ts
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
+import { IngresosService } from '../../services/ingreso.service';
 import { IngresoForm } from './ingresos-form/ingresos-form';
 
 @Component({
@@ -10,21 +12,28 @@ import { IngresoForm } from './ingresos-form/ingresos-form';
   templateUrl: './ingresos.html',
 })
 export class Ingresos {
-  ingresos = [
-    { id: 1, descripcion: 'Salario', monto: 2000000, fecha: '2025-10-01' },
-    { id: 2, descripcion: 'Venta', monto: 500000, fecha: '2025-10-10' },
-  ];
-
+  ingresos: any[] = [];
   mostrarFormulario = false;
   ingresoSeleccionado: any = null;
 
+  constructor(private ingresosService: IngresosService) {}
+
+  ngOnInit() {
+    this.cargarIngresos();
+  }
+
+  cargarIngresos() {
+    this.ingresosService.obtenerIngresos().subscribe({
+      next: (data) => (this.ingresos = data),
+      error: (err) => console.error('Error al cargar ingresos:', err),
+    });
+  }
+
   guardarIngreso(ingreso: any) {
     if (ingreso.id) {
-      const index = this.ingresos.findIndex(i => i.id === ingreso.id);
-      this.ingresos[index] = ingreso;
+      this.ingresosService.actualizarIngreso(ingreso.id, ingreso).subscribe(() => this.cargarIngresos());
     } else {
-      ingreso.id = this.ingresos.length + 1;
-      this.ingresos.push(ingreso);
+      this.ingresosService.crearIngreso(ingreso).subscribe(() => this.cargarIngresos());
     }
     this.cerrarFormulario();
   }
@@ -35,7 +44,7 @@ export class Ingresos {
   }
 
   eliminarIngreso(ingreso: any) {
-    this.ingresos = this.ingresos.filter(i => i.id !== ingreso.id);
+    this.ingresosService.eliminarIngreso(ingreso.id).subscribe(() => this.cargarIngresos());
   }
 
   cerrarFormulario() {

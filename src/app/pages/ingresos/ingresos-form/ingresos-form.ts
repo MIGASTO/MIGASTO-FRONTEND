@@ -1,3 +1,4 @@
+// src/app/pages/ingresos/ingresos-form/ingresos-form.ts
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -17,8 +18,11 @@ export class IngresoForm {
     id: null,
     descripcion: '',
     monto: 0,
-    fuente: '',
     fecha: new Date().toISOString().split('T')[0],
+    id_categoria: 1, // 👈 por ahora fija una categoría de prueba
+    id_moneda: 1,    // 👈 moneda por defecto (ej: COP)
+    tags: [],
+    id_usuario: 1,   // 👈 usuario fijo (ajústalo según autenticación)
   };
 
   ngOnChanges() {
@@ -44,8 +48,11 @@ export class IngresoForm {
       id: null,
       descripcion: '',
       monto: 0,
-      fuente: '',
       fecha: new Date().toISOString().split('T')[0],
+      id_categoria: 1,
+      id_moneda: 1,
+      tags: [],
+      id_usuario: 1,
     };
   }
 }
