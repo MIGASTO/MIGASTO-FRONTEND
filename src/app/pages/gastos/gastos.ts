@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { Navbar } from '../../components/navbar/navbar';
-import { Gasto, GastoService } from '../../services/gasto.service';
+import { GastosService } from '../../services/gasto.service';
 import { GastoForm } from './gastos-form/gastos-form';
 
 @Component({
@@ -10,40 +10,68 @@ import { GastoForm } from './gastos-form/gastos-form';
   imports: [CommonModule, GastoForm, Navbar],
   templateUrl: './gastos.html',
 })
-export class Gastos implements OnInit {
-  gastos: Gasto[] = [];
+export class Gastos {
+  gastos: any[] = [];
   mostrarFormulario = false;
-  gastoSeleccionado: Gasto | null = null;
+  gastoSeleccionado: any = null;
 
-  constructor(private gastoService: GastoService) {}
+  constructor(private gastosService: GastosService) {}
 
   ngOnInit() {
     this.cargarGastos();
   }
 
   cargarGastos() {
-    this.gastoService.obtenerGastos().subscribe((data) => {
-      this.gastos = data;
+    this.gastosService.obtenerGasto().subscribe({
+      next: (data) => (this.gastos = data),
+      error: (err) => console.error('Error al cargar ingresos:', err),
     });
   }
 
-  guardarGasto(gasto: Gasto) {
-    if (gasto.id) {
-      this.gastoService.actualizarGasto(gasto.id, gasto).subscribe(() => this.cargarGastos());
+  guardarGasto(gasto: any) {
+    const fechaFormateada = gasto.fecha
+      ? new Date(gasto.fecha).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0];
+
+    const datosActualizados = {
+      descripcion: gasto.descripcion,
+      monto: gasto.monto,
+      fecha: fechaFormateada,
+      id_categoria: gasto.id_categoria,
+      //remover comentarios si se usan estos campos 
+      // cuando se integre moneda y tag dinamicos
+      //id_moneda: gasto.id_moneda,
+      //tags[]: gasto.tags[],
+      id_moneda: 1,
+      tags:[1],
+    };
+
+    if (gasto.id_movimiento) {
+      this.gastosService
+        .actualizarGasto(gasto.id_movimiento, datosActualizados)
+        .subscribe({
+          next: () => this.cargarGastos(),
+          error: (err) => console.error('Error al actualizar:', err),
+        });
     } else {
-      this.gastoService.agregarGasto(gasto).subscribe(() => this.cargarGastos());
+      
+      this.gastosService
+        .crearGasto(datosActualizados)
+        .subscribe(() => this.cargarGastos());
     }
+
     this.cerrarFormulario();
   }
 
-  editarGasto(gasto: Gasto) {
+  editarGasto(gasto: any) {
     this.gastoSeleccionado = { ...gasto };
     this.mostrarFormulario = true;
   }
 
-  eliminarGasto(gasto: Gasto) {
+  eliminarGasto(gasto: any) {
     if (confirm('¿Deseas eliminar este gasto?')) {
-      this.gastoService.eliminarGasto(gasto.id!).subscribe(() => this.cargarGastos());
+      this.gastosService.eliminarGasto(gasto.id_movimiento)
+      .subscribe(() => this.cargarGastos());
     }
   }
 

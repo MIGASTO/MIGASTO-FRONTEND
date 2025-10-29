@@ -2,32 +2,29 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-export interface Gasto {
-    id?: number;
-    descripcion: string;
-    monto: number;
-    categoria: string;
-    fecha: string;
-    }
-
     @Injectable({
     providedIn: 'root',
     })
-    export class GastoService {
-    private apiUrl = 'http://localhost:3000/api/gastos'; // 🔹 tu endpoint del backend
+    export class GastosService {
+    private apiUrl = 'http://localhost:8080/api/movimientos';
 
     constructor(private http: HttpClient) {}
 
-    obtenerGastos(): Observable<Gasto[]> {
-        return this.http.get<Gasto[]>(this.apiUrl);
+    obtenerGasto(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/gastos`);
     }
 
-    agregarGasto(gasto: Gasto): Observable<Gasto> {
-        return this.http.post<Gasto>(this.apiUrl, gasto);
+    crearGasto(gasto: any): Observable<any> {
+        console.log('📦 Datos enviados al backend:', gasto);
+        return this.http.post<any>(this.apiUrl, gasto);
     }
 
-    actualizarGasto(id: number, gasto: Gasto): Observable<Gasto> {
-        return this.http.put<Gasto>(`${this.apiUrl}/${id}`, gasto);
+    obtenerPorId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+    }
+
+    actualizarGasto(id: number, gasto: any): Observable<any> {
+        return this.http.patch<any>(`${this.apiUrl}/${id}`, gasto);
     }
 
     eliminarGasto(id: number): Observable<void> {

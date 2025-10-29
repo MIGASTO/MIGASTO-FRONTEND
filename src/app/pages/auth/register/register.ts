@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -13,10 +12,9 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class Register {
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
-  // ahora sí puedes usar this.fb en el inicializador
   registerForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -28,18 +26,23 @@ export class Register {
       return;
     }
 
-    const body = { ...this.registerForm.value, rolId: 1 }; // rol admin por defecto
+    // Rol fijo (puedes cambiarlo según tu lógica)
+    const userData = {
+      email: this.registerForm.value.email!,
+      password: this.registerForm.value.password!,
+      rolId: 1,
+    };
 
-
-    this.http.post('http://localhost:8080/api/auth/register', body).subscribe({
-      next: () => {
+    this.auth.register(userData).subscribe({
+      next: res => {
+        console.log('Usuario registrado:', res);
         alert('Registro exitoso');
         this.router.navigate(['/login']);
       },
       error: err => {
         console.error(err);
         alert(err?.error?.message || 'Error en el registro');
-      }
+      },
     });
   }
 }
