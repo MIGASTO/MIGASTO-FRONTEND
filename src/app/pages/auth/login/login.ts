@@ -9,16 +9,15 @@ import { AuthService } from '../../../services/auth.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
 })
-export class Login {   
+export class Login {
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
   });
 
   onLogin() {
@@ -27,21 +26,16 @@ export class Login {
       return;
     }
 
-    const { email, password } = this.loginForm.value;
-
-    this.authService.login({ email: email!, password: password! }).subscribe({
-      
-      
-      next: (res) => {
-  console.log('Respuesta del backend:', res);
-  this.router.navigate(['/home']);
-},
-      error: (err) => {
+    this.auth.login(this.loginForm.value as { email: string; password: string }).subscribe({
+      next: res => {
+        console.log('JWT recibido:', res.access_token);
+        //alert('Inicio de sesión exitoso');
+        this.router.navigate(['/home']);
+      },
+      error: err => {
         console.error(err);
-        alert('Credenciales inválidas');
-        
-      }
-      
+        alert(err?.error?.message || 'Credenciales inválidas');
+      },
     });
   }
 }
