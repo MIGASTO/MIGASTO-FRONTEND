@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
+import { Observable, tap } from 'rxjs';
 
 interface DecodedToken {
   sub: number;

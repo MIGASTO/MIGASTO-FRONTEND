@@ -31,6 +31,7 @@
     <!-- Menú normal (versión escritorio) -->
     <nav class="hidden md:flex space-x-4">
         <a routerLink="/home" class="hover:text-sky-300">Inicio</a>
+        <a routerLink="/profile" class="hover:text-sky-300">Perfil</a>
         <a routerLink="/gastos" class="hover:text-sky-300">Gastos</a>
         <a routerLink="/ingresos" class="hover:text-sky-300">Ingresos</a>
         <a routerLink="/login" class="hover:text-sky-300" >Cerrar sesion</a>
@@ -41,11 +42,18 @@
         class="absolute top-16 left-0 w-full bg-sky-800 flex flex-col md:hidden text-center transition-all duration-300"
         [class.hidden]="!isMenuOpen"
     >
+        
         <a
         routerLink="/home"
         class="py-2 hover:bg-sky-700 border-b border-sky-700"
         (click)="closeMenu()"
         >Inicio</a
+        >
+        <a
+        routerLink="/profile"
+        class="py-2 hover:bg-sky-700"
+        (click)="closeMenu()"
+        >Perfil</a
         >
         <a
         routerLink="/gastos"
