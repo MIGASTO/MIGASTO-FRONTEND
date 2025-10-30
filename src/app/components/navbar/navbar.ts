@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.html',
-  imports: [RouterModule],
+  imports: [RouterModule, ],
   styleUrls: ['./navbar.css'],
 })
 export class Navbar{

@@ -7,6 +7,7 @@ import { Gastos } from './pages/gastos/gastos';
 import { Home } from './pages/home/home';
 import { Ingresos } from './pages/ingresos/ingresos';
 import { Profile } from './pages/profile/profile';
+import { ProfileForm } from './pages/profile/profile-form/profile-form';
 
 export const routes: Routes = [
     {path:'', redirectTo: 'login', pathMatch: 'full'},
@@ -18,5 +19,6 @@ export const routes: Routes = [
     {path:'profile', component: Profile},
     {path:'gastos', component: Gastos},
     {path:'ingresos', component: Ingresos},
+    {path:'profile-form', component: ProfileForm},
     {path:'**', component: Login}, // Manejo de rutas desconocidas
 ];

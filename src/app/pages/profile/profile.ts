@@ -1,12 +1,66 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink, RouterModule } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
+import { Navbar } from '../../components/navbar/navbar';
+import { PerfilService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterModule],
+  standalone: true,
+  imports: [Navbar, RouterLink, RouterModule],
   templateUrl: './profile.html',
-  styleUrl: './profile.css'
 })
-export class Profile {
+export class Profile implements OnInit {
+  usuario: any = {};
 
+  constructor(private perfilService: PerfilService, private router: Router) {}
+
+  ngOnInit() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    try {
+      const decoded: any = jwtDecode(token);
+      const userId = decoded?.id || decoded?.sub;
+
+      if (!userId) {
+        console.error('No se pudo obtener el ID del usuario del token');
+        this.router.navigate(['/login']);
+        return;
+      }
+
+      this.perfilService.obtenerPerfil(userId).subscribe({
+        next: (res) => {
+          this.usuario = {
+            ...res,
+            generoTexto: this.obtenerGenero(res.genero),
+          };
+        },
+        error: (err) => console.error('Error al obtener perfil:', err),
+      });
+    } catch (e) {
+      console.error('Error al decodificar el token:', e);
+      this.router.navigate(['/login']);
+    }
+  }
+
+  obtenerGenero(id: number): string {
+    switch (id) {
+      case 1:
+        return 'Masculino';
+      case 2:
+        return 'Femenino';
+      case 3:
+        return 'Otro';
+      case 4:
+        return 'Prefiero no decirlo';
+      default:
+        return 'No especificado';
+    }
+  }
+
+  
 }
