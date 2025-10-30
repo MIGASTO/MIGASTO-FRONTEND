@@ -19,7 +19,7 @@
         <div class="space-y-3">
             <p><span class="text-sky-300 text-sm">Edad:</span> {{ usuario.edad || 'No registrada' }}</p>
             <p><span class="text-sky-300">Teléfono:</span> {{ usuario.telefono || 'No disponible' }}</p>
-            <p><span class="text-sky-300">Género:</span> {{ obtenerGenero(usuario.id_genero) }}</p>
+            <p><span class="text-sky-300">Género:</span> {{ usuario.generoTexto }}</p>
         </div>
         </div>
 
@@ -34,6 +34,6 @@
     </main>
 
     <footer class="p-4 bg-sky-900 text-center text-sm">
-        © 2025 MiGasto - Todos los derechos reservados
+        ©️ 2025 MiGasto - Todos los derechos reservados
     </footer>
 </section>

@@ -36,7 +36,7 @@ export class Profile implements OnInit {
         next: (res) => {
           this.usuario = {
             ...res,
-            generoTexto: this.obtenerGenero(res.genero),
+            generoTexto: this.obtenerGenero(res.genero?.id_genero),
           };
         },
         error: (err) => console.error('Error al obtener perfil:', err),
