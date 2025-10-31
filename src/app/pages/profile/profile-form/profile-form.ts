@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
 import { Navbar } from '../../../components/navbar/navbar';
 import { PerfilService } from '../../../services/profile.service';
 
@@ -12,7 +11,6 @@ import { PerfilService } from '../../../services/profile.service';
 })
 export class ProfileForm implements OnInit {
   form!: FormGroup;
-  userId!: number;
 
   constructor(
     private fb: FormBuilder,
@@ -21,10 +19,6 @@ export class ProfileForm implements OnInit {
   ) {}
 
   ngOnInit() {
-    const token = localStorage.getItem('token');
-    const decoded: any = token ? jwtDecode(token) : null;
-    this.userId = decoded?.id || decoded?.sub;
-
     this.form = this.fb.group({
       nombre_completo: ['', [Validators.required, Validators.minLength(3)]],
       edad: [''],
@@ -33,7 +27,8 @@ export class ProfileForm implements OnInit {
       id_genero: [''],
     });
 
-    this.perfilService.obtenerPerfil(this.userId).subscribe({
+    // Ya no hace falta decodificar el token, el service lo maneja
+    this.perfilService.obtenerPerfil().subscribe({
       next: (perfil) => this.form.patchValue(perfil),
       error: (err) => console.error('Error al cargar perfil:', err),
     });
@@ -42,7 +37,7 @@ export class ProfileForm implements OnInit {
   onSubmit() {
     if (this.form.invalid) return;
 
-    this.perfilService.actualizarPerfil(this.userId, this.form.value).subscribe({
+    this.perfilService.actualizarPerfil(this.form.value).subscribe({
       next: () => {
         alert('Perfil actualizado correctamente');
         this.router.navigate(['/profile']);
