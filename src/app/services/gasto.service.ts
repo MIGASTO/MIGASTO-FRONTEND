@@ -7,6 +7,8 @@ import { Observable } from 'rxjs';
     })
     export class GastosService {
     private apiUrl = 'http://localhost:8080/api/movimientos';
+    private apiMonedas = 'http://localhost:8080/api/monedas';
+    private apiTags = 'http://localhost:8080/api/tags';
 
     constructor(private http: HttpClient) {}
 
@@ -29,6 +31,14 @@ import { Observable } from 'rxjs';
 
     eliminarGasto(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    }
+
+    obtenerMonedas(): Observable<any[]> {
+        return this.http.get<any[]>(this.apiMonedas);
+    }
+
+    obtenerTags(): Observable<any[]> {
+        return this.http.get<any[]>(this.apiTags);
     }
 }
 

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-gasto-form',
@@ -9,9 +10,12 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './gastos-form.html',
 })
 export class GastoForm {
-  @Input() gastoEditado: any = null; 
-  @Output() guardar = new EventEmitter<any>(); 
+  @Input() gastoEditado: any = null;
+  @Output() guardar = new EventEmitter<any>();
   @Output() cancelar = new EventEmitter<void>();
+
+  monedas: any[] = [];
+  tagsDisponibles: any[] = [];
 
   gasto = {
     id_movimiento: null,
@@ -19,16 +23,22 @@ export class GastoForm {
     monto: 0,
     fecha: new Date().toISOString().split('T')[0],
     id_categoria: 2,
-    id_moneda:1,
-    tags:[1] as number[],
+    id_moneda: null,
+    tags: [] as number[],
   };
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.cargarListas();
+  }
 
   ngOnChanges() {
     if (this.gastoEditado) {
       this.gasto = {
-         ...this.gastoEditado,
-         descripcion: this.gastoEditado.descripcion || '',
-         id_moneda: this.gastoEditado.id_moneda ?? null,
+        ...this.gastoEditado,
+        descripcion: this.gastoEditado.descripcion || '',
+        id_moneda: this.gastoEditado.id_moneda ?? null,
         tags: Array.isArray(this.gastoEditado.tags)
           ? this.gastoEditado.tags
           : this.gastoEditado.tags
@@ -40,20 +50,31 @@ export class GastoForm {
     }
   }
 
+  cargarListas() {
+    this.http.get('http://localhost:8080/api/monedas').subscribe({
+      next: (res: any) => (this.monedas = res),
+      error: (err) => console.error('Error al cargar monedas:', err),
+    });
+
+    this.http.get('http://localhost:8080/api/tags').subscribe({
+      next: (res: any) => (this.tagsDisponibles = res),
+      error: (err) => console.error('Error al cargar tags:', err),
+    });
+  }
+
   guardarGasto() {
     const datos = {
+      descripcion: this.gasto.descripcion?.trim(),
       monto: this.gasto.monto,
       fecha: this.gasto.fecha,
       id_categoria: this.gasto.id_categoria,
-      descripcion: this.gasto.descripcion?.trim() || undefined,
-      id_moneda: this.gasto.id_moneda ?? null,
-      tags: Array.isArray(this.gasto.tags)
-      ? this.gasto.tags
-      : this.gasto.tags
-      ? [this.gasto.tags]
-      : [],
+      id_moneda: this.gasto.id_moneda,
+      tags: this.gasto.tags ?? [],
     };
-    this.guardar.emit({...this.gasto, ...datos});
+
+    console.log('💾 Datos enviados desde gasto-form:', datos);
+
+    this.guardar.emit({ ...this.gasto, ...datos });
     this.resetForm();
   }
 
@@ -69,8 +90,8 @@ export class GastoForm {
       monto: 0,
       fecha: new Date().toISOString().split('T')[0],
       id_categoria: 2,
-      id_moneda:1,
-      tags:[1],
+      id_moneda: null,
+      tags: [],
     };
   }
 }

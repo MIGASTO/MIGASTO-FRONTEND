@@ -1,33 +1,34 @@
 <form (ngSubmit)="guardarGasto()" class="flex flex-col space-y-4">
-    <div>
-        <label class="block text-sky-100 mb-1">Descripción</label>
-        <input
-        [(ngModel)]="gasto.descripcion"
-        name="descripcion"
-        type="text"
-        class="w-full p-2 rounded bg-sky-800 text-white"
-        placeholder="Ej. Transporte, Comida..."
-        required
-        />
-    </div>
-
-    <div>
-        <label class="block text-sky-100 mb-1">Monto</label>
-        <input
-        [(ngModel)]="gasto.monto"
-        name="monto"
-        type="number"
-        class="w-full p-2 rounded bg-sky-800 text-white"
-        placeholder="Ej. 15000"
-        required
-        />
-    </div>
-
-
-    <div>
-    <label class="block text-sky-100 mb-1" for="fecha">Fecha</label>
+  <!-- Descripción -->
+  <div>
+    <label class="block text-sky-100 mb-1">Descripción</label>
     <input
-      id="fecha"
+      [(ngModel)]="gasto.descripcion"
+      name="descripcion"
+      type="text"
+      class="w-full p-2 rounded bg-sky-800 text-white"
+      placeholder="Ej. Transporte, Comida..."
+      required
+    />
+  </div>
+
+  <!-- Monto -->
+  <div>
+    <label class="block text-sky-100 mb-1">Monto</label>
+    <input
+      [(ngModel)]="gasto.monto"
+      name="monto"
+      type="number"
+      class="w-full p-2 rounded bg-sky-800 text-white"
+      placeholder="Ej. 15000"
+      required
+    />
+  </div>
+
+  <!-- Fecha -->
+  <div>
+    <label class="block text-sky-100 mb-1">Fecha</label>
+    <input
       [(ngModel)]="gasto.fecha"
       name="fecha"
       type="date"
@@ -35,20 +36,55 @@
     />
   </div>
 
-    <div class="flex justify-end space-x-3">
-        <button
-        type="button"
-        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition"
-        (click)="cancelarEdicion()"
-        >
-        Cancelar
-        </button>
+  <!-- Moneda -->
+   <div>
+    <label class="block text-sky-100 mb-1">Moneda</label>
+    <select
+      [(ngModel)]="gasto.id_moneda"
+      name="id_moneda"
+      class="w-full p-2 rounded bg-sky-800 text-white"
+    >
+      <option [ngValue]="null">Seleccionar...</option>
+      <option
+        *ngFor="let moneda of monedas"
+        [ngValue]="moneda.id_moneda"
+      >
+         ({{ moneda.simbolo }}){{ moneda.nombre }}
+      </option>
+    </select>
+  </div>
 
-        <button
-        type="submit"
-        class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition"
-        >
-        {{ gasto.id_movimiento ? 'Actualizar' : 'Guardar' }}
-        </button>
-    </div>
+  <!-- Tags (múltiples) -->
+  <div>
+    <label class="block text-sky-100 mb-1">Tags</label>
+    <select
+      multiple
+      [(ngModel)]="gasto.tags"
+      name="tags"
+      class="w-full p-2 rounded bg-sky-800 text-white"
+    >
+      <option *ngFor="let tag of tagsDisponibles" [ngValue]="tag.id_tag">
+        {{ tag.nombre }}
+      </option>
+    </select>
+    <p class="text-xs text-sky-300 mt-1">(Puede seleccionar varios)</p>
+  </div>
+
+  <!-- Botones -->
+  <div class="flex justify-end space-x-3">
+    <button
+      type="button"
+      class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition"
+      (click)="cancelarEdicion()"
+    >
+      Cancelar
+    </button>
+
+    <button
+      type="submit"
+      class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition"
+    >
+      {{ gasto.id_movimiento ? 'Actualizar' : 'Guardar' }}
+    </button>
+  </div>
 </form>

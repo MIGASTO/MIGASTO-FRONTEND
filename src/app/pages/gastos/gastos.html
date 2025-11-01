@@ -35,6 +35,8 @@
                 <th class="py-2 px-3">Descripción</th>
                 <th class="py-2 px-3">Monto</th>
                 <th class="py-2 px-3">Fecha</th>
+                <th class="py-2 px-3">Moneda</th>
+                <th class="py-2 px-3">Tags</th>
                 <th class="py-2 px-3 text-center">Acciones</th>
                 </tr>
             </thead>
@@ -47,18 +49,26 @@
                 <td class="py-2 px-3">{{ gasto.descripcion }}</td>
                 <td class="py-2 px-3">${{ gasto.monto }}</td>
                 <td class="py-2 px-3">{{ gasto.fecha | date: 'shortDate' }}</td>
+                
+                <!-- ✅ Mostrar nombre de moneda -->
+                <td class="py-2 px-3">
+                {{ gasto.moneda?.simbolo || '—' }}
+                </td>
+                <td class="py-2 px-3">
+                    {{ getTagNames(gasto) }}
+                </td>
                 <td class="py-2 px-3 text-center space-x-2">
                     <button
                     class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
                     (click)="editarGasto(gasto)"
                     >
-                    ✏ Editar
+                    ✏
                     </button>
                     <button
                     class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
                     (click)="eliminarGasto(gasto)"
                     >
-                    ❌ Eliminar
+                    ❌
                     </button>
                 </td>
                 </tr>

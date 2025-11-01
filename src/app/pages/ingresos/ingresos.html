@@ -3,12 +3,12 @@
 
   <main class="flex-grow flex flex-col items-center p-8">
     <h2 class="text-4xl font-extrabold mb-6 text-center">Gestión de Ingresos</h2>
-  <p class="text-lg mb-8 text-sky-100 text-center max-w-xl">
+    <p class="text-lg mb-8 text-sky-100 text-center max-w-xl">
       Aquí podrás registrar, editar y eliminar tus
       <span class="font-semibold">ingresos personales</span>.
     </p>
 
-  <div class="w-full max-w-3xl bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+    <div class="w-full max-w-3xl bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-2xl font-semibold">Lista de Ingresos</h3>
         <button
@@ -19,7 +19,7 @@
         </button>
       </div>
 
-  <div *ngIf="mostrarFormulario" class="mb-6 border border-sky-700 rounded-lg p-4 bg-sky-800/30">
+      <div *ngIf="mostrarFormulario" class="mb-6 border border-sky-700 rounded-lg p-4 bg-sky-800/30">
         <app-ingreso-form
           [ingresoEditado]="ingresoSeleccionado"
           (guardar)="guardarIngreso($event)"
@@ -28,13 +28,15 @@
       </div>
 
       <div class="overflow-x-auto">
-  <table class="w-full text-left text-sky-100">
+        <table class="w-full text-left text-sky-100">
           <thead>
             <tr class="border-b border-sky-700">
               <th class="py-2 px-3">#</th>
               <th class="py-2 px-3">Descripción</th>
               <th class="py-2 px-3">Monto</th>
               <th class="py-2 px-3">Fecha</th>
+              <th class="py-2 px-3">Moneda</th>
+              <th class="py-2 px-3">Tags</th>
               <th class="py-2 px-3 text-center">Acciones</th>
             </tr>
           </thead>
@@ -47,18 +49,20 @@
               <td class="py-2 px-3">{{ ingreso.descripcion }}</td>
               <td class="py-2 px-3">${{ ingreso.monto }}</td>
               <td class="py-2 px-3">{{ ingreso.fecha | date: 'shortDate' }}</td>
+              <td class="py-2 px-3">{{ ingreso.moneda?.simbolo || '—' }}</td>
+              <td class="py-2 px-3">{{ getTagNames(ingreso) }}</td>
               <td class="py-2 px-3 text-center space-x-2">
                 <button
                   class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg transition"
                   (click)="editarIngreso(ingreso)"
                 >
-                  ✏ Editar
+                  ✏
                 </button>
                 <button
                   class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition"
                   (click)="eliminarIngreso(ingreso)"
                 >
-                  ❌ Eliminar
+                  ❌
                 </button>
               </td>
             </tr>

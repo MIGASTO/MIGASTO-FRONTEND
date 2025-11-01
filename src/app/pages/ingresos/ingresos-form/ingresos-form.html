@@ -1,8 +1,7 @@
 <form (ngSubmit)="guardarIngreso()" class="flex flex-col space-y-4">
   <div>
-    <label class="block text-sky-100 mb-1" for="descripcion">Descripción</label>
+    <label class="block text-sky-100 mb-1">Descripción</label>
     <input
-      id="descripcion"
       [(ngModel)]="ingreso.descripcion"
       name="descripcion"
       type="text"
@@ -13,9 +12,8 @@
   </div>
 
   <div>
-    <label class="block text-sky-100 mb-1" for="monto">Monto</label>
+    <label class="block text-sky-100 mb-1">Monto</label>
     <input
-      id="monto"
       [(ngModel)]="ingreso.monto"
       name="monto"
       type="number"
@@ -26,14 +24,42 @@
   </div>
 
   <div>
-    <label class="block text-sky-100 mb-1" for="fecha">Fecha</label>
+    <label class="block text-sky-100 mb-1">Fecha</label>
     <input
-      id="fecha"
       [(ngModel)]="ingreso.fecha"
       name="fecha"
       type="date"
       class="w-full p-2 rounded bg-sky-800 text-white"
     />
+  </div>
+
+  <div>
+    <label class="block text-sky-100 mb-1">Moneda</label>
+    <select
+      [(ngModel)]="ingreso.id_moneda"
+      name="id_moneda"
+      class="w-full p-2 rounded bg-sky-800 text-white"
+    >
+      <option [ngValue]="null">Seleccionar...</option>
+      <option *ngFor="let moneda of monedas" [ngValue]="moneda.id_moneda">
+        {{ moneda.codigo }}
+      </option>
+    </select>
+  </div>
+
+  <div>
+    <label class="block text-sky-100 mb-1">Tags</label>
+    <select
+      multiple
+      [(ngModel)]="ingreso.tags"
+      name="tags"
+      class="w-full p-2 rounded bg-sky-800 text-white"
+    >
+      <option *ngFor="let tag of tagsDisponibles" [ngValue]="tag.id_tag">
+        {{ tag.nombre }}
+      </option>
+    </select>
+    <p class="text-xs text-sky-300 mt-1">(Puedes seleccionar varios)</p>
   </div>
 
   <div class="flex justify-end space-x-3">

@@ -38,12 +38,9 @@ export class Gastos {
       monto: gasto.monto,
       fecha: fechaFormateada,
       id_categoria: gasto.id_categoria,
-      //remover comentarios si se usan estos campos 
-      // cuando se integre moneda y tag dinamicos
-      //id_moneda: gasto.id_moneda,
-      //tags[]: gasto.tags[],
-      id_moneda: 1,
-      tags:[1],
+      id_moneda: gasto.id_moneda ?? null,
+      tags: Array.isArray(gasto.tags) ? gasto.tags : gasto.tags ? [gasto.tags] : [],
+
     };
 
     if (gasto.id_movimiento) {
@@ -79,4 +76,9 @@ export class Gastos {
     this.gastoSeleccionado = null;
     this.mostrarFormulario = false;
   }
+
+  getTagNames(gasto: any): string {
+  if (!gasto.tags || gasto.tags.length === 0) return '—'
+  return gasto.tags.map((tag: any) => tag.nombre).join(', ')
+}
 }

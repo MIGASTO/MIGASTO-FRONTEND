@@ -30,7 +30,7 @@ export class Register {
     const userData = {
       email: this.registerForm.value.email!,
       password: this.registerForm.value.password!,
-      rolId: 2,
+      rolId: 1,
     };
 
     this.auth.register(userData).subscribe({

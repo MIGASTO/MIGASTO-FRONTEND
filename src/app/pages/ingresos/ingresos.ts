@@ -38,12 +38,12 @@ export class Ingresos {
       monto: ingreso.monto,
       fecha: fechaFormateada,
       id_categoria: ingreso.id_categoria,
-      //remover comentarios si se usan estos campos 
-      // cuando se integre moneda y tag dinamicos
-      //id_moneda: ingreso.id_moneda,
-      //tags[]: ingreso.tags[],
-      id_moneda: 1,
-      tags:[1],
+      id_moneda: ingreso.id_moneda ?? null,
+      tags: Array.isArray(ingreso.tags)
+        ? ingreso.tags
+        : ingreso.tags
+        ? [ingreso.tags]
+        : [],
     };
 
     if (ingreso.id_movimiento) {
@@ -51,10 +51,9 @@ export class Ingresos {
         .actualizarIngreso(ingreso.id_movimiento, datosActualizados)
         .subscribe({
           next: () => this.cargarIngresos(),
-          error: (err) => console.error('Error al actualizar:', err),
+          error: (err) => console.error('Error al actualizar ingreso:', err),
         });
     } else {
-     
       this.ingresosService
         .crearIngreso(datosActualizados)
         .subscribe(() => this.cargarIngresos());
@@ -69,16 +68,20 @@ export class Ingresos {
   }
 
   eliminarIngreso(ingreso: any) {
-    if (confirm('¿Deseas eliminar este gasto?')){
+    if (confirm('¿Deseas eliminar este ingreso?')) {
       this.ingresosService
-      .eliminarIngreso(ingreso.id_movimiento)
-      .subscribe(() => this.cargarIngresos());
+        .eliminarIngreso(ingreso.id_movimiento)
+        .subscribe(() => this.cargarIngresos());
     }
-    }
-    
+  }
 
   cerrarFormulario() {
     this.ingresoSeleccionado = null;
     this.mostrarFormulario = false;
+  }
+
+  getTagNames(ingreso: any): string {
+    if (!ingreso.tags || ingreso.tags.length === 0) return '—';
+    return ingreso.tags.map((tag: any) => tag.nombre).join(', ');
   }
 }

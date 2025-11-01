@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-ingreso-form',
@@ -13,23 +14,31 @@ export class IngresoForm {
   @Output() guardar = new EventEmitter<any>();
   @Output() cancelar = new EventEmitter<void>();
 
+  monedas: any[] = [];
+  tagsDisponibles: any[] = [];
+
   ingreso = {
     id_movimiento: null,
     descripcion: '',
     monto: 0,
     fecha: new Date().toISOString().split('T')[0],
-    id_categoria: 1,
-    id_moneda:1,
-    tags:[1] as number[],
-    
+    id_categoria: 1, // categoría fija para ingresos
+    id_moneda: null,
+    tags: [] as number[],
   };
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.cargarListas();
+  }
 
   ngOnChanges() {
     if (this.ingresoEditado) {
       this.ingreso = {
-         ...this.ingresoEditado,
-         descripcion: this.ingresoEditado.descripcion || '',
-         id_moneda: this.ingresoEditado.id_moneda ?? null,
+        ...this.ingresoEditado,
+        descripcion: this.ingresoEditado.descripcion || '',
+        id_moneda: this.ingresoEditado.id_moneda ?? null,
         tags: Array.isArray(this.ingresoEditado.tags)
           ? this.ingresoEditado.tags
           : this.ingresoEditado.tags
@@ -41,21 +50,29 @@ export class IngresoForm {
     }
   }
 
-  guardarIngreso() {
+  cargarListas() {
+    this.http.get('http://localhost:8080/api/monedas').subscribe({
+      next: (res: any) => (this.monedas = res),
+      error: (err) => console.error('Error al cargar monedas:', err),
+    });
 
+    this.http.get('http://localhost:8080/api/tags').subscribe({
+      next: (res: any) => (this.tagsDisponibles = res),
+      error: (err) => console.error('Error al cargar tags:', err),
+    });
+  }
+
+  guardarIngreso() {
     const datos = {
+      descripcion: this.ingreso.descripcion?.trim(),
       monto: this.ingreso.monto,
       fecha: this.ingreso.fecha,
       id_categoria: this.ingreso.id_categoria,
-      descripcion: this.ingreso.descripcion?.trim() || undefined,
-      id_moneda: this.ingreso.id_moneda ?? null,
-      tags: Array.isArray(this.ingreso.tags)
-      ? this.ingreso.tags
-      : this.ingreso.tags
-      ? [this.ingreso.tags]
-      : [],
+      id_moneda: this.ingreso.id_moneda,
+      tags: this.ingreso.tags ?? [],
     };
-    this.guardar.emit({...this.ingreso, ...datos,});
+
+    this.guardar.emit({ ...this.ingreso, ...datos });
     this.resetForm();
   }
 
@@ -71,8 +88,8 @@ export class IngresoForm {
       monto: 0,
       fecha: new Date().toISOString().split('T')[0],
       id_categoria: 1,
-      id_moneda:1,
-      tags:[1],
+      id_moneda: null,
+      tags: [],
     };
   }
 }
