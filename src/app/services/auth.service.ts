@@ -8,7 +8,7 @@ interface DecodedToken {
   email: string;
   rol: string;
   iat: number;
-  exp: number;
+  exp: number; // Ahora SÍ esperamos que exista
 }
 
 @Injectable({ providedIn: 'root' })
@@ -18,45 +18,44 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  // Registro
   register(data: { email: string; password: string; rolId: number }): Observable<any> {
     return this.http.post(`${this.API_URL}/register`, data);
   }
 
-  // Login
   login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.API_URL}/login`, credentials).pipe(
       tap((response: any) => {
         console.log('🔐 Respuesta del backend al login:', response);
         if (response.access_token) {
           localStorage.setItem('access_token', response.access_token);
-          //console.log('✅ Token guardado en localStorage');
-        } else {
-          //console.warn('⚠️ No se recibió access_token en la respuesta');
         }
       })
     );
   }
 
-  // Obtener token
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // Saber si está autenticado
+  // **** CAMBIO REVERTIDO ****
+  // Volvemos a la lógica de verificación de expiración
   isLoggedIn(): boolean {
     const token = this.getToken();
     if (!token) return false;
 
     try {
       const decoded: DecodedToken = jwtDecode(token);
+      
+      // Verificamos que 'exp' exista (por si acaso) Y que no esté expirado
+      if (!decoded.exp) return false; 
+      
       return Date.now() < decoded.exp * 1000;
     } catch {
-      return false;
+      return false; // Token malformado
     }
   }
+  // **** FIN DEL CAMBIO ****
 
-  // Obtener info del token decodificado
   getDecodedToken(): DecodedToken | null {
     const token = this.getToken();
     if (!token) return null;
@@ -67,13 +66,11 @@ export class AuthService {
     }
   }
 
-  // Obtener rol actual del usuario
   getUserRole(): string | null {
     const decoded = this.getDecodedToken();
     return decoded?.rol || null;
   }
 
-  // Cerrar sesión
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { jwtDecode } from 'jwt-decode'; // <-- IMPORTANTE: Importa jwt-decode aquí
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -15,12 +16,16 @@ export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  loginError: string | null = null; 
+
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
 
   onLogin() {
+    this.loginError = null; 
+
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
@@ -28,13 +33,29 @@ export class Login {
 
     this.auth.login(this.loginForm.value as { email: string; password: string }).subscribe({
       next: res => {
-        console.log('JWT recibido:', res.access_token);
-        //alert('Inicio de sesión exitoso');
+        // --- INICIO DE DEPURACIÓN ---
+        // Vamos a decodificar el token aquí mismo.
+        try {
+          const tokenRecibido = res.access_token;
+          const decodedToken: any = jwtDecode(tokenRecibido);
+          
+          console.log('--- DECODIFICACIÓN INMEDIATA ---');
+          console.log('Token decodificado en Login:', decodedToken);
+          console.log('¿Tiene "exp"?_ ', decodedToken.hasOwnProperty('exp'));
+          console.log('--- FIN DE DEPURACIÓN ---');
+
+        } catch (e) {
+          console.error('Error decodificando el token en el login', e);
+        }
+        // --- FIN DE DEPURACIÓN ---
+
+        console.log('✅ Login correcto. Redirigiendo a /home...');
         this.router.navigate(['/home']);
       },
       error: err => {
-        console.error(err);
-        alert(err?.error?.message || 'Credenciales inválidas');
+        const message = err?.error?.message || 'Error de conexión o credenciales inválidas.';
+        console.error('⚠️ Error al iniciar sesión:', message, err);
+        this.loginError = message; 
       },
     });
   }
