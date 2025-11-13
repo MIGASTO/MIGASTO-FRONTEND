@@ -6,7 +6,6 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  // Volvemos a usar la lógica centralizada en el servicio
   if (authService.isLoggedIn()) {
     console.log('✅ GUARD: Acceso permitido (Token verificado y válido).');
     return true;

@@ -33,8 +33,7 @@ export class Login {
 
     this.auth.login(this.loginForm.value as { email: string; password: string }).subscribe({
       next: res => {
-        // --- INICIO DE DEPURACIÓN ---
-        // Vamos a decodificar el token aquí mismo.
+
         try {
           const tokenRecibido = res.access_token;
           const decodedToken: any = jwtDecode(tokenRecibido);
@@ -47,7 +46,6 @@ export class Login {
         } catch (e) {
           console.error('Error decodificando el token en el login', e);
         }
-        // --- FIN DE DEPURACIÓN ---
 
         console.log('✅ Login correcto. Redirigiendo a /home...');
         this.router.navigate(['/home']);

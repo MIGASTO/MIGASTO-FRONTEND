@@ -8,7 +8,7 @@ interface DecodedToken {
   email: string;
   rol: string;
   iat: number;
-  exp: number; // Ahora SÍ esperamos que exista
+  exp: number; 
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,8 +37,6 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // **** CAMBIO REVERTIDO ****
-  // Volvemos a la lógica de verificación de expiración
   isLoggedIn(): boolean {
     const token = this.getToken();
     if (!token) return false;
@@ -46,7 +44,6 @@ export class AuthService {
     try {
       const decoded: DecodedToken = jwtDecode(token);
       
-      // Verificamos que 'exp' exista (por si acaso) Y que no esté expirado
       if (!decoded.exp) return false; 
       
       return Date.now() < decoded.exp * 1000;
@@ -54,7 +51,6 @@ export class AuthService {
       return false; // Token malformado
     }
   }
-  // **** FIN DEL CAMBIO ****
 
   getDecodedToken(): DecodedToken | null {
     const token = this.getToken();

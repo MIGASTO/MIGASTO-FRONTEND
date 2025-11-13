@@ -23,9 +23,7 @@ export class Home implements OnInit {
     this.cargarResumen();
   }
 
-  /**
-   * Getter que calcula el mensaje de estado del balance.
-   */
+
   get balanceMessage(): string {
     if (!this.resumen) return '';
     
