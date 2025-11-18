@@ -1,72 +1,96 @@
 <app-navbar />
 
-<div class="container mx-auto p-6">
-  <!-- Título -->
-  <h1 class="text-3xl font-bold text-green-600 mb-6">📊 Dashboard de Ingresos</h1>
+<section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-white">
+  <main class="flex-grow flex flex-col items-center p-8">
+    <!-- Encabezado con título y navegación -->
+    <div class="w-full max-w-7xl mb-8">
+      <h2 class="text-4xl font-extrabold mb-6 text-center flex items-center justify-center gap-3">
+        📊 Dashboard de Ingresos
+      </h2>
 
-  <!-- Indicador de carga -->
-  <div *ngIf="cargando" class="text-center py-8">
-    <p class="text-gray-600">Cargando estadísticas...</p>
-  </div>
+      <!-- Navegación entre dashboards -->
+      <div class="flex justify-center gap-3 mb-6">
+        <button
+          (click)="navegarA('/home')"
+          class="bg-sky-600 hover:bg-sky-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
+        >
+          🏠 General
+        </button>
+        <button
+          (click)="navegarA('/gastos/dashboard')"
+          class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
+        >
+          � Gastos
+        </button>
+        <button
+          (click)="navegarA('/ingresos')"
+          class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
+        >
+          📝 Gestionar Ingresos
+        </button>
+      </div>
 
-  <!-- Tarjetas de estadísticas -->
-  <div *ngIf="!cargando" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-    <div class="bg-gradient-to-br from-green-400 to-green-600 text-white p-6 rounded-lg shadow-lg">
-      <h3 class="text-sm font-semibold opacity-80">Total Ingresos</h3>
-      <p class="text-3xl font-bold mt-2">${{ formatearMonto(totalIngresos) }}</p>
+      <p class="text-sky-100 text-lg text-center">
+        Análisis detallado de tus ingresos, distribución y tendencias
+      </p>
     </div>
 
-    <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 text-white p-6 rounded-lg shadow-lg">
-      <h3 class="text-sm font-semibold opacity-80">Promedio</h3>
-      <p class="text-3xl font-bold mt-2">${{ formatearMonto(promedioIngresos) }}</p>
+    <!-- Indicador de carga -->
+    <div *ngIf="cargando" class="text-center py-8">
+      <p class="text-sky-200">Cargando estadísticas...</p>
     </div>
 
-    <div class="bg-gradient-to-br from-teal-400 to-teal-600 text-white p-6 rounded-lg shadow-lg">
-      <h3 class="text-sm font-semibold opacity-80">Cantidad</h3>
-      <p class="text-3xl font-bold mt-2">{{ cantidadIngresos }}</p>
+    <!-- Tarjetas de estadísticas -->
+    <div *ngIf="!cargando" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Total Ingresos</h3>
+        <p class="text-3xl font-bold text-green-400">
+          ${{ totalIngresos | number:'1.0-0' }}
+        </p>
+      </div>
+
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Promedio por Ingreso</h3>
+        <p class="text-3xl font-bold text-emerald-400">
+          ${{ promedioIngresos | number:'1.0-0' }}
+        </p>
+      </div>
+
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Cantidad de Ingresos</h3>
+        <p class="text-3xl font-bold text-teal-400">
+          {{ cantidadIngresos }}
+        </p>
+      </div>
+
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Ingreso Más Alto</h3>
+        <p class="text-2xl font-bold text-green-500">
+          <span *ngIf="ingresoMayor">${{ ingresoMayor.monto | number:'1.0-0' }}</span>
+          <span *ngIf="!ingresoMayor">$0</span>
+        </p>
+        <p class="text-xs text-sky-300 mt-1" *ngIf="ingresoMayor && ingresoMayor.descripcion">
+          {{ ingresoMayor.descripcion }}
+        </p>
+      </div>
     </div>
 
-    <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 text-white p-6 rounded-lg shadow-lg">
-      <h3 class="text-sm font-semibold opacity-80">Ingreso Mayor</h3>
-      <p class="text-3xl font-bold mt-2">${{ ingresoMayor ? formatearMonto(ingresoMayor.monto) : '0.00' }}</p>
-      <p *ngIf="ingresoMayor && ingresoMayor.descripcion" class="text-xs opacity-70 mt-1">{{ ingresoMayor.descripcion }}</p>
-    </div>
-  </div>
+    <!-- Gráficas -->
+    <div *ngIf="!cargando" class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Gráfica Pie: Ingresos por Categoría -->
+      <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <canvas #pieCanvas></canvas>
+      </div>
 
-  <!-- Botones de navegación -->
-  <div class="flex gap-3 mb-6 flex-wrap">
-    <button
-      (click)="navegarA('/home')"
-      class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
-      🏠 General
-    </button>
-    <button
-      (click)="navegarA('/gastos/dashboard')"
-      class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">
-      💸 Gastos
-    </button>
-    <button
-      (click)="navegarA('/ingresos')"
-      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-      📝 Gestionar Ingresos
-    </button>
-  </div>
+      <!-- Gráfica Line: Evolución Mensual -->
+      <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <canvas #lineCanvas></canvas>
+      </div>
 
-  <!-- Gráficas -->
-  <div *ngIf="!cargando" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- Gráfica Pie: Ingresos por Categoría -->
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <canvas #pieCanvas></canvas>
+      <!-- Gráfica Bar: Top Ingresos (ocupa todo el ancho) -->
+      <div class="bg-white/10 backdrop-blur-md p-6 rounded-xl shadow-lg lg:col-span-2">
+        <canvas #barCanvas></canvas>
+      </div>
     </div>
-
-    <!-- Gráfica Line: Evolución Mensual -->
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <canvas #lineCanvas></canvas>
-    </div>
-
-    <!-- Gráfica Bar: Top Ingresos (ocupa todo el ancho) -->
-    <div class="bg-white p-6 rounded-lg shadow-lg lg:col-span-2">
-      <canvas #barCanvas></canvas>
-    </div>
-  </div>
-</div>
+  </main>
+</section>
