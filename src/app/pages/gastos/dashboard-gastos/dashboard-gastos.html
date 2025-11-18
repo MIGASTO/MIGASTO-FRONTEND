@@ -1,0 +1,103 @@
+<section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-white">
+  <app-navbar></app-navbar>
+
+  <main class="flex-grow p-6">
+    <!-- Encabezado con navegación entre dashboards -->
+    <div class="max-w-7xl mx-auto mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-4xl font-extrabold">
+          📊 Dashboard de <span class="text-red-400">Gastos</span>
+        </h2>
+
+        <!-- Navegación entre dashboards -->
+        <div class="flex gap-3">
+          <button
+            (click)="navegarA('/home')"
+            class="bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-lg font-medium transition"
+          >
+            🏠 General
+          </button>
+          <button
+            (click)="navegarA('/ingresos/dashboard')"
+            class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-medium transition"
+          >
+            💰 Ingresos
+          </button>
+          <button
+            (click)="navegarA('/gastos')"
+            class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-medium transition"
+          >
+            📝 Gestionar Gastos
+          </button>
+        </div>
+      </div>
+
+      <p class="text-sky-100 text-lg">
+        Análisis detallado de tus gastos, distribución y tendencias
+      </p>
+    </div>
+
+    <!-- Tarjetas de estadísticas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Total Gastos</h3>
+        <p class="text-3xl font-bold text-red-400">
+          <span *ngIf="!cargando">${{ totalGastos | number:'1.0-0' }}</span>
+          <span *ngIf="cargando">...</span>
+        </p>
+      </div>
+
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Promedio por Gasto</h3>
+        <p class="text-3xl font-bold text-orange-400">
+          <span *ngIf="!cargando">${{ promedioGastos | number:'1.0-0' }}</span>
+          <span *ngIf="cargando">...</span>
+        </p>
+      </div>
+
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Cantidad de Gastos</h3>
+        <p class="text-3xl font-bold text-yellow-400">
+          <span *ngIf="!cargando">{{ cantidadGastos }}</span>
+          <span *ngIf="cargando">...</span>
+        </p>
+      </div>
+
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <h3 class="text-sm font-semibold text-sky-200 mb-2">Gasto Más Alto</h3>
+        <p class="text-2xl font-bold text-red-500">
+          <span *ngIf="!cargando && gastoMayor">${{ gastoMayor.monto | number:'1.0-0' }}</span>
+          <span *ngIf="!cargando && !gastoMayor">$0</span>
+          <span *ngIf="cargando">...</span>
+        </p>
+        <p class="text-xs text-sky-300 mt-1" *ngIf="gastoMayor">
+          {{ gastoMayor.descripcion }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Gráficas -->
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Gráfica de pastel: Gastos por categoría -->
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <canvas #pieCanvas></canvas>
+      </div>
+
+      <!-- Gráfica de línea: Evolución mensual -->
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <canvas #lineCanvas></canvas>
+      </div>
+    </div>
+
+    <!-- Gráfica de barras: Top gastos -->
+    <div class="max-w-7xl mx-auto">
+      <div class="bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
+        <canvas #barCanvas></canvas>
+      </div>
+    </div>
+  </main>
+
+  <footer class="p-4 bg-sky-900 text-center text-sm">
+    © 2025 MiGasto - Todos los derechos reservados
+  </footer>
+</section>

@@ -3,10 +3,20 @@
 
   <main class="flex-grow flex flex-col items-center p-8">
     <h2 class="text-4xl font-extrabold mb-6 text-center">Gestión de Ingresos</h2>
-    <p class="text-lg mb-8 text-sky-100 text-center max-w-xl">
+    <p class="text-lg mb-4 text-sky-100 text-center max-w-xl">
       Aquí podrás registrar, editar y eliminar tus
       <span class="font-semibold">ingresos personales</span>.
     </p>
+
+    <!-- Botón de navegación al dashboard -->
+    <div class="mb-6">
+      <button
+        routerLink="/ingresos/dashboard"
+        class="bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-500/50"
+      >
+        📊 Ver Dashboard de Ingresos
+      </button>
+    </div>
 
     <div class="w-full max-w-3xl bg-sky-900/40 backdrop-blur-md p-6 rounded-xl shadow-lg">
       <div class="flex justify-between items-center mb-4">

@@ -23,4 +23,29 @@ export class BalanceService {
   obtenerResumen(): Observable<BalanceSummary> {
     return this.http.get<BalanceSummary>(this.apiUrl);
   }
+
+  // Obtener estadísticas de gastos por categoría
+  obtenerGastosPorCategoria(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/gastos-categoria`);
+  }
+
+  // Obtener estadísticas de ingresos por categoría
+  obtenerIngresosPorCategoria(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/ingresos-categoria`);
+  }
+
+  // Obtener evolución mensual (últimos 6 meses)
+  obtenerEvolucionMensual(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/evolucion-mensual`);
+  }
+
+  // Obtener top gastos
+  obtenerTopGastos(limite: number = 5): Observable<any> {
+    return this.http.get(`${this.apiUrl}/top-gastos?limite=${limite}`);
+  }
+
+  // Obtener top ingresos
+  obtenerTopIngresos(limite: number = 5): Observable<any> {
+    return this.http.get(`${this.apiUrl}/top-ingresos?limite=${limite}`);
+  }
 }

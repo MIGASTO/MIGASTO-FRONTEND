@@ -1,0 +1,72 @@
+<app-navbar />
+
+<div class="container mx-auto p-6">
+  <!-- Título -->
+  <h1 class="text-3xl font-bold text-green-600 mb-6">📊 Dashboard de Ingresos</h1>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="cargando" class="text-center py-8">
+    <p class="text-gray-600">Cargando estadísticas...</p>
+  </div>
+
+  <!-- Tarjetas de estadísticas -->
+  <div *ngIf="!cargando" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+    <div class="bg-gradient-to-br from-green-400 to-green-600 text-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-sm font-semibold opacity-80">Total Ingresos</h3>
+      <p class="text-3xl font-bold mt-2">${{ totalIngresos.toFixed(2) }}</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 text-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-sm font-semibold opacity-80">Promedio</h3>
+      <p class="text-3xl font-bold mt-2">${{ promedioIngresos.toFixed(2) }}</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-teal-400 to-teal-600 text-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-sm font-semibold opacity-80">Cantidad</h3>
+      <p class="text-3xl font-bold mt-2">{{ cantidadIngresos }}</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 text-white p-6 rounded-lg shadow-lg">
+      <h3 class="text-sm font-semibold opacity-80">Ingreso Mayor</h3>
+      <p class="text-3xl font-bold mt-2">{{ ingresoMayor ? '$' + ingresoMayor.monto.toFixed(2) : '$0' }}</p>
+      <p *ngIf="ingresoMayor" class="text-xs opacity-70 mt-1">{{ ingresoMayor.descripcion }}</p>
+    </div>
+  </div>
+
+  <!-- Botones de navegación -->
+  <div class="flex gap-3 mb-6 flex-wrap">
+    <button
+      (click)="navegarA('/home')"
+      class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition">
+      🏠 General
+    </button>
+    <button
+      (click)="navegarA('/gastos/dashboard')"
+      class="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition">
+      💸 Gastos
+    </button>
+    <button
+      (click)="navegarA('/ingresos')"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+      📝 Gestionar Ingresos
+    </button>
+  </div>
+
+  <!-- Gráficas -->
+  <div *ngIf="!cargando" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Gráfica Pie: Ingresos por Categoría -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <canvas #pieCanvas></canvas>
+    </div>
+
+    <!-- Gráfica Line: Evolución Mensual -->
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <canvas #lineCanvas></canvas>
+    </div>
+
+    <!-- Gráfica Bar: Top Ingresos (ocupa todo el ancho) -->
+    <div class="bg-white p-6 rounded-lg shadow-lg lg:col-span-2">
+      <canvas #barCanvas></canvas>
+    </div>
+  </div>
+</div>
