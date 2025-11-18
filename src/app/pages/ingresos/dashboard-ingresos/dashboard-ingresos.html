@@ -13,12 +13,12 @@
   <div *ngIf="!cargando" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
     <div class="bg-gradient-to-br from-green-400 to-green-600 text-white p-6 rounded-lg shadow-lg">
       <h3 class="text-sm font-semibold opacity-80">Total Ingresos</h3>
-      <p class="text-3xl font-bold mt-2">${{ totalIngresos.toFixed(2) }}</p>
+      <p class="text-3xl font-bold mt-2">${{ formatearMonto(totalIngresos) }}</p>
     </div>
 
     <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 text-white p-6 rounded-lg shadow-lg">
       <h3 class="text-sm font-semibold opacity-80">Promedio</h3>
-      <p class="text-3xl font-bold mt-2">${{ promedioIngresos.toFixed(2) }}</p>
+      <p class="text-3xl font-bold mt-2">${{ formatearMonto(promedioIngresos) }}</p>
     </div>
 
     <div class="bg-gradient-to-br from-teal-400 to-teal-600 text-white p-6 rounded-lg shadow-lg">
@@ -28,8 +28,8 @@
 
     <div class="bg-gradient-to-br from-cyan-400 to-cyan-600 text-white p-6 rounded-lg shadow-lg">
       <h3 class="text-sm font-semibold opacity-80">Ingreso Mayor</h3>
-      <p class="text-3xl font-bold mt-2">{{ ingresoMayor ? '$' + ingresoMayor.monto.toFixed(2) : '$0' }}</p>
-      <p *ngIf="ingresoMayor" class="text-xs opacity-70 mt-1">{{ ingresoMayor.descripcion }}</p>
+      <p class="text-3xl font-bold mt-2">${{ ingresoMayor ? formatearMonto(ingresoMayor.monto) : '0.00' }}</p>
+      <p *ngIf="ingresoMayor && ingresoMayor.descripcion" class="text-xs opacity-70 mt-1">{{ ingresoMayor.descripcion }}</p>
     </div>
   </div>
 

@@ -40,23 +40,34 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
     // Las gráficas se renderizan después de cargar los datos
   }
 
+  formatearMonto(valor: any): string {
+    const numero = Number(valor) || 0;
+    return numero.toFixed(2);
+  }
+
   cargarEstadisticas() {
     this.cargando = true;
 
     // Cargar todos los ingresos para calcular estadísticas básicas
     this.ingresosService.obtenerIngresos().subscribe({
       next: (ingresos) => {
-        this.cantidadIngresos = ingresos.length;
-        this.totalIngresos = ingresos.reduce((sum, i) => sum + i.monto, 0);
+        this.cantidadIngresos = ingresos.length || 0;
+        this.totalIngresos = ingresos.reduce((sum: number, i: any) => sum + (Number(i.monto) || 0), 0);
         this.promedioIngresos = this.cantidadIngresos > 0 ? this.totalIngresos / this.cantidadIngresos : 0;
-        this.ingresoMayor = ingresos.reduce((max, i) => i.monto > (max?.monto || 0) ? i : max, null);
+        this.ingresoMayor = ingresos.reduce((max: any, i: any) => (Number(i.monto) || 0) > (Number(max?.monto) || 0) ? i : max, null);
 
         this.cargando = false;
         this.renderizarGraficas();
       },
       error: (err) => {
         console.error('Error al cargar estadísticas de ingresos:', err);
+        // Inicializar con valores por defecto en caso de error
+        this.cantidadIngresos = 0;
+        this.totalIngresos = 0;
+        this.promedioIngresos = 0;
+        this.ingresoMayor = null;
         this.cargando = false;
+        this.renderizarGraficas();
       }
     });
   }

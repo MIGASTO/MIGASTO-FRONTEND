@@ -40,23 +40,34 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     // Las gráficas se renderizan después de cargar los datos
   }
 
+  formatearMonto(valor: any): string {
+    const numero = Number(valor) || 0;
+    return numero.toFixed(2);
+  }
+
   cargarEstadisticas() {
     this.cargando = true;
 
     // Cargar todos los gastos para calcular estadísticas básicas
     this.gastosService.obtenerGasto().subscribe({
       next: (gastos) => {
-        this.cantidadGastos = gastos.length;
-        this.totalGastos = gastos.reduce((sum, g) => sum + g.monto, 0);
+        this.cantidadGastos = gastos.length || 0;
+        this.totalGastos = gastos.reduce((sum: number, g: any) => sum + (Number(g.monto) || 0), 0);
         this.promedioGastos = this.cantidadGastos > 0 ? this.totalGastos / this.cantidadGastos : 0;
-        this.gastoMayor = gastos.reduce((max, g) => g.monto > (max?.monto || 0) ? g : max, null);
+        this.gastoMayor = gastos.reduce((max: any, g: any) => (Number(g.monto) || 0) > (Number(max?.monto) || 0) ? g : max, null);
 
         this.cargando = false;
         this.renderizarGraficas();
       },
       error: (err) => {
         console.error('Error al cargar estadísticas de gastos:', err);
+        // Inicializar con valores por defecto en caso de error
+        this.cantidadGastos = 0;
+        this.totalGastos = 0;
+        this.promedioGastos = 0;
+        this.gastoMayor = null;
         this.cargando = false;
+        this.renderizarGraficas();
       }
     });
   }
