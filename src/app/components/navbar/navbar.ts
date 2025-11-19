@@ -17,10 +17,12 @@ export class Navbar {
   ) {}
 
   closeMenu() {
+    console.log('closeMenu called');
     this.isMenuOpen = false;
   }
 
   logout() {
+    console.log('logout called');
     this.authService.logout();
     this.router.navigate(['/login']);
     this.closeMenu();

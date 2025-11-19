@@ -48,54 +48,43 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   cargarEstadisticas() {
     this.cargando = true;
 
-    // Cargar todos los gastos para calcular estadísticas básicas
-    this.gastosService.obtenerGasto().subscribe({
-      next: (gastos) => {
-        this.cantidadGastos = gastos.length || 0;
-        this.totalGastos = gastos.reduce((sum: number, g: any) => sum + (Number(g.monto) || 0), 0);
-        this.promedioGastos = this.cantidadGastos > 0 ? this.totalGastos / this.cantidadGastos : 0;
-        this.gastoMayor = gastos.reduce((max: any, g: any) => (Number(g.monto) || 0) > (Number(max?.monto) || 0) ? g : max, null);
+    // Cargar todas las estadísticas en una sola llamada
+    this.balanceService.obtenerEstadisticasGastos().subscribe({
+      next: (estadisticas) => {
+        // Asignar los datos iniciales
+        this.totalGastos = estadisticas.total || 0;
+        this.promedioGastos = estadisticas.promedio || 0;
+        this.cantidadGastos = estadisticas.cantidad || 0;
+
+        // Encontrar el gasto mayor del top5
+        if (estadisticas.top5 && estadisticas.top5.length > 0) {
+          this.gastoMayor = {
+            monto: estadisticas.max || estadisticas.top5[0].monto,
+            descripcion: estadisticas.top5[0].descripcion
+          };
+        } else {
+          this.gastoMayor = null;
+        }
 
         this.cargando = false;
-        this.renderizarGraficas();
+
+        // Renderizar las gráficas con los datos del backend
+        this.renderPieChart(estadisticas.graficoTags || []);
+        this.renderLineChart(estadisticas.graficoMensual || []);
+        this.renderBarChart(estadisticas.top5 || []);
       },
       error: (err) => {
         console.error('Error al cargar estadísticas de gastos:', err);
-        // Inicializar con valores por defecto en caso de error
+        // Inicializar con valores por defecto y mostrar datos dummy
         this.cantidadGastos = 0;
         this.totalGastos = 0;
         this.promedioGastos = 0;
         this.gastoMayor = null;
         this.cargando = false;
-        this.renderizarGraficas();
-      }
-    });
-  }
 
-  renderizarGraficas() {
-    // Gráfica de distribución por categoría (pie)
-    this.balanceService.obtenerGastosPorCategoria().subscribe({
-      next: (data) => this.renderPieChart(data),
-      error: (err) => {
-        console.error('Error al cargar gastos por categoría:', err);
+        // Renderizar gráficas dummy
         this.renderPieChartDummy();
-      }
-    });
-
-    // Gráfica de evolución mensual (line)
-    this.balanceService.obtenerEvolucionMensual().subscribe({
-      next: (data) => this.renderLineChart(data),
-      error: (err) => {
-        console.error('Error al cargar evolución mensual:', err);
         this.renderLineChartDummy();
-      }
-    });
-
-    // Gráfica de top gastos (bar)
-    this.balanceService.obtenerTopGastos(10).subscribe({
-      next: (data) => this.renderBarChart(data),
-      error: (err) => {
-        console.error('Error al cargar top gastos:', err);
         this.renderBarChartDummy();
       }
     });
@@ -107,7 +96,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
-        labels: data.map((item: any) => item.categoria || 'Sin categoría'),
+        labels: data.map((item: any) => item.tag || 'Sin categoría'),
         datasets: [{
           data: data.map((item: any) => item.total),
           backgroundColor: [
@@ -151,13 +140,15 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   renderLineChart(data: any) {
     if (!this.lineCanvas) return;
 
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
     new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
-        labels: data.map((item: any) => item.mes),
+        labels: data.map((item: any) => meses[item.mes - 1] || `Mes ${item.mes}`),
         datasets: [{
           label: 'Gastos Mensuales',
-          data: data.map((item: any) => item.gastos),
+          data: data.map((item: any) => item.total),
           borderColor: '#ef4444',
           backgroundColor: 'rgba(239, 68, 68, 0.1)',
           tension: 0.4,
@@ -168,7 +159,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución de Gastos (Últimos 6 meses)' }
+          title: { display: true, text: 'Evolución de Gastos (Últimos meses)' }
         },
         scales: {
           y: { beginAtZero: true }
