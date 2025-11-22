@@ -48,54 +48,43 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   cargarEstadisticas() {
     this.cargando = true;
 
-    // Cargar todos los ingresos para calcular estadísticas básicas
-    this.ingresosService.obtenerIngresos().subscribe({
-      next: (ingresos) => {
-        this.cantidadIngresos = ingresos.length || 0;
-        this.totalIngresos = ingresos.reduce((sum: number, i: any) => sum + (Number(i.monto) || 0), 0);
-        this.promedioIngresos = this.cantidadIngresos > 0 ? this.totalIngresos / this.cantidadIngresos : 0;
-        this.ingresoMayor = ingresos.reduce((max: any, i: any) => (Number(i.monto) || 0) > (Number(max?.monto) || 0) ? i : max, null);
+    // Cargar todas las estadísticas en una sola llamada
+    this.balanceService.obtenerEstadisticasIngresos().subscribe({
+      next: (estadisticas) => {
+        // Asignar los datos iniciales
+        this.totalIngresos = estadisticas.total || 0;
+        this.promedioIngresos = estadisticas.promedio || 0;
+        this.cantidadIngresos = estadisticas.cantidad || 0;
+
+        // Encontrar el ingreso mayor del top5
+        if (estadisticas.top5 && estadisticas.top5.length > 0) {
+          this.ingresoMayor = {
+            monto: estadisticas.max || estadisticas.top5[0].monto,
+            descripcion: estadisticas.top5[0].descripcion
+          };
+        } else {
+          this.ingresoMayor = null;
+        }
 
         this.cargando = false;
-        this.renderizarGraficas();
+
+        // Renderizar las gráficas con los datos del backend
+        this.renderPieChart(estadisticas.graficoTags || []);
+        this.renderLineChart(estadisticas.graficoMensual || []);
+        this.renderBarChart(estadisticas.top5 || []);
       },
       error: (err) => {
         console.error('Error al cargar estadísticas de ingresos:', err);
-        // Inicializar con valores por defecto en caso de error
+        // Inicializar con valores por defecto y mostrar datos dummy
         this.cantidadIngresos = 0;
         this.totalIngresos = 0;
         this.promedioIngresos = 0;
         this.ingresoMayor = null;
         this.cargando = false;
-        this.renderizarGraficas();
-      }
-    });
-  }
 
-  renderizarGraficas() {
-    // Gráfica de distribución por categoría (pie)
-    this.balanceService.obtenerIngresosPorCategoria().subscribe({
-      next: (data) => this.renderPieChart(data),
-      error: (err) => {
-        console.error('Error al cargar ingresos por categoría:', err);
+        // Renderizar gráficas dummy
         this.renderPieChartDummy();
-      }
-    });
-
-    // Gráfica de evolución mensual (line)
-    this.balanceService.obtenerEvolucionMensual().subscribe({
-      next: (data) => this.renderLineChart(data),
-      error: (err) => {
-        console.error('Error al cargar evolución mensual:', err);
         this.renderLineChartDummy();
-      }
-    });
-
-    // Gráfica de top ingresos (bar)
-    this.balanceService.obtenerTopIngresos(10).subscribe({
-      next: (data) => this.renderBarChart(data),
-      error: (err) => {
-        console.error('Error al cargar top ingresos:', err);
         this.renderBarChartDummy();
       }
     });
@@ -107,7 +96,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
     new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
-        labels: data.map((item: any) => item.categoria || 'Sin categoría'),
+        labels: data.map((item: any) => item.tag || 'Sin categoría'),
         datasets: [{
           data: data.map((item: any) => item.total),
           backgroundColor: [
@@ -151,13 +140,15 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   renderLineChart(data: any) {
     if (!this.lineCanvas) return;
 
+    const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
     new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
-        labels: data.map((item: any) => item.mes),
+        labels: data.map((item: any) => meses[item.mes - 1] || `Mes ${item.mes}`),
         datasets: [{
           label: 'Ingresos Mensuales',
-          data: data.map((item: any) => item.ingresos),
+          data: data.map((item: any) => item.total),
           borderColor: '#10b981',
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4,
@@ -168,7 +159,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución de Ingresos (Últimos 6 meses)' }
+          title: { display: true, text: 'Evolución de Ingresos (Últimos meses)' }
         },
         scales: {
           y: { beginAtZero: true }

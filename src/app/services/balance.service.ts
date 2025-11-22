@@ -11,12 +11,32 @@ export interface BalanceSummary {
   filtros: { mes: string; anio: string };
 }
 
+export interface EstadisticasGastos {
+  total: number;
+  promedio: number;
+  cantidad: number;
+  max: number;
+  graficoTags: Array<{ tag: string; total: number }>;
+  graficoMensual: Array<{ mes: number; total: number }>;
+  top5: Array<{ descripcion: string; monto: number }>;
+}
+
+export interface EstadisticasIngresos {
+  total: number;
+  promedio: number;
+  cantidad: number;
+  max: number;
+  graficoTags: Array<{ tag: string; total: number }>;
+  graficoMensual: Array<{ mes: number; total: number }>;
+  top5: Array<{ descripcion: string; monto: number }>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class BalanceService {
 
-  private apiUrl = 'http://localhost:8080/api/movimientos/balance'; 
+  private apiUrl = 'http://localhost:8080/api/movimientos/balance';
 
   constructor(private http: HttpClient) {}
 
@@ -24,28 +44,13 @@ export class BalanceService {
     return this.http.get<BalanceSummary>(this.apiUrl);
   }
 
-  // Obtener estadísticas de gastos por categoría
-  obtenerGastosPorCategoria(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/gastos-categoria`);
+  // Obtener todas las estadísticas de gastos en una sola llamada
+  obtenerEstadisticasGastos(): Observable<EstadisticasGastos> {
+    return this.http.get<EstadisticasGastos>(`${this.apiUrl}/gastos`);
   }
 
-  // Obtener estadísticas de ingresos por categoría
-  obtenerIngresosPorCategoria(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/ingresos-categoria`);
-  }
-
-  // Obtener evolución mensual (últimos 6 meses)
-  obtenerEvolucionMensual(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/evolucion-mensual`);
-  }
-
-  // Obtener top gastos
-  obtenerTopGastos(limite: number = 5): Observable<any> {
-    return this.http.get(`${this.apiUrl}/top-gastos?limite=${limite}`);
-  }
-
-  // Obtener top ingresos
-  obtenerTopIngresos(limite: number = 5): Observable<any> {
-    return this.http.get(`${this.apiUrl}/top-ingresos?limite=${limite}`);
+  // Obtener todas las estadísticas de ingresos en una sola llamada
+  obtenerEstadisticasIngresos(): Observable<EstadisticasIngresos> {
+    return this.http.get<EstadisticasIngresos>(`${this.apiUrl}/ingresos`);
   }
 }
