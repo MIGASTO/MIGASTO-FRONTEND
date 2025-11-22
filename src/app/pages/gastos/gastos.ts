@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Navbar } from '../../components/navbar/navbar';
 import { GastosService } from '../../services/gasto.service';
 import { GastoForm } from './gastos-form/gastos-form';
@@ -7,7 +8,7 @@ import { GastoForm } from './gastos-form/gastos-form';
 @Component({
   selector: 'app-gastos',
   standalone: true,
-  imports: [CommonModule, GastoForm, Navbar],
+  imports: [CommonModule, GastoForm, Navbar, RouterModule],
   templateUrl: './gastos.html',
 })
 export class Gastos {
