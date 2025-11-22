@@ -5,3 +5,7 @@ div {
 canvas {
   max-height: 400px;
 }
+
+button {
+  white-space: nowrap;
+}

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { Navbar } from '../../../components/navbar/navbar';
@@ -20,6 +20,11 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
+  // Instancias para controlar el redibujado
+  private chartPieInstance: Chart | null = null;
+  private chartLineInstance: Chart | null = null;
+  private chartBarInstance: Chart | null = null;
+
   totalGastos = 0;
   promedioGastos = 0;
   gastoMayor: any = null;
@@ -29,15 +34,18 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   constructor(
     private balanceService: BalanceService,
     private gastosService: GastosService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit() {
+    Chart.defaults.color = '#f1f5f9'; 
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; 
+    Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; 
     this.cargarEstadisticas();
   }
 
   ngAfterViewInit() {
-    // Las gráficas se renderizan después de cargar los datos
   }
 
   formatearMonto(valor: any): string {
@@ -48,15 +56,12 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   cargarEstadisticas() {
     this.cargando = true;
 
-    // Cargar todas las estadísticas en una sola llamada
     this.balanceService.obtenerEstadisticasGastos().subscribe({
       next: (estadisticas) => {
-        // Asignar los datos iniciales
         this.totalGastos = estadisticas.total || 0;
         this.promedioGastos = estadisticas.promedio || 0;
         this.cantidadGastos = estadisticas.cantidad || 0;
 
-        // Encontrar el gasto mayor del top5
         if (estadisticas.top5 && estadisticas.top5.length > 0) {
           this.gastoMayor = {
             monto: estadisticas.max || estadisticas.top5[0].monto,
@@ -67,22 +72,22 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         }
 
         this.cargando = false;
+        this.cdr.detectChanges();
 
-        // Renderizar las gráficas con los datos del backend
         this.renderPieChart(estadisticas.graficoTags || []);
         this.renderLineChart(estadisticas.graficoMensual || []);
         this.renderBarChart(estadisticas.top5 || []);
       },
       error: (err) => {
         console.error('Error al cargar estadísticas de gastos:', err);
-        // Inicializar con valores por defecto y mostrar datos dummy
         this.cantidadGastos = 0;
         this.totalGastos = 0;
         this.promedioGastos = 0;
         this.gastoMayor = null;
+        
         this.cargando = false;
+        this.cdr.detectChanges();
 
-        // Renderizar gráficas dummy
         this.renderPieChartDummy();
         this.renderLineChartDummy();
         this.renderBarChartDummy();
@@ -92,8 +97,10 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderPieChart(data: any) {
     if (!this.pieCanvas) return;
+    
+    if (this.chartPieInstance) this.chartPieInstance.destroy();
 
-    new Chart(this.pieCanvas.nativeElement, {
+    this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
         labels: data.map((item: any) => item.tag || 'Sin categoría'),
@@ -102,7 +109,8 @@ export class DashboardGastos implements OnInit, AfterViewInit {
           backgroundColor: [
             '#ef4444', '#f97316', '#f59e0b', '#eab308',
             '#84cc16', '#22c55e', '#10b981', '#14b8a6'
-          ]
+          ],
+          borderColor: 'transparent'
         }]
       },
       options: {
@@ -117,21 +125,23 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderPieChartDummy() {
     if (!this.pieCanvas) return;
+    if (this.chartPieInstance) this.chartPieInstance.destroy();
 
-    new Chart(this.pieCanvas.nativeElement, {
+    this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
         labels: ['Comida', 'Transporte', 'Entretenimiento', 'Otros'],
         datasets: [{
           data: [400, 300, 200, 100],
-          backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308']
+          backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308'],
+          borderColor: 'transparent'
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { position: 'right' },
-          title: { display: true, text: 'Gastos por Categoría (Datos de ejemplo)' }
+          title: { display: true, text: 'Gastos por Categoría' }
         }
       }
     });
@@ -139,10 +149,11 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderLineChart(data: any) {
     if (!this.lineCanvas) return;
+    if (this.chartLineInstance) this.chartLineInstance.destroy();
 
     const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-    new Chart(this.lineCanvas.nativeElement, {
+    this.chartLineInstance = new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
         labels: data.map((item: any) => meses[item.mes - 1] || `Mes ${item.mes}`),
@@ -159,7 +170,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución de Gastos (Últimos meses)' }
+          title: { display: true, text: 'Evolución Mensual' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -170,8 +181,9 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderLineChartDummy() {
     if (!this.lineCanvas) return;
+    if (this.chartLineInstance) this.chartLineInstance.destroy();
 
-    new Chart(this.lineCanvas.nativeElement, {
+    this.chartLineInstance = new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
         labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'],
@@ -188,7 +200,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución de Gastos (Datos de ejemplo)' }
+          title: { display: true, text: 'Evolución Mensual' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -199,22 +211,23 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderBarChart(data: any) {
     if (!this.barCanvas) return;
+    if (this.chartBarInstance) this.chartBarInstance.destroy();
 
-    new Chart(this.barCanvas.nativeElement, {
+    this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels: data.map((item: any) => item.descripcion),
         datasets: [{
           label: 'Monto',
           data: data.map((item: any) => item.monto),
-          backgroundColor: '#ef4444'
+          backgroundColor: '#ef4444',
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top 10 Gastos Más Altos' }
+          title: { display: true, text: 'Top Gastos Más Altos' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -225,8 +238,9 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderBarChartDummy() {
     if (!this.barCanvas) return;
+    if (this.chartBarInstance) this.chartBarInstance.destroy();
 
-    new Chart(this.barCanvas.nativeElement, {
+    this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels: ['Mercado', 'Gasolina', 'Restaurante', 'Cine', 'Farmacia'],
@@ -240,7 +254,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top Gastos Más Altos (Datos de ejemplo)' }
+          title: { display: true, text: 'Top Gastos Más Altos' }
         },
         scales: {
           y: { beginAtZero: true }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { Navbar } from '../../../components/navbar/navbar';
@@ -20,6 +20,11 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
+  // Variables para guardar las instancias de las gráficas y poder destruirlas al recargar
+  private chartPieInstance: Chart | null = null;
+  private chartLineInstance: Chart | null = null;
+  private chartBarInstance: Chart | null = null;
+
   totalIngresos = 0;
   promedioIngresos = 0;
   ingresoMayor: any = null;
@@ -29,15 +34,20 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   constructor(
     private balanceService: BalanceService,
     private ingresosService: IngresosService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef // <--- Inyección necesaria para corregir el error de carga
   ) {}
 
   ngOnInit() {
+    Chart.defaults.color = '#f1f5f9'; // Slate-100 (Blanco grisáceo)
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; // Líneas muy sutiles
+    Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; // Fuente limpia
+    
     this.cargarEstadisticas();
   }
 
   ngAfterViewInit() {
-    // Las gráficas se renderizan después de cargar los datos
+    // Ya no dependemos de esto porque forzamos la detección en cargarEstadisticas
   }
 
   formatearMonto(valor: any): string {
@@ -48,15 +58,12 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   cargarEstadisticas() {
     this.cargando = true;
 
-    // Cargar todas las estadísticas en una sola llamada
     this.balanceService.obtenerEstadisticasIngresos().subscribe({
       next: (estadisticas) => {
-        // Asignar los datos iniciales
         this.totalIngresos = estadisticas.total || 0;
         this.promedioIngresos = estadisticas.promedio || 0;
         this.cantidadIngresos = estadisticas.cantidad || 0;
 
-        // Encontrar el ingreso mayor del top5
         if (estadisticas.top5 && estadisticas.top5.length > 0) {
           this.ingresoMayor = {
             monto: estadisticas.max || estadisticas.top5[0].monto,
@@ -66,23 +73,30 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
           this.ingresoMayor = null;
         }
 
+        // 1. Finalizamos la carga lógica
         this.cargando = false;
 
-        // Renderizar las gráficas con los datos del backend
+        // 2. IMPORTANTE: Forzar actualización del HTML para que los <canvas> existan
+        this.cdr.detectChanges();
+
+        // 3. Renderizar gráficas
         this.renderPieChart(estadisticas.graficoTags || []);
         this.renderLineChart(estadisticas.graficoMensual || []);
         this.renderBarChart(estadisticas.top5 || []);
       },
       error: (err) => {
         console.error('Error al cargar estadísticas de ingresos:', err);
-        // Inicializar con valores por defecto y mostrar datos dummy
+        
         this.cantidadIngresos = 0;
         this.totalIngresos = 0;
         this.promedioIngresos = 0;
         this.ingresoMayor = null;
+        
         this.cargando = false;
+        
+        // También forzamos actualización en caso de error
+        this.cdr.detectChanges();
 
-        // Renderizar gráficas dummy
         this.renderPieChartDummy();
         this.renderLineChartDummy();
         this.renderBarChartDummy();
@@ -92,8 +106,10 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderPieChart(data: any) {
     if (!this.pieCanvas) return;
+    // Destruir gráfica anterior si existe
+    if (this.chartPieInstance) this.chartPieInstance.destroy();
 
-    new Chart(this.pieCanvas.nativeElement, {
+    this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
         labels: data.map((item: any) => item.tag || 'Sin categoría'),
@@ -102,7 +118,8 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
           backgroundColor: [
             '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9',
             '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'
-          ]
+          ],
+          borderColor: 'transparent'
         }]
       },
       options: {
@@ -117,21 +134,23 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderPieChartDummy() {
     if (!this.pieCanvas) return;
+    if (this.chartPieInstance) this.chartPieInstance.destroy();
 
-    new Chart(this.pieCanvas.nativeElement, {
+    this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
         labels: ['Salario', 'Freelance', 'Inversiones', 'Otros'],
         datasets: [{
           data: [2000, 500, 300, 200],
-          backgroundColor: ['#10b981', '#14b8a6', '#06b6d4', '#0ea5e9']
+          backgroundColor: ['#10b981', '#14b8a6', '#06b6d4', '#0ea5e9'],
+          borderColor: 'transparent'
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { position: 'right' },
-          title: { display: true, text: 'Ingresos por Categoría (Datos de ejemplo)' }
+          title: { display: true, text: 'Ingresos por Categoría (Ejemplo)' }
         }
       }
     });
@@ -139,10 +158,11 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderLineChart(data: any) {
     if (!this.lineCanvas) return;
+    if (this.chartLineInstance) this.chartLineInstance.destroy();
 
     const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
-    new Chart(this.lineCanvas.nativeElement, {
+    this.chartLineInstance = new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
         labels: data.map((item: any) => meses[item.mes - 1] || `Mes ${item.mes}`),
@@ -159,7 +179,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución de Ingresos (Últimos meses)' }
+          title: { display: true, text: 'Evolución de Ingresos' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -170,11 +190,12 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderLineChartDummy() {
     if (!this.lineCanvas) return;
+    if (this.chartLineInstance) this.chartLineInstance.destroy();
 
-    new Chart(this.lineCanvas.nativeElement, {
+    this.chartLineInstance = new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
-        labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'],
+        labels: ['Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov'],
         datasets: [{
           label: 'Ingresos Mensuales',
           data: [3000, 3200, 2900, 3100, 3300, 3500],
@@ -188,7 +209,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución de Ingresos (Datos de ejemplo)' }
+          title: { display: true, text: 'Evolución (Ejemplo)' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -199,8 +220,9 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderBarChart(data: any) {
     if (!this.barCanvas) return;
+    if (this.chartBarInstance) this.chartBarInstance.destroy();
 
-    new Chart(this.barCanvas.nativeElement, {
+    this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels: data.map((item: any) => item.descripcion),
@@ -214,7 +236,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top 10 Ingresos Más Altos' }
+          title: { display: true, text: 'Top Ingresos Más Altos' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -225,11 +247,12 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderBarChartDummy() {
     if (!this.barCanvas) return;
+    if (this.chartBarInstance) this.chartBarInstance.destroy();
 
-    new Chart(this.barCanvas.nativeElement, {
+    this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['Salario Mensual', 'Proyecto Freelance', 'Dividendos', 'Venta', 'Bono'],
+        labels: ['Salario', 'Freelance', 'Dividendos', 'Venta', 'Bono'],
         datasets: [{
           label: 'Monto',
           data: [2000, 800, 300, 250, 150],
@@ -240,7 +263,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top Ingresos Más Altos (Datos de ejemplo)' }
+          title: { display: true, text: 'Top Ingresos (Ejemplo)' }
         },
         scales: {
           y: { beginAtZero: true }
