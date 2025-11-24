@@ -1,0 +1,11 @@
+div {
+  transition: all 0.3s ease;
+}
+
+canvas {
+  max-height: 400px;
+}
+
+button {
+  white-space: nowrap;
+}
