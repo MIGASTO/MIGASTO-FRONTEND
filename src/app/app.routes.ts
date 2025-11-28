@@ -2,67 +2,67 @@ import { Routes } from '@angular/router';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
-import { Gastos } from './pages/gastos/gastos';
 import { DashboardGastos } from './pages/gastos/dashboard-gastos/dashboard-gastos';
+import { Gastos } from './pages/gastos/gastos';
 import { Home } from './pages/home/home';
-import { Ingresos } from './pages/ingresos/ingresos';
 import { DashboardIngresos } from './pages/ingresos/dashboard-ingresos/dashboard-ingresos';
+import { Ingresos } from './pages/ingresos/ingresos';
 import { Profile } from './pages/profile/profile';
 import { ProfileForm } from './pages/profile/profile-form/profile-form';
 
-// Importación de tu guardia de autenticación
+
 import { authGuard } from './interceptor/guards/auth.guard';
+import { ResetPassword } from './pages/auth/reset-password/reset-password';
 
 export const routes: Routes = [
-    // RUTA RAIZ: Redirige al home (que está protegido).
+
     { path:'', redirectTo: 'home', pathMatch: 'full'},
 
-    // RUTAS PÚBLICAS (NO PROTEGIDAS)
+
     { path:'login', component: Login},
     { path:'register', component: Register},
+    {path: 'recuperar-password', component: ResetPassword,},
 
-    // RUTAS PRIVADAS (PROTEGIDAS) - Usan canActivate: [authGuard]
     {
         path:'home',
         component: Home,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'dashboard',
         component: Dashboard,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'profile',
         component: Profile,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'gastos',
         component: Gastos,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'gastos/dashboard',
         component: DashboardGastos,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'ingresos',
         component: Ingresos,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'ingresos/dashboard',
         component: DashboardIngresos,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
     {
         path:'profile-form',
         component: ProfileForm,
-        canActivate: [authGuard] // PROTEGIDA
+        canActivate: [authGuard] 
     },
 
-    // Manejo de rutas desconocidas: Redirige al login o home.
     {path:'**', component: Home},
 ];

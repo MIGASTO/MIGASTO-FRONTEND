@@ -18,6 +18,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+  // --- MÉTODOS EXISTENTES ---
+
   register(data: { email: string; password: string; rolId: number }): Observable<any> {
     return this.http.post(`${this.API_URL}/register`, data);
   }
@@ -27,7 +29,7 @@ export class AuthService {
       tap((response: any) => {
         console.log('🔐 Respuesta del backend al login:', response);
         if (response.access_token) {
-          localStorage.setItem('access_token', response.access_token);
+          localStorage.setItem(this.TOKEN_KEY, response.access_token);
         }
       })
     );
@@ -69,5 +71,21 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  // --- NUEVOS MÉTODOS PARA RESET PASSWORD ---
+
+  /**
+   * Envía el correo al backend para solicitar el código OTP.
+   */
+  solicitarRecuperacion(email: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/request-password-reset`, { email });
+  }
+
+  /**
+   * Envía el código OTP recibido y la nueva contraseña para actualizarla.
+   */
+  restablecerContrasena(otp: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/reset-password`, { otp, newPassword });
   }
 }
