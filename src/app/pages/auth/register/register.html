@@ -1,72 +1,134 @@
-<section class="login-container min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-200 to-sky-950">
-    <div class="w-max h-auto m-auto p-4">
-        <h1 class="text-7xl font-bold bg-gradient-to-r from-gray-950 to-emerald-800 bg-clip-text text-transparent animate-gradient tracking-wider mt-auto mb-6">
-        MIGasto
-        </h1>
-        <p
-        class="text-3xl text-gray-800 text-left mb-6 bg-cover bg-center p-4 rounded-lg drop-shadow-[0_0_3px_rgba(255,255,255,0.5)]"
-        >
-        <span class="text-5xl">¡Regístrate gratis!</span><br />
-        toma el control de tus finanzas hoy mismo
-        </p>
+<section class="min-h-screen flex items-center justify-center bg-gradient-to-b from-sky-200 to-sky-950 p-4">
+
+    <div class="hidden lg:flex flex-col justify-center w-1/2 p-16 bg-white/40">
+            <h1 class="text-7xl font-bold bg-gradient-to-r from-gray-950 to-emerald-800 bg-clip-text text-transparent animate-gradient tracking-wider mb-8">
+                MIGasto
+            </h1>
+            <div class="pl-8 border-l-8 border-emerald-600 rounded-sm">
+                <p class="text-6xl font-extrabold text-slate-900 leading-tight tracking-tight">
+                    ¡Regístrate gratis!
+                </p>
+                <p class="text-xl text-slate-600 mt-6 font-medium max-w-md leading-relaxed">
+                    oma el control de tus finanzas hoy mismo con herramientas inteligentes
+                </p>
+            </div>
     </div>
 
-    <div class="w-1/3 flex justify-center bg-slate-300 h-screen ml-auto p-4">
-        <form
-        [formGroup]="registerForm"
-        (ngSubmit)="onSubmit()"
-        class="flex flex-col space-y-5 w-full max-w-sm m-auto"
-        >
-        <h2 class="text-3xl font-semibold text-left text-gray-700 mb-1 tracking-wide">
-            Register
-        </h2>
-        <p class="text-gray-400 m-none">
-            Crea tu cuenta y empieza a gestionar tus finanzas.
-        </p>
+    <!-- Lado Derecho (Formulario) -->
+    <div class="w-full lg:w-1/2 max-w-md bg-slate-100/90 backdrop-blur rounded-2xl shadow-2xl p-6">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="flex flex-col space-y-4">
+            
+            <div class="text-center lg:text-left">
+                <h2 class="text-3xl font-semibold text-gray-700 tracking-wide">Registro</h2>
+                <p class="text-gray-500 text-sm mt-1">Completa tus datos para crear una cuenta.</p>
+            </div>
 
-        <!-- Email Input -->
-        <div class="flex justify-center">
-            <input
-            type="email"
-            placeholder="Correo electrónico"
-            formControlName="email"
-            class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-            />
-        </div>
+            <!-- Mensaje de Error Global -->
+            <div *ngIf="registerError" class="p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-sm rounded animate-pulse">
+                {{ registerError }}
+            </div>
 
-        <!-- Password Input -->
-        <div>
-            <input
-            type="password"
-            placeholder="Contraseña"
-            formControlName="password"
-            class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-500"
-            />
-        </div>
-        <p class="text-gray-400 m-none text-xs">
-            la contrasena debe tener: minimo 6 caracteres, mayuscula, minuscula y
-            por lo menos un numero.
-        </p>
+            <!-- Nombre Completo -->
+            <div>
+                <input type="text" placeholder="Nombre Completo" formControlName="nombre_completo"
+                class="w-full border bg-white border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 placeholder-gray-400 transition" 
+                [ngClass]="{'border-red-500 focus:ring-red-500': registerForm.get('nombre_completo')?.invalid && registerForm.get('nombre_completo')?.touched}"/>
+                
+                <div *ngIf="registerForm.get('nombre_completo')?.invalid && registerForm.get('nombre_completo')?.touched" class="text-red-500 text-xs ml-1 mt-1 font-medium">
+                    <span *ngIf="registerForm.get('nombre_completo')?.errors?.['required']">El nombre es requerido.</span>
+                    <span *ngIf="registerForm.get('nombre_completo')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+                </div>
+            </div>
 
-        <!-- Register Button -->
-        <button
-            type="submit"
-            class="w-full bg-[#3da9fc] text-white p-3 rounded-lg hover:bg-blue-700 transition duration-300 font-medium"
-        >
-            Registrarse
-        </button>
+            <!-- Grid: Edad y Teléfono -->
+            <div class="grid grid-cols-2 gap-4">
+                <!-- Edad -->
+                <div>
+                    <input type="number" placeholder="Edad" formControlName="edad"
+                    class="w-full border bg-white border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 placeholder-gray-400 transition"
+                    [ngClass]="{'border-red-500 focus:ring-red-500': registerForm.get('edad')?.invalid && registerForm.get('edad')?.touched}" />
+                    
+                    <div *ngIf="registerForm.get('edad')?.invalid && registerForm.get('edad')?.touched" class="text-red-500 text-xs ml-1 mt-1 font-medium">
+                        <span *ngIf="registerForm.get('edad')?.errors?.['required']">Requerido.</span>
+                        <!-- MENSAJE ESPECÍFICO DE MAYORÍA DE EDAD -->
+                        <span *ngIf="registerForm.get('edad')?.errors?.['min']">Debes ser mayor de edad (18+).</span>
+                    </div>
+                </div>
 
-        <!-- Login Link -->
-        <p class="text-center text-gray-600 text-sm mt-4">
-            ¿Ya tienes cuenta?
-            <a
-            routerLink="/login"
-            class="text-blue-500 hover:underline font-medium cursor-pointer"
-            >
-            Inicia Sesion
-            </a>
-        </p>
+                <!-- Teléfono -->
+                <div>
+                    <input type="tel" placeholder="Teléfono" formControlName="telefono"
+                    class="w-full border bg-white border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 placeholder-gray-400 transition" 
+                    [ngClass]="{'border-red-500 focus:ring-red-500': registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched}"/>
+                    
+                    <div *ngIf="registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched" class="text-red-500 text-xs ml-1 mt-1 font-medium">
+                        <span *ngIf="registerForm.get('telefono')?.errors?.['required']">Requerido.</span>
+                        <span *ngIf="registerForm.get('telefono')?.errors?.['pattern']">Solo números.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid: Género -->
+            <div>
+                <select formControlName="id_genero" class="w-full border bg-white border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 transition appearance-none"
+                [ngClass]="{'border-red-500 focus:ring-red-500': registerForm.get('id_genero')?.invalid && registerForm.get('id_genero')?.touched}">
+                    <option value="" disabled selected>Selecciona tu género</option>
+                    <option *ngFor="let genero of generos" [value]="genero.id">{{ genero.nombre }}</option>
+                </select>
+                
+                <div *ngIf="registerForm.get('id_genero')?.invalid && registerForm.get('id_genero')?.touched" class="text-red-500 text-xs ml-1 mt-1 font-medium">
+                    Selecciona una opción.
+                </div>
+            </div>
+
+            <!-- URL Foto Perfil -->
+            <div>
+                <input type="text" placeholder="URL Foto de Perfil (Opcional)" formControlName="foto_perfil"
+                class="w-full border bg-white border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 placeholder-gray-400 transition" />
+            </div>
+
+            <!-- Email -->
+            <div>
+                <input type="email" placeholder="Correo electrónico" formControlName="email"
+                class="w-full border bg-white border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 placeholder-gray-400 transition" 
+                [ngClass]="{'border-red-500 focus:ring-red-500': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}"/>
+                
+                <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-500 text-xs ml-1 mt-1 font-medium">
+                    <span *ngIf="registerForm.get('email')?.errors?.['required']">El correo es requerido.</span>
+                    <span *ngIf="registerForm.get('email')?.errors?.['email']">Formato inválido.</span>
+                </div>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <input type="password" placeholder="Contraseña" formControlName="password"
+                class="w-full border bg-white border-gray-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-sky-500 text-gray-700 placeholder-gray-400 transition"
+                [ngClass]="{'border-red-500 focus:ring-red-500': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}" />
+                
+                <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 text-xs ml-1 mt-1 font-medium">
+                    <span *ngIf="registerForm.get('password')?.errors?.['required']">La contraseña es requerida.</span>
+                    <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Mínimo 6 caracteres.</span>
+                </div>
+                <p class="text-gray-400 mt-1 text-xs" *ngIf="!registerForm.get('password')?.touched || registerForm.get('password')?.valid">
+                    Mínimo 6 caracteres.
+                </p>
+            </div>
+
+            <!-- Register Button -->
+            <div class="flex justify-center mt-4">
+                <button type="submit" [disabled]="registerForm.invalid"
+                class="px-10 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition duration-300 font-medium shadow-lg disabled:bg-gray-300 disabled:cursor-not-allowed transform hover:-translate-y-0.5 w-auto">
+                    Registrarse
+                </button>
+            </div>
+
+            <!-- Login Link -->
+            <p class="text-center text-gray-600 text-sm mt-4 pt-4 border-t border-gray-200">
+                ¿Ya tienes cuenta?
+                <a routerLink="/login" class="text-sky-600 hover:text-sky-800 font-bold cursor-pointer hover:underline transition">
+                Inicia Sesión
+                </a>
+            </p>
         </form>
     </div>
 </section>
-

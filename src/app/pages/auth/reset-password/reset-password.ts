@@ -22,19 +22,19 @@ export class ResetPassword {
     private authService: AuthService,
     private router: Router
   ) {
-    // Formulario para el Paso 1
+
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
 
-    // Formulario para el Paso 2
+
     this.resetForm = this.fb.group({
       otp: ['', [Validators.required, Validators.minLength(4)]],
       newPassword: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  // Acción del Paso 1: Enviar correo
+
   enviarCodigo() {
     if (this.emailForm.invalid) return;
     
@@ -65,7 +65,7 @@ export class ResetPassword {
       next: () => {
         this.cargando = false;
         alert('¡Éxito! Tu contraseña ha sido cambiada.');
-        this.router.navigate(['/login']); // Redirigir al login
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         this.cargando = false;
