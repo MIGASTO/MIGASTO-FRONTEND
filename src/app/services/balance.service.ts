@@ -36,22 +36,18 @@ export interface EstadisticasIngresos {
 })
 export class BalanceService {
 
-  // 1. Cambia la base URL para que no incluya '/balance' al final
   private apiUrl = 'http://localhost:8080/api/movimientos'; 
 
   constructor(private http: HttpClient) {}
 
   obtenerResumen(): Observable<BalanceSummary> {
-    // Aquí sí usamos /balance explícitamente
     return this.http.get<BalanceSummary>(`${this.apiUrl}/balance`);
   }
 
-  // 2. Apunta a la ruta 'estadisticas/gastos' que tienes en tu Controller
   obtenerEstadisticasGastos(): Observable<EstadisticasGastos> {
     return this.http.get<EstadisticasGastos>(`${this.apiUrl}/estadisticas/gastos`);
   }
 
-  // 3. Apunta a la ruta 'estadisticas/ingresos' que tienes en tu Controller
   obtenerEstadisticasIngresos(): Observable<EstadisticasIngresos> {
     return this.http.get<EstadisticasIngresos>(`${this.apiUrl}/estadisticas/ingresos`);
   }

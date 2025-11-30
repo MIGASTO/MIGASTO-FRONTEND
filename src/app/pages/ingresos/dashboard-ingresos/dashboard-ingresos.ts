@@ -20,7 +20,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
-  // Variables para guardar las instancias de las gráficas y poder destruirlas al recargar
+
   private chartPieInstance: Chart | null = null;
   private chartLineInstance: Chart | null = null;
   private chartBarInstance: Chart | null = null;
@@ -35,19 +35,19 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
     private balanceService: BalanceService,
     private ingresosService: IngresosService,
     private router: Router,
-    private cdr: ChangeDetectorRef // <--- Inyección necesaria para corregir el error de carga
+    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit() {
-    Chart.defaults.color = '#f1f5f9'; // Slate-100 (Blanco grisáceo)
-    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; // Líneas muy sutiles
-    Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; // Fuente limpia
+    Chart.defaults.color = '#f1f5f9'; 
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; 
+    Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; 
     
     this.cargarEstadisticas();
   }
 
   ngAfterViewInit() {
-    // Ya no dependemos de esto porque forzamos la detección en cargarEstadisticas
+
   }
 
   formatearMonto(valor: any): string {
@@ -73,13 +73,10 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
           this.ingresoMayor = null;
         }
 
-        // 1. Finalizamos la carga lógica
         this.cargando = false;
 
-        // 2. IMPORTANTE: Forzar actualización del HTML para que los <canvas> existan
         this.cdr.detectChanges();
 
-        // 3. Renderizar gráficas
         this.renderPieChart(estadisticas.graficoTags || []);
         this.renderLineChart(estadisticas.graficoMensual || []);
         this.renderBarChart(estadisticas.top5 || []);
@@ -93,8 +90,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         this.ingresoMayor = null;
         
         this.cargando = false;
-        
-        // También forzamos actualización en caso de error
+
         this.cdr.detectChanges();
 
         this.renderPieChartDummy();
@@ -106,7 +102,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
 
   renderPieChart(data: any) {
     if (!this.pieCanvas) return;
-    // Destruir gráfica anterior si existe
+
     if (this.chartPieInstance) this.chartPieInstance.destroy();
 
     this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {

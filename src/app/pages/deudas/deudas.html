@@ -1,0 +1,130 @@
+<section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-slate-800 relative">
+    
+    <app-navbar></app-navbar>
+
+    <main class="flex-grow container mx-auto p-4 lg:p-8">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-white drop-shadow-md">Mis Deudas</h1>
+            <p class="text-sky-100 mt-2 text-lg">Administra tus compromisos financieros.</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            
+            <!-- 1. FORMULARIO (Agregar Deuda) -->
+            <div class="w-full lg:w-1/3 bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-white/50 sticky top-4">
+                <div class="mb-6 border-l-4 border-sky-500 pl-4">
+                    <h2 class="text-2xl font-bold text-slate-800">Nueva Deuda</h2>
+                    <p class="text-sm text-slate-500">Registra un nuevo compromiso</p>
+                </div>
+
+                <form [formGroup]="deudaForm" (ngSubmit)="agregarDeuda()" class="flex flex-col space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Prestamista / Entidad</label>
+                        <input type="text" formControlName="prestamista" placeholder="Ej: Banco, Juan Pérez..." 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-sky-500 text-slate-700 transition"
+                            [ngClass]="{'border-red-500': deudaForm.get('prestamista')?.invalid && deudaForm.get('prestamista')?.touched}">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Monto Total</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-slate-400">$</span>
+                            <input type="number" formControlName="montoTotal" placeholder="0.00" 
+                                class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 pl-8 outline-none focus:ring-2 focus:ring-sky-500 text-slate-700 transition"
+                                [ngClass]="{'border-red-500': deudaForm.get('montoTotal')?.invalid && deudaForm.get('montoTotal')?.touched}">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Fecha Límite</label>
+                        <input type="date" formControlName="fechaLimite" 
+                            class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-sky-500 text-slate-700 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Descripción</label>
+                        <textarea formControlName="descripcion" rows="2" placeholder="Notas..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 outline-none focus:ring-2 focus:ring-sky-500 text-slate-700 resize-none"></textarea>
+                    </div>
+
+                    <button type="submit" [disabled]="deudaForm.invalid"
+                        class="w-full bg-sky-600 hover:bg-sky-700 text-white p-3 rounded-xl font-bold shadow-lg transition transform hover:-translate-y-0.5 disabled:bg-gray-300 disabled:cursor-not-allowed mt-2">
+                        Guardar Deuda
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. LISTA DE DEUDAS -->
+            <div class="w-full lg:w-2/3 flex flex-col space-y-4">
+                
+                <h2 class="text-xl font-semibold text-white mb-2 pl-2 border-l-4 border-emerald-400">Mis Compromisos</h2>
+
+                <!-- Tarjetas -->
+                <div *ngFor="let deuda of listaDeudas" class="bg-white rounded-xl p-5 shadow-lg flex flex-col justify-between hover:shadow-xl transition duration-300 group border-l-4"
+                     [ngClass]="deuda.montoPagado >= deuda.montoTotal ? 'border-emerald-500 opacity-75' : 'border-red-500'">
+                    
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-800">{{ deuda.prestamista }}</h3>
+                            <p class="text-slate-500 text-sm">{{ deuda.descripcion || 'Sin descripción' }}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xs text-slate-400 uppercase font-bold">Total</span>
+                            <span class="text-lg font-bold text-slate-700">${{ deuda.montoTotal | number }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Barra de Progreso -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <span class="text-emerald-600">Pagado: ${{ deuda.montoPagado | number }}</span>
+                            <span class="text-red-500">Resta: ${{ deuda.montoTotal - deuda.montoPagado | number }}</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                            <div class="bg-gradient-to-r from-emerald-400 to-emerald-600 h-full rounded-full transition-all duration-500"
+                                 [style.width.%]="(deuda.montoPagado / deuda.montoTotal) * 100"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 justify-end items-center pt-3 border-t border-slate-100">
+                        <span class="text-xs text-slate-400 mr-auto flex items-center gap-1">
+                            📅 Vence: {{ deuda.fechaLimite | date:'mediumDate' }}
+                        </span>
+
+                        <button (click)="eliminarDeuda(deuda.id)" class="text-red-400 hover:text-red-600 p-2 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+
+                        <!-- BOTÓN PAGAR CUOTA -->
+                        <button 
+                            *ngIf="deuda.montoPagado < deuda.montoTotal"
+                            (click)="abrirModalPago(deuda)" 
+                            class="px-5 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-600 hover:text-white rounded-lg text-sm font-bold transition flex items-center gap-2 group-btn">
+                            <span>Pagar Cuota</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                        
+                        <span *ngIf="deuda.montoPagado >= deuda.montoTotal" class="px-4 py-2 bg-slate-100 text-slate-500 rounded-lg text-sm font-bold border border-slate-200">
+                            ✅ Saldada
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 3. RENDERIZADO DEL MODAL -->
+    <app-pago-cuota-modal 
+        *ngIf="deudaSeleccionada" 
+        [deuda]="deudaSeleccionada"
+        (cancelar)="cerrarModal()"
+        (confirmar)="procesarPago($event)">
+    </app-pago-cuota-modal>
+
+</section>
