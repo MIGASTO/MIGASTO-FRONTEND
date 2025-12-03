@@ -1,5 +1,5 @@
 <header
-    class="w-full flex justify-between items-center p-4 bg-sky-900 shadow-lg relative"
+    class="w-full flex justify-between items-center p-4 bg-stone-900 shadow-lg relative"
     >
     <!-- Lado izquierdo: logo + botón hamburguesa -->
     <div class="flex items-center space-x-3">
@@ -34,6 +34,7 @@
         <a routerLink="/profile" class="hover:text-sky-300">Perfil</a>
         <a routerLink="/gastos" class="hover:text-sky-300">Gastos</a>
         <a routerLink="/ingresos" class="hover:text-sky-300">Ingresos</a>
+        <a routerLink="/prestamos" class="hover:text-sky-300">Prestamos</a>
         <button (click)="logout()" class="hover:text-sky-300 cursor-pointer">Cerrar sesión</button>
     </nav>
 
@@ -67,6 +68,13 @@
         (click)="closeMenu()"
         >Ingresos</a
         >
+        <a
+        routerLink="/Prestamos"
+        class="py-2 hover:bg-sky-700 border-b border-sky-700"
+        (click)="closeMenu()"
+        >Prestamos</a
+        >
+
         <button
         (click)="logout()"
         class="py-2 hover:bg-sky-700 text-left px-4 w-full"

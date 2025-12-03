@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PagoCuota } from './pago-cuota';
+import { HistorialAbonosModal } from './historial-abonos-modal';
 
-describe('PagoCuota', () => {
-  let component: PagoCuota;
-  let fixture: ComponentFixture<PagoCuota>;
+describe('HistorialAbonosModal', () => {
+  let component: HistorialAbonosModal;
+  let fixture: ComponentFixture<HistorialAbonosModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PagoCuota]
+      imports: [HistorialAbonosModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PagoCuota);
+    fixture = TestBed.createComponent(HistorialAbonosModal);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

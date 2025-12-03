@@ -13,7 +13,7 @@ import { ProfileForm } from './pages/profile/profile-form/profile-form';
 
 import { authGuard } from './interceptor/guards/auth.guard';
 import { ResetPassword } from './pages/auth/reset-password/reset-password';
-import { Deudas } from './pages/deudas/deudas';
+import { Prestamos } from './pages/prestamos/prestamos';
 
 export const routes: Routes = [
 
@@ -22,8 +22,8 @@ export const routes: Routes = [
 
     { path:'login', component: Login},
     { path:'register', component: Register},
-    {path: 'recuperar-password', component: ResetPassword,},
-    {path : 'deudas', component: Deudas},
+    { path: 'recuperar-password', component: ResetPassword,},
+
 
     {
         path:'home',
@@ -64,6 +64,12 @@ export const routes: Routes = [
         path:'profile-form',
         component: ProfileForm,
         canActivate: [authGuard] 
+    },
+
+    {
+        path : 'prestamos',
+        component: Prestamos,
+        canActivate: [authGuard]
     },
 
     {path:'**', component: Home},
