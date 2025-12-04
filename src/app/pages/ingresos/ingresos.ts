@@ -1,14 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { Footer } from '../../components/footer/footer';
+import { IngresoForm } from '../../components/formularios/ingresos-form/ingresos-form';
 import { Navbar } from '../../components/navbar/navbar';
 import { IngresosService } from '../../services/ingreso.service';
-import { IngresoForm } from './ingresos-form/ingresos-form';
 
 @Component({
   selector: 'app-ingresos',
   standalone: true,
-  imports: [CommonModule, IngresoForm, Navbar, RouterModule],
+  imports: [CommonModule, IngresoForm, Navbar, RouterModule, Footer],
   templateUrl: './ingresos.html',
 })
 export class Ingresos {

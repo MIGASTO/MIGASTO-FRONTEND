@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AbonoService } from '../../../services/abono.service';
-import { Prestamo, PrestamosService } from '../../../services/prestamos.service';
+import { AbonoService } from '../../services/abono.service';
+import { Prestamo, PrestamosService } from '../../services/prestamos.service';
 
 @Component({
   selector: 'app-historial-abonos-modal',
@@ -11,9 +11,9 @@ import { Prestamo, PrestamosService } from '../../../services/prestamos.service'
   templateUrl: './historial-abonos-modal.html',
 })
 export class HistorialAbonosModal implements OnInit {
-  @Input() prestamoId!: number; // Recibimos solo el ID para buscar la data fresca
+  @Input() prestamoId!: number;
   @Output() cerrar = new EventEmitter<void>();
-  @Output() cambioRealizado = new EventEmitter<void>(); // Para avisar que se recargue la tabla principal
+  @Output() cambioRealizado = new EventEmitter<void>(); 
 
   private prestamosService = inject(PrestamosService);
   private abonoService = inject(AbonoService);
@@ -38,7 +38,6 @@ export class HistorialAbonosModal implements OnInit {
       next: (response: any) => {
         console.log("📦 Respuesta del Backend (Historial):", response);
 
-        // 1. Normalizamos la respuesta (si viene en .data, la sacamos)
         const dataReal = response.data || response;
         
         this.prestamo = dataReal;
