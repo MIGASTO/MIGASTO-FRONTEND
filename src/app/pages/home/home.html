@@ -1,100 +1,94 @@
-<section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-white">
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative">
     <app-navbar></app-navbar>
 
-    <main class="flex-grow flex flex-col items-center text-center p-6">
-        <h2 class="text-4xl font-extrabold mb-4">Bienvenido a <span class="text-sky-300">MiGasto</span></h2>
-        <p class="text-lg mb-10 text-sky-100 max-w-xl">
-            Aquí puedes ver un resumen de tus <span class="font-semibold">ingresos, gastos</span> y tu balance general.
+    <main class="flex-grow flex flex-col items-center text-center p-6 lg:p-10 pt-24">
+        
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-4 text-sky-950/80 drop-shadow-md">
+            Bienvenido a <span class="text-sky-600">MiGasto</span>
+        </h2>
+        <p class="text-lg mb-12 text-slate-500 max-w-xl font-medium">
+            Tu centro de control financiero. Visualiza tus <span class="text-slate-700 font-bold">ingresos, gastos</span> y el balance en tiempo real.
         </p>
 
-        <div *ngIf="loading" class="mt-8">
-            <svg class="animate-spin h-8 w-8 text-sky-300 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p class="mt-2 text-sky-200">Cargando datos...</p>
+        <div *ngIf="loading" class="mt-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-4 border-sky-500 mb-4"></div>
+            <p class="text-slate-500">Cargando resumen...</p>
         </div>
 
-        <div *ngIf="error && !loading" class="bg-red-700/70 p-4 rounded-xl shadow-md w-full max-w-4xl mt-8">
-            <p class="font-semibold">¡Atención!</p>
-            <p class="text-sm">{{ error }}</p>
+        <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-600 p-6 rounded-2xl shadow-lg w-full max-w-4xl mt-4">
+            <p class="font-bold text-lg mb-1">¡Atención!</p>
+            <p>{{ error }}</p>
         </div>
 
-        <div *ngIf="resumen && !loading && !error" class="w-full max-w-4xl">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div *ngIf="resumen && !loading && !error" class="w-full max-w-5xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
 
-                <div class="bg-sky-900/80 p-6 rounded-xl shadow-2xl border-b-4 border-green-400 transform hover:scale-[1.02] transition duration-300">
-                    <h3 class="text-xl font-semibold mb-2 flex items-center justify-center">
-                        <span class="mr-2">💰</span> Ingresos
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 border-b-4 border-b-emerald-500 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+                    <h3 class="text-xl font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                        <span>💰</span> Ingresos
                     </h3>
-                    <p class="text-3xl font-bold text-green-400">
-                        ${{ resumen.totalIngresos }}
+                    <p class="text-4xl font-black text-emerald-600 tracking-tighter">
+                        ${{ resumen.totalIngresos | number }}
                     </p>
                 </div>
 
-                <div class="bg-sky-900/80 p-6 rounded-xl shadow-2xl border-b-4 border-red-400 transform hover:scale-[1.02] transition duration-300">
-                    <h3 class="text-xl font-semibold mb-2 flex items-center justify-center">
-                        <span class="mr-2">💸</span> Gastos
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 border-b-4 border-b-red-500 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+                    <h3 class="text-xl font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                        <span>💸</span> Gastos
                     </h3>
-                    <p class="text-3xl font-bold text-red-400">
-                        ${{ resumen.totalGastos }}
+                    <p class="text-4xl font-black text-red-500 tracking-tighter">
+                        ${{ resumen.totalGastos | number }}
                     </p>
                 </div>
 
-                <div class="p-6 rounded-xl shadow-2xl transform hover:scale-[1.02] transition duration-300"
-                    [ngClass]="{'bg-green-900/80 border-b-4 border-green-300': resumen.balance >= 0, 'bg-red-900/80 border-b-4 border-red-300': resumen.balance < 0}">
-                    <h3 class="text-xl font-semibold mb-2 flex items-center justify-center">
-                        <span class="mr-2">⚖️</span> Balance
+                <div class="p-8 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition duration-300 border-b-4"
+                    [ngClass]="{
+                        'bg-white border-slate-100 border-b-sky-500': true,
+                        'ring-2 ring-emerald-100': resumen.balance >= 0,
+                        'ring-2 ring-red-100': resumen.balance < 0
+                    }">
+                    <h3 class="text-xl font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                        <span>⚖️</span> Balance
                     </h3>
-                    <p class="text-3xl font-bold"
-                        [class.text-green-300]="resumen.balance >= 0"
-                        [class.text-red-300]="resumen.balance < 0">
-                        ${{ resumen.balance }}
+                    <p class="text-4xl font-black tracking-tighter"
+                        [class.text-emerald-600]="resumen.balance >= 0"
+                        [class.text-red-500]="resumen.balance < 0">
+                        ${{ resumen.balance | number }}
                     </p>
                 </div>
             </div>
 
-            <div class="mt-8 p-4 rounded-lg text-center font-medium shadow-xl"
-                 [ngClass]="{'bg-green-600/70 text-white': resumen.balance > 0,
-                             'bg-red-600/70 text-white': resumen.balance < 0,
-                             'bg-sky-700/70 text-white': resumen.balance === 0}">
+            <div class="mt-8 p-5 rounded-2xl text-center font-bold shadow-md border"
+                [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-200': resumen.balance > 0,
+                    'bg-red-50 text-red-700 border-red-200': resumen.balance < 0,
+                    'bg-slate-50 text-slate-600 border-slate-200': resumen.balance === 0
+                }">
                 {{ balanceMessage }}
             </div>
 
-            <!-- Botones de navegación a dashboards específicos -->
-            <div class="flex justify-center gap-3 mt-8 flex-wrap">
-                <button
-                    routerLink="/home"
-                    class="bg-sky-600 hover:bg-sky-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
-                >
-                    🏠 General
+            <div class="flex justify-center gap-4 mt-12 flex-wrap">
+                <button routerLink="/ingresos/dashboard" 
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-200 transition transform hover:scale-105 flex items-center gap-2">
+                    <span>💰</span> Ver Ingresos
                 </button>
-                <button
-                    routerLink="/ingresos/dashboard"
-                    class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
-                >
-                    💰 Ingresos
-                </button>
-                <button
-                    routerLink="/gastos/dashboard"
-                    class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105"
-                >
-                    💸 Gastos
+                <button routerLink="/gastos/dashboard" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-red-200 transition transform hover:scale-105 flex items-center gap-2">
+                    <span>📉</span> Ver Gastos
                 </button>
             </div>
         </div>
 
-        <div class="mt-10">
+        <div class="mt-12">
             <button
                 routerLink="/dashboard"
-                class="bg-sky-500 hover:bg-sky-600 text-white font-medium px-8 py-3 rounded-full shadow-xl transition transform hover:translate-y-[-2px] focus:outline-none focus:ring-4 focus:ring-sky-500/50"
+                class="text-sky-600 font-bold hover:text-sky-800 hover:underline transition"
             >
-                Ver Dashboard Detallado
+                Ir al Dashboard Completo →
             </button>
         </div>
     </main>
 
-    <footer class="p-4 bg-sky-900 text-center text-sm border-t border-sky-800">
-        © 2025 MiGasto - Todos los derechos reservados
-    </footer>
+    <app-footer></app-footer>
 </section>

@@ -1,9 +1,7 @@
 <header
     class="w-full flex justify-between items-center p-4 bg-stone-900 shadow-lg relative"
     >
-    <!-- Lado izquierdo: logo + botón hamburguesa -->
     <div class="flex items-center space-x-3">
-        <!-- Botón hamburguesa -->
         <button
         class="text-white focus:outline-none md:hidden"
         (click)="isMenuOpen = !isMenuOpen"
@@ -24,11 +22,9 @@
         </svg>
         </button>
 
-        <!-- Nombre de la app -->
         <h1 class="text-2xl font-bold">MiGasto</h1>
     </div>
 
-    <!-- Menú normal (versión escritorio) -->
     <nav class="hidden md:flex space-x-4">
         <a routerLink="/home" class="hover:text-sky-300">Inicio</a>
         <a routerLink="/profile" class="hover:text-sky-300">Perfil</a>
@@ -38,7 +34,6 @@
         <button (click)="logout()" class="hover:text-sky-300 cursor-pointer">Cerrar sesión</button>
     </nav>
 
-    <!-- Menú desplegable móvil -->
     <nav
         class="absolute top-16 left-0 w-full bg-sky-800 flex flex-col md:hidden text-center transition-all duration-300"
         [class.hidden]="!isMenuOpen"

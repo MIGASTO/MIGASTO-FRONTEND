@@ -4,48 +4,51 @@ import { Router, RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { Navbar } from '../../../components/navbar/navbar';
 import { BalanceService } from '../../../services/balance.service';
-import { GastosService } from '../../../services/gasto.service';
+import { IngresosService } from '../../../services/ingreso.service';
 
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-dashboard-gastos',
+  selector: 'app-dashboard-ingresos',
   standalone: true,
   imports: [CommonModule, RouterModule, Navbar],
-  templateUrl: './dashboard-gastos.html',
-  styleUrls: ['./dashboard-gastos.css']
+  templateUrl: './dashboard-ingresos.html',
+  styleUrls: ['./dashboard-ingresos.css']
 })
-export class DashboardGastos implements OnInit, AfterViewInit {
+export class DashboardIngresos implements OnInit, AfterViewInit {
   @ViewChild('pieCanvas') pieCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
-  // Instancias para controlar el redibujado
+
   private chartPieInstance: Chart | null = null;
   private chartLineInstance: Chart | null = null;
   private chartBarInstance: Chart | null = null;
 
-  totalGastos = 0;
-  promedioGastos = 0;
-  gastoMayor: any = null;
-  cantidadGastos = 0;
+  totalIngresos = 0;
+  promedioIngresos = 0;
+  ingresoMayor: any = null;
+  cantidadIngresos = 0;
   cargando = true;
 
   constructor(
     private balanceService: BalanceService,
-    private gastosService: GastosService,
+    private ingresosService: IngresosService,
     private router: Router,
     private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit() {
-    Chart.defaults.color = '#f1f5f9'; 
+
+    Chart.defaults.color = '#2d2d2e'; 
     Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; 
     Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; 
+    
     this.cargarEstadisticas();
   }
 
   ngAfterViewInit() {
+
   }
 
   formatearMonto(valor: any): string {
@@ -56,22 +59,23 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   cargarEstadisticas() {
     this.cargando = true;
 
-    this.balanceService.obtenerEstadisticasGastos().subscribe({
+    this.balanceService.obtenerEstadisticasIngresos().subscribe({
       next: (estadisticas) => {
-        this.totalGastos = estadisticas.total || 0;
-        this.promedioGastos = estadisticas.promedio || 0;
-        this.cantidadGastos = estadisticas.cantidad || 0;
+        this.totalIngresos = estadisticas.total || 0;
+        this.promedioIngresos = estadisticas.promedio || 0;
+        this.cantidadIngresos = estadisticas.cantidad || 0;
 
         if (estadisticas.top5 && estadisticas.top5.length > 0) {
-          this.gastoMayor = {
+          this.ingresoMayor = {
             monto: estadisticas.max || estadisticas.top5[0].monto,
             descripcion: estadisticas.top5[0].descripcion
           };
         } else {
-          this.gastoMayor = null;
+          this.ingresoMayor = null;
         }
 
         this.cargando = false;
+
         this.cdr.detectChanges();
 
         this.renderPieChart(estadisticas.graficoTags || []);
@@ -79,13 +83,15 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         this.renderBarChart(estadisticas.top5 || []);
       },
       error: (err) => {
-        console.error('Error al cargar estadísticas de gastos:', err);
-        this.cantidadGastos = 0;
-        this.totalGastos = 0;
-        this.promedioGastos = 0;
-        this.gastoMayor = null;
+        console.error('Error al cargar estadísticas de ingresos:', err);
+        
+        this.cantidadIngresos = 0;
+        this.totalIngresos = 0;
+        this.promedioIngresos = 0;
+        this.ingresoMayor = null;
         
         this.cargando = false;
+
         this.cdr.detectChanges();
 
         this.renderPieChartDummy();
@@ -97,7 +103,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
 
   renderPieChart(data: any) {
     if (!this.pieCanvas) return;
-    
+
     if (this.chartPieInstance) this.chartPieInstance.destroy();
 
     this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
@@ -107,8 +113,8 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         datasets: [{
           data: data.map((item: any) => item.total),
           backgroundColor: [
-            '#ef4444', '#f97316', '#f59e0b', '#eab308',
-            '#84cc16', '#22c55e', '#10b981', '#14b8a6'
+            '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9',
+            '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7'
           ],
           borderColor: 'transparent'
         }]
@@ -117,7 +123,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { position: 'right' },
-          title: { display: true, text: 'Gastos por Categoría' }
+          title: { display: true, text: 'Ingresos por Categoría' }
         }
       }
     });
@@ -130,10 +136,10 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
-        labels: ['Comida', 'Transporte', 'Entretenimiento', 'Otros'],
+        labels: ['sin datos'],
         datasets: [{
-          data: [400, 300, 200, 100],
-          backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308'],
+          data: [1],
+          backgroundColor: ['#10b981', '#14b8a6', '#06b6d4', '#0ea5e9'],
           borderColor: 'transparent'
         }]
       },
@@ -141,7 +147,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { position: 'right' },
-          title: { display: true, text: 'Gastos por Categoría' }
+          title: { display: true, text: 'Ingresos por Categoría (Ejemplo)' }
         }
       }
     });
@@ -158,10 +164,10 @@ export class DashboardGastos implements OnInit, AfterViewInit {
       data: {
         labels: data.map((item: any) => meses[item.mes - 1] || `Mes ${item.mes}`),
         datasets: [{
-          label: 'Gastos Mensuales',
+          label: 'Ingresos Mensuales',
           data: data.map((item: any) => item.total),
-          borderColor: '#ef4444',
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4,
           fill: true
         }]
@@ -170,7 +176,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución Mensual' }
+          title: { display: true, text: 'Evolución de Ingresos' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -186,12 +192,12 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     this.chartLineInstance = new Chart(this.lineCanvas.nativeElement, {
       type: 'line',
       data: {
-        labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'],
+        labels: ['Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov'],
         datasets: [{
-          label: 'Gastos Mensuales',
-          data: [1200, 1500, 1100, 1400, 1300, 1600],
-          borderColor: '#ef4444',
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          label: 'Ingresos Mensuales',
+          data: [1],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4,
           fill: true
         }]
@@ -200,7 +206,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: true },
-          title: { display: true, text: 'Evolución Mensual' }
+          title: { display: true, text: 'Evolución (Ejemplo)' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -220,14 +226,14 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         datasets: [{
           label: 'Monto',
           data: data.map((item: any) => item.monto),
-          backgroundColor: '#ef4444',
+          backgroundColor: '#10b981'
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top Gastos Más Altos' }
+          title: { display: true, text: 'Top Ingresos Más Altos' }
         },
         scales: {
           y: { beginAtZero: true }
@@ -243,18 +249,18 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['Mercado', 'Gasolina', 'Restaurante', 'Cine', 'Farmacia'],
+        labels: ['sin datos'],
         datasets: [{
           label: 'Monto',
-          data: [350, 300, 250, 150, 100],
-          backgroundColor: '#ef4444'
+          data: [0],
+          backgroundColor: '#10b981'
         }]
       },
       options: {
         responsive: true,
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top Gastos Más Altos' }
+          title: { display: true, text: 'Top Ingresos (Ejemplo)' }
         },
         scales: {
           y: { beginAtZero: true }

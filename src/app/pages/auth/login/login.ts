@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { jwtDecode } from 'jwt-decode'; // <-- IMPORTANTE: Importa jwt-decode aquí
+import { jwtDecode } from 'jwt-decode';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({

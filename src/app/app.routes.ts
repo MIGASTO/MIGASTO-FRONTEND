@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 import { Dashboard } from './components/dashboard/dashboard';
+import { DashboardGastos } from './components/dashboard/dashboard-gastos/dashboard-gastos';
+import { DashboardIngresos } from './components/dashboard/dashboard-ingresos/dashboard-ingresos';
+import { ProfileForm } from './components/formularios/profile-form/profile-form';
 import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
-import { DashboardGastos } from './pages/gastos/dashboard-gastos/dashboard-gastos';
 import { Gastos } from './pages/gastos/gastos';
 import { Home } from './pages/home/home';
-import { DashboardIngresos } from './pages/ingresos/dashboard-ingresos/dashboard-ingresos';
 import { Ingresos } from './pages/ingresos/ingresos';
 import { Profile } from './pages/profile/profile';
-import { ProfileForm } from './pages/profile/profile-form/profile-form';
 
 
 import { authGuard } from './interceptor/guards/auth.guard';

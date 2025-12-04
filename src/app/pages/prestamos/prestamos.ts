@@ -1,15 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Footer } from '../../components/footer/footer';
+import { HistorialAbonosModal } from '../../components/historial-abonos-modal/historial-abonos-modal';
 import { Navbar } from '../../components/navbar/navbar';
 import { Prestamo, PrestamosService } from '../../services/prestamos.service';
 import { AbonoModal } from '../abono-modal/abono-modal';
-import { HistorialAbonosModal } from '../abono-modal/historial-abonos-modal/historial-abonos-modal';
 
 @Component({
   selector: 'app-prestamos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Navbar, AbonoModal, HistorialAbonosModal],
+  imports: [CommonModule, ReactiveFormsModule, Navbar, AbonoModal, HistorialAbonosModal, Footer],
   templateUrl: './prestamos.html',
 })
 export class Prestamos implements OnInit {
@@ -38,17 +39,14 @@ export class Prestamos implements OnInit {
     
     this.prestamosService.getPrestamosDetails().subscribe({
       next: (response: any) => {
-        console.log("Respuesta del Backend:", response); // Para debug
+        
 
-        // CASO 1: El backend devuelve un objeto con propiedad 'data' (lo que te está pasando)
         if (response.data && Array.isArray(response.data)) {
           this.prestamos = response.data;
         } 
-        // CASO 2: El backend devuelve el array directamente (antiguo comportamiento)
         else if (Array.isArray(response)) {
           this.prestamos = response;
         }
-        // CASO 3: Objeto vacío o mensaje sin datos
         else {
           this.prestamos = [];
         }
@@ -95,7 +93,6 @@ export class Prestamos implements OnInit {
     }
   }
 
-  // --- Modal Logic ---
   abrirModalAbono(prestamo: Prestamo) {
     this.prestamoSeleccionado = prestamo;
   }
@@ -109,7 +106,6 @@ export class Prestamos implements OnInit {
     this.cargarPrestamos(); 
   }
 
-  // Utilidad visual
   calcularPorcentaje(p: Prestamo): number {
     const total = Number(p.monto_total);
     const pagado = Number(p.monto_pagado || 0);
@@ -124,8 +120,6 @@ export class Prestamos implements OnInit {
   cerrarHistorial() {
     this.historialIdSeleccionado = null;
   }
-  
-  // Cuando el modal de historial nos avise que borró/editó algo, recargamos la tabla principal
   onHistorialChange() {
     this.cargarPrestamos();
   }

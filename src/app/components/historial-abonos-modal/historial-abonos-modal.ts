@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AbonoService } from '../../../services/abono.service';
-import { Prestamo, PrestamosService } from '../../../services/prestamos.service';
+import { AbonoService } from '../../services/abono.service';
+import { Prestamo, PrestamosService } from '../../services/prestamos.service';
 
 @Component({
   selector: 'app-historial-abonos-modal',
@@ -11,9 +11,9 @@ import { Prestamo, PrestamosService } from '../../../services/prestamos.service'
   templateUrl: './historial-abonos-modal.html',
 })
 export class HistorialAbonosModal implements OnInit {
-  @Input() prestamoId!: number; // Recibimos solo el ID para buscar la data fresca
+  @Input() prestamoId!: number;
   @Output() cerrar = new EventEmitter<void>();
-  @Output() cambioRealizado = new EventEmitter<void>(); // Para avisar que se recargue la tabla principal
+  @Output() cambioRealizado = new EventEmitter<void>(); 
 
   private prestamosService = inject(PrestamosService);
   private abonoService = inject(AbonoService);
@@ -38,15 +38,12 @@ export class HistorialAbonosModal implements OnInit {
       next: (response: any) => {
         console.log("📦 Respuesta del Backend (Historial):", response);
 
-        // 1. Normalizamos la respuesta (si viene en .data, la sacamos)
         const dataReal = response.data || response;
         
         this.prestamo = dataReal;
 
-        // 2. Extraemos los abonos con seguridad
         const listaAbonos = dataReal.abonos || [];
 
-        // 3. Ordenamos (del más reciente al más antiguo)
         this.abonos = listaAbonos.sort((a: any, b: any) => 
           new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime()
         );
@@ -63,7 +60,6 @@ export class HistorialAbonosModal implements OnInit {
     });
   }
 
-  // --- EDITAR ---
   iniciarEdicion(abono: any) {
     this.editandoId = abono.id_abono;
     this.montoEdicion = Number(abono.monto);
@@ -87,8 +83,8 @@ export class HistorialAbonosModal implements OnInit {
       next: () => {
         alert('Abono actualizado correctamente');
         this.cancelarEdicion();
-        this.cargarDatos(); // Recargar lista local
-        this.cambioRealizado.emit(); // Avisar al padre para actualizar saldos
+        this.cargarDatos(); 
+        this.cambioRealizado.emit(); 
       },
       error: (err) => {
         console.error(err);
@@ -97,7 +93,6 @@ export class HistorialAbonosModal implements OnInit {
     });
   }
 
-  // --- ELIMINAR ---
   eliminarAbono(id: number, monto: number) {
     if (!confirm(`¿Estás seguro de ELIMINAR este abono de $${monto}?\nEsto aumentará la deuda pendiente.`)) return;
 

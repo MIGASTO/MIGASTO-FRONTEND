@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
 import { PerfilService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [Navbar, RouterLink, RouterModule],
+  imports: [Navbar, RouterLink, RouterModule, Footer],
   templateUrl: './profile.html',
 })
 export class Profile implements OnInit {
