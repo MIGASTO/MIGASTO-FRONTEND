@@ -43,10 +43,8 @@ export class HistorialAbonosModal implements OnInit {
         
         this.prestamo = dataReal;
 
-        // 2. Extraemos los abonos con seguridad
         const listaAbonos = dataReal.abonos || [];
 
-        // 3. Ordenamos (del más reciente al más antiguo)
         this.abonos = listaAbonos.sort((a: any, b: any) => 
           new Date(b.fecha_creacion).getTime() - new Date(a.fecha_creacion).getTime()
         );
@@ -63,7 +61,6 @@ export class HistorialAbonosModal implements OnInit {
     });
   }
 
-  // --- EDITAR ---
   iniciarEdicion(abono: any) {
     this.editandoId = abono.id_abono;
     this.montoEdicion = Number(abono.monto);
@@ -87,8 +84,8 @@ export class HistorialAbonosModal implements OnInit {
       next: () => {
         alert('Abono actualizado correctamente');
         this.cancelarEdicion();
-        this.cargarDatos(); // Recargar lista local
-        this.cambioRealizado.emit(); // Avisar al padre para actualizar saldos
+        this.cargarDatos(); 
+        this.cambioRealizado.emit(); 
       },
       error: (err) => {
         console.error(err);
@@ -97,7 +94,6 @@ export class HistorialAbonosModal implements OnInit {
     });
   }
 
-  // --- ELIMINAR ---
   eliminarAbono(id: number, monto: number) {
     if (!confirm(`¿Estás seguro de ELIMINAR este abono de $${monto}?\nEsto aumentará la deuda pendiente.`)) return;
 

@@ -1,80 +1,77 @@
-<form (ngSubmit)="guardarGasto()" class="flex flex-col space-y-4">
-  <!-- Descripción -->
+<form (ngSubmit)="guardarGasto()" class="flex flex-col space-y-5">
+
   <div>
-    <label class="block text-sky-100 mb-1">Descripción</label>
+    <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Descripción</label>
     <input
       [(ngModel)]="gasto.descripcion"
       name="descripcion"
       type="text"
-      class="w-full p-2 rounded bg-sky-800 text-white"
+      class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-500 transition"
       placeholder="Ej. Transporte, Comida..."
       required
     />
   </div>
 
-  <!-- Monto -->
   <div>
-    <label class="block text-sky-100 mb-1">Monto</label>
-    <input
-      [(ngModel)]="gasto.monto"
-      name="monto"
-      type="number"
-      class="w-full p-2 rounded bg-sky-800 text-white"
-      placeholder="Ej. 15000"
-      required
-    />
+    <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Monto</label>
+    <div class="relative">
+        <span class="absolute left-3 top-3 text-slate-400 font-bold">$</span>
+        <input
+          [(ngModel)]="gasto.monto"
+          name="monto"
+          type="number"
+          class="w-full p-3 pl-8 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 outline-none focus:ring-2 focus:ring-red-500 transition font-bold"
+          placeholder="0.00"
+          required
+        />
+    </div>
   </div>
 
-  <!-- Fecha -->
   <div>
-    <label class="block text-sky-100 mb-1">Fecha</label>
+    <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Fecha</label>
     <input
       [(ngModel)]="gasto.fecha"
       name="fecha"
       type="date"
-      class="w-full p-2 rounded bg-sky-800 text-white"
+      class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 outline-none focus:ring-2 focus:ring-red-500 transition"
     />
   </div>
 
-  <!-- Moneda -->
-   <div>
-    <label class="block text-sky-100 mb-1">Moneda</label>
+  <div>
+    <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Moneda</label>
     <select
       [(ngModel)]="gasto.id_moneda"
       name="id_moneda"
-      class="w-full p-2 rounded bg-sky-800 text-white"
+      class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 outline-none focus:ring-2 focus:ring-red-500 transition cursor-pointer"
     >
-      <option [ngValue]="null">Seleccionar...</option>
-      <option
-        *ngFor="let moneda of monedas"
-        [ngValue]="moneda.id_moneda"
-      >
-         ({{ moneda.simbolo }}){{ moneda.nombre }}
+      <option [ngValue]="null" class="text-slate-400">Seleccionar...</option>
+      <option *ngFor="let moneda of monedas" [ngValue]="moneda.id_moneda">
+        {{ moneda.codigo }} {{ moneda.nombre }}
       </option>
     </select>
   </div>
 
-  <!-- Tags (múltiples) -->
   <div>
-    <label class="block text-sky-100 mb-1">Tags</label>
+    <label class="block text-xs font-bold text-slate-600 uppercase mb-1 ml-1">Tags</label>
     <select
       multiple
       [(ngModel)]="gasto.tags"
       name="tags"
-      class="w-full p-2 rounded bg-sky-800 text-white"
+      class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 outline-none focus:ring-2 focus:ring-red-500 transition h-32"
     >
-      <option *ngFor="let tag of tagsDisponibles" [ngValue]="tag.id_tag">
+      <option *ngFor="let tag of tagsDisponibles" [ngValue]="tag.id_tag" class="p-2 hover:bg-red-50 rounded mb-1 cursor-pointer">
         {{ tag.nombre }}
       </option>
     </select>
-    <p class="text-xs text-sky-300 mt-1">(Puede seleccionar varios)</p>
+    <p class="text-xs text-slate-400 mt-2 ml-1 italic flex items-center gap-1">
+      ℹ Mantén presionado Ctrl (o Cmd) para seleccionar varios.
+    </p>
   </div>
 
-  <!-- Botones -->
-  <div class="flex justify-end space-x-3">
+  <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100 mt-2">
     <button
       type="button"
-      class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition"
+      class="px-5 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition border border-transparent hover:border-slate-200"
       (click)="cancelarEdicion()"
     >
       Cancelar
@@ -82,9 +79,10 @@
 
     <button
       type="submit"
-      class="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-lg transition"
+      class="px-6 py-2.5 rounded-xl font-bold text-white shadow-lg transition transform active:scale-95 flex items-center gap-2"
+      [ngClass]="gasto.id_movimiento ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-200' : 'bg-red-600 hover:bg-red-700 shadow-red-200'"
     >
-      {{ gasto.id_movimiento ? 'Actualizar' : 'Guardar' }}
+      {{ gasto.id_movimiento ? 'Actualizar Gasto' : 'Registrar Gasto' }}
     </button>
   </div>
 </form>

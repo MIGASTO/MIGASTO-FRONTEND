@@ -23,7 +23,7 @@ export class IngresoForm {
     descripcion: '',
     monto: 0,
     fecha: new Date().toISOString().split('T')[0],
-    id_categoria: 1, // categoría fija para ingresos
+    id_categoria: 1, 
     id_moneda: null,
     tags: [] as number[],
   };

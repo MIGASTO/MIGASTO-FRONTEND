@@ -25,7 +25,6 @@ export class AbonoModal implements OnInit {
   step: 'FORM' | 'QUESTION' = 'FORM';
   recordarDecision = false;
   
-  // Variable para saber si el usuario ya tiene una preferencia guardada
   preferenciaGuardada: string | null = null;
   
   private idAbonoReciente: number | null = null;
@@ -34,16 +33,13 @@ export class AbonoModal implements OnInit {
     this.saldoPendiente = Number(this.prestamo.monto_restante || 0);
     this.montoControl.addValidators(Validators.max(this.saldoPendiente));
 
-    // Revisamos si existe la preferencia al abrir el modal
     this.preferenciaGuardada = localStorage.getItem('PREF_GASTO_AUTO');
   }
 
-  // --- NUEVA FUNCIÓN: Eliminar la preferencia ---
   eliminarPreferencia() {
     localStorage.removeItem('PREF_GASTO_AUTO');
     this.preferenciaGuardada = null;
-    this.recordarDecision = false; // Reseteamos el checkbox visualmente
-    // No cerramos el modal, solo actualizamos la UI para que el usuario sepa
+    this.recordarDecision = false; 
   }
 
   pagarTotalidad() {
@@ -75,7 +71,6 @@ export class AbonoModal implements OnInit {
             this.idAbonoReciente = res.id_abono;
         }
 
-        // Pasamos a verificar si hay preferencia o mostramos pregunta
         this.verificarPreferenciaGasto();
       },
       error: (err) => {
@@ -87,7 +82,7 @@ export class AbonoModal implements OnInit {
   }
 
   verificarPreferenciaGasto() {
-    // Leemos de nuevo por si el usuario lo borró hace un segundo
+
     const preferencia = localStorage.getItem('PREF_GASTO_AUTO'); 
 
     if (preferencia === 'SI') {
@@ -95,7 +90,6 @@ export class AbonoModal implements OnInit {
     } else if (preferencia === 'NO') {
       this.cerrarTodo();
     } else {
-      // Si no hay preferencia (o se acaba de borrar), mostramos la pregunta
       this.step = 'QUESTION';
     }
   }
@@ -114,7 +108,7 @@ export class AbonoModal implements OnInit {
 
   llamarAlBackendParaGasto() {
     if (!this.idAbonoReciente) {
-        this.cerrarTodo(); // Si no hay ID, cerramos sin error para no molestar
+        this.cerrarTodo(); 
         return;
     }
 
@@ -127,7 +121,6 @@ export class AbonoModal implements OnInit {
       error: (err) => {
         console.error('❌ Error generando gasto', err);
         this.loading = false;
-        // Opcional: alertar error
         this.cerrarTodo();
       }
     });

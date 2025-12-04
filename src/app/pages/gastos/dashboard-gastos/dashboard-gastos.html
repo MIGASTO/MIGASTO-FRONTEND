@@ -1,118 +1,141 @@
-
-<section class="min-h-screen flex flex-col bg-gradient-to-b from-[#89CFF0] to-[#1e3a8a] text-white font-sans">
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative">
     <app-navbar></app-navbar>
-  <main class="flex-grow w-full max-w-[1600px] mx-auto p-6 lg:p-8">
-    
-    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-      
-      <div class="text-left w-full md:w-auto">
-        <div class="flex items-center gap-3">
-            <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                <span class="text-3xl">📊</span>
+
+    <main class="flex-grow w-full max-w-[1600px] mx-auto p-6 lg:p-8 pt-20">
+        
+        <!-- Header Dashboard -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div class="text-left w-full md:w-auto">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+                        <span class="text-3xl">📊</span>
+                    </div>
+                    <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">
+                        Dashboard de <span class="text-red-500">Gastos</span>
+                    </h2>
+                </div>
+                <p class="text-slate-500 text-lg mt-2 ml-1">
+                    Análisis detallado de tus gastos, distribución y tendencias.
+                </p>
             </div>
-            <h2 class="text-4xl font-extrabold drop-shadow-md">
-              Dashboard de <span class="text-red-400">Gastos</span>
-            </h2>
-        </div>
-        <p class="text-sky-100 text-lg mt-1 ml-1 opacity-90">
-          Análisis detallado de tus gastos, distribución y tendencias
-        </p>
-      </div>
 
-      <div class="flex gap-3">
-        <button
-          (click)="navegarA('/home')"
-          class="bg-[#0ea5e9] hover:bg-[#0284c7] text-white px-5 py-2 rounded-md font-bold shadow-lg transition transform hover:scale-105 flex items-center gap-2"
-        >
-          🏠 General
-        </button>
-        
-        <button
-          (click)="navegarA('/ingresos/dashboard')"
-          class="bg-[#22c55e] hover:bg-[#16a34a] text-white px-5 py-2 rounded-md font-bold shadow-lg transition transform hover:scale-105 flex items-center gap-2"
-        >
-          💰 Ingresos
-        </button>
-
-        <button
-          (click)="navegarA('/gastos')"
-          class="bg-[#ef4444] text-white px-5 py-2 rounded-md font-bold shadow-lg cursor-default ring-2 ring-white/30 flex items-center gap-2"
-        >
-          📉 Gestionar Gastos
-        </button>
-      </div>
-    </div>
-
-    <div *ngIf="cargando" class="text-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-      <p class="text-sky-100 text-xl">Cargando datos...</p>
-    </div>
-
-    <div *ngIf="!cargando" class="space-y-6">
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        
-        <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl hover:bg-slate-700/50 transition">
-          <h3 class="text-sm font-bold text-gray-200 mb-1 uppercase tracking-wide">Total Gastos</h3>
-          <p class="text-4xl font-extrabold text-red-400 drop-shadow-sm">
-            ${{ totalGastos | number:'1.0-0' }}
-          </p>
+            <!-- Navegación -->
+            <div class="flex gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
+                <button
+                    (click)="navegarA('/home')"
+                    class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-50 hover:text-sky-600 transition flex items-center gap-2"
+                >
+                    🏠 General
+                </button>
+                <button
+                    (click)="navegarA('/ingresos/dashboard')"
+                    class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition flex items-center gap-2"
+                >
+                    💰 Ingresos
+                </button>
+                <button
+                    (click)="navegarA('/gastos')"
+                    class="bg-red-100 text-red-700 px-5 py-2.5 rounded-xl font-bold shadow-sm flex items-center gap-2 border border-red-200"
+                >
+                    📉 Gestionar
+                </button>
+            </div>
         </div>
 
-        <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl hover:bg-slate-700/50 transition">
-          <h3 class="text-sm font-bold text-gray-200 mb-1 uppercase tracking-wide">Promedio por Gasto</h3>
-          <p class="text-4xl font-extrabold text-orange-400 drop-shadow-sm">
-            ${{ promedioGastos | number:'1.0-0' }}
-          </p>
+        <!-- Cargando -->
+        <div *ngIf="cargando" class="text-center py-20 opacity-60">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-red-500 mx-auto mb-4"></div>
+            <p class="text-slate-500 text-xl font-medium">Procesando datos...</p>
         </div>
 
-        <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl hover:bg-slate-700/50 transition">
-          <h3 class="text-sm font-bold text-gray-200 mb-1 uppercase tracking-wide">Cantidad de Gastos</h3>
-          <p class="text-4xl font-extrabold text-yellow-400 drop-shadow-sm">
-            {{ cantidadGastos }}
-          </p>
+        <div *ngIf="!cargando" class="space-y-8 animate-in fade-in duration-500">
+            
+            <!-- Tarjetas Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Total Gastos -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Gastos</h3>
+                        <span class="text-red-100 bg-red-600 p-1.5 rounded-lg text-xs">💸</span>
+                    </div>
+                    <p class="text-4xl font-black text-red-500 tracking-tight">
+                        ${{ totalGastos | number:'1.0-0' }}
+                    </p>
+                </div>
+
+                <!-- Promedio -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Promedio / Gasto</h3>
+                        <span class="text-orange-100 bg-orange-500 p-1.5 rounded-lg text-xs">📉</span>
+                    </div>
+                    <p class="text-4xl font-black text-orange-500 tracking-tight">
+                        ${{ promedioGastos | number:'1.0-0' }}
+                    </p>
+                </div>
+
+                <!-- Cantidad -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">N° Transacciones</h3>
+                        <span class="text-yellow-100 bg-yellow-500 p-1.5 rounded-lg text-xs">#️⃣</span>
+                    </div>
+                    <p class="text-4xl font-black text-slate-700 tracking-tight">
+                        {{ cantidadGastos }}
+                    </p>
+                </div>
+
+                <!-- Mayor Gasto -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300 relative overflow-hidden group">
+                    <div class="absolute right-0 top-0 h-full w-1 bg-gradient-to-b from-red-400 to-red-600"></div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Mayor Gasto</h3>
+                    <p class="text-3xl font-black text-red-600 tracking-tight">
+                        <span *ngIf="gastoMayor">${{ gastoMayor.monto | number:'1.0-0' }}</span>
+                        <span *ngIf="!gastoMayor">$0</span>
+                    </p>
+                    <p class="text-sm text-slate-500 mt-1 font-medium truncate" *ngIf="gastoMayor">
+                        {{ gastoMayor.descripcion }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Gráficas -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col h-[450px]">
+                    <h3 class="text-lg font-bold text-slate-700 mb-6 text-center border-b border-slate-100 pb-3">
+                        Gastos por Categoría
+                    </h3>
+                    <div class="flex-grow relative w-full h-full min-h-0">
+                        <canvas #pieCanvas></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col h-[450px]">
+                    <h3 class="text-lg font-bold text-slate-700 mb-6 text-center border-b border-slate-100 pb-3">
+                        Evolución Mensual
+                    </h3>
+                    <div class="flex-grow relative w-full h-full">
+                        <canvas #lineCanvas></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Gastos -->
+            <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100">
+                <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-3">
+                    <span class="text-2xl">⚠️</span>
+                    <h3 class="text-lg font-bold text-slate-700">Top Gastos Más Altos</h3>
+                </div>
+                <div class="relative w-full h-[300px]">
+                    <canvas #barCanvas></canvas>
+                </div>
+            </div>
+
         </div>
+    </main>
 
-        <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl hover:bg-slate-700/50 transition">
-          <h3 class="text-sm font-bold text-gray-200 mb-1 uppercase tracking-wide">Gasto Más Alto</h3>
-          <p class="text-4xl font-extrabold text-red-500 drop-shadow-sm">
-            <span *ngIf="gastoMayor">${{ gastoMayor.monto | number:'1.0-0' }}</span>
-            <span *ngIf="!gastoMayor">$0</span>
-          </p>
-          <p class="text-xs text-gray-300 mt-1 font-medium opacity-80 truncate" *ngIf="gastoMayor">
-            {{ gastoMayor.descripcion }}
-          </p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl h-[400px] flex flex-col">
-          <h3 class="text-white font-bold mb-4 text-center opacity-90">Gastos por Categoría</h3>
-          <div class="flex-grow relative w-full h-full">
-            <canvas #pieCanvas></canvas>
-          </div>
-        </div>
-
-        <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl h-[400px] flex flex-col">
-          <h3 class="text-white font-bold mb-4 text-center opacity-90">Evolución Mensual</h3>
-          <div class="flex-grow relative w-full h-full">
-            <canvas #lineCanvas></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-slate-700/40 backdrop-blur-md border border-white/10 p-6 rounded-xl shadow-xl">
-         <h3 class="text-white font-bold mb-4 text-left opacity-90 pl-2 border-l-4 border-red-500">Top Gastos Más Altos</h3>
-         <div class="relative w-full h-[300px]">
-            <canvas #barCanvas></canvas>
-         </div>
-      </div>
-
-    </div>
-  </main>
-
-  <footer class="p-4 bg-sky-950/50 backdrop-blur-sm text-center text-sm text-slate-400 border-t border-white/5">
-    © 2025 MiGasto - Todos los derechos reservados
-  </footer>
+    <footer class="p-4 bg-stone-200 text-center text-sm text-slate-600 border-t border-white/10">
+        © 2025 MiGasto - Todos los derechos reservados
+    </footer>
 </section>

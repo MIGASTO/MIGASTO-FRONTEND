@@ -39,7 +39,8 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    Chart.defaults.color = '#f1f5f9'; 
+
+    Chart.defaults.color = '#2d2d2e'; 
     Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; 
     Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; 
     
@@ -135,9 +136,9 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
     this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
-        labels: ['Salario', 'Freelance', 'Inversiones', 'Otros'],
+        labels: ['sin datos'],
         datasets: [{
-          data: [2000, 500, 300, 200],
+          data: [1],
           backgroundColor: ['#10b981', '#14b8a6', '#06b6d4', '#0ea5e9'],
           borderColor: 'transparent'
         }]
@@ -194,7 +195,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         labels: ['Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov'],
         datasets: [{
           label: 'Ingresos Mensuales',
-          data: [3000, 3200, 2900, 3100, 3300, 3500],
+          data: [1],
           borderColor: '#10b981',
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
           tension: 0.4,
@@ -248,10 +249,10 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
     this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['Salario', 'Freelance', 'Dividendos', 'Venta', 'Bono'],
+        labels: ['sin datos'],
         datasets: [{
           label: 'Monto',
-          data: [2000, 800, 300, 250, 150],
+          data: [0],
           backgroundColor: '#10b981'
         }]
       },

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-gasto-form',
@@ -71,8 +71,6 @@ export class GastoForm {
       id_moneda: this.gasto.id_moneda,
       tags: this.gasto.tags ?? [],
     };
-
-    console.log('💾 Datos enviados desde gasto-form:', datos);
 
     this.guardar.emit({ ...this.gasto, ...datos });
     this.resetForm();

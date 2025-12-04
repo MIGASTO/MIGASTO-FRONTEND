@@ -1,39 +1,56 @@
-<section class="min-h-screen flex flex-col bg-gradient-to-b from-sky-200 to-sky-950 text-white">
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative">
     <app-navbar></app-navbar>
 
-    <main class="flex-grow flex flex-col items-center text-center p-6">
-        <h2 class="text-4xl font-extrabold mb-6">
-        Perfil de <span class="text-sky-300">Usuario</span>
+    <main class="flex-grow flex flex-col items-center text-center p-6 pt-24">
+        
+        <h2 class="text-4xl font-extrabold mb-8 text-sky-950/80">
+            Perfil de <span class="text-sky-600">Usuario</span>
         </h2>
 
-        <div class="bg-sky-900 p-8 rounded-2xl shadow-lg w-full max-w-md text-left">
-        <div class="flex flex-col items-center mb-6">
-            <img
-            [src]="usuario.foto_perfil || '/src/app/assets/perro_programador.jpg'"
-            alt="Foto de perfil"
-            class="w-32 h-32 rounded-full border-4 border-sky-400 object-cover mb-4"
-            />
-            <h3 class="text-2xl font-semibold">{{ usuario.nombre_completo }}</h3>
-        </div>
+        <div class="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md text-left border border-white/60 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-sky-50 to-blue-50"></div>
 
-        <div class="space-y-3">
-            <p><span class="text-sky-300 text-sm">Edad:</span> {{ usuario.edad || 'No registrada' }}</p>
-            <p><span class="text-sky-300">Teléfono:</span> {{ usuario.telefono || 'No disponible' }}</p>
-            <p><span class="text-sky-300">Género:</span> {{ usuario.generoTexto }}</p>
-        </div>
+            <div class="flex flex-col items-center mb-8 relative z-10">
+                <div class="p-1 rounded-full bg-white shadow-md mb-4">
+                    <img
+                        [src]="usuario.foto_perfil"
+                        alt="Foto de perfil"
+                        class="w-32 h-32 rounded-full object-cover border-4 border-sky-100"
+                    />
+                </div>
+                <h3 class="text-3xl font-bold text-slate-800">{{ usuario.nombre_completo }}</h3>
+                <span class="text-sm text-slate-400 font-medium bg-slate-50 px-3 py-1 rounded-full mt-2 border border-slate-100">
+                    Usuario Registrado
+                </span>
+            </div>
+
+            <div class="space-y-4 relative z-10">
+                <div class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl transition">
+                    <span class="text-slate-400 text-sm font-bold uppercase">Edad</span>
+                    <span class="text-slate-700 font-semibold">{{ usuario.edad || 'No registrada' }}</span>
+                </div>
+                <div class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl transition border-t border-slate-100">
+                    <span class="text-slate-400 text-sm font-bold uppercase">Teléfono</span>
+                    <span class="text-slate-700 font-semibold">{{ usuario.telefono || 'No disponible' }}</span>
+                </div>
+                <div class="flex justify-between items-center p-3 hover:bg-slate-50 rounded-xl transition border-t border-slate-100">
+                    <span class="text-slate-400 text-sm font-bold uppercase">Género</span>
+                    <span class="text-slate-700 font-semibold">{{ usuario.generoTexto }}</span>
+                </div>
+            </div>
         </div>
 
         <div class="mt-10">
-        <button
-            routerLink="/profile-form"
-            class="bg-sky-500 hover:bg-sky-600 text-white font-medium px-6 py-2 rounded-full shadow-lg transition"
-        >
-            Editar Perfil
-        </button>
+            <button
+                routerLink="/profile-form"
+                class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-8 py-3 rounded-full shadow-lg shadow-sky-200 transition transform hover:-translate-y-1"
+            >
+                Editar Perfil
+            </button>
         </div>
     </main>
 
-    <footer class="p-4 bg-sky-900 text-center text-sm">
+    <footer class="p-4 bg-stone-200 text-center text-sm text-slate-600 border-t border-white/10">
         © 2025 MiGasto - Todos los derechos reservados
     </footer>
 </section>

@@ -20,7 +20,6 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   @ViewChild('barCanvas') barCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('lineCanvas') lineCanvas!: ElementRef<HTMLCanvasElement>;
 
-  // Instancias para controlar el redibujado
   private chartPieInstance: Chart | null = null;
   private chartLineInstance: Chart | null = null;
   private chartBarInstance: Chart | null = null;
@@ -39,7 +38,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    Chart.defaults.color = '#f1f5f9'; 
+    Chart.defaults.color = '#2d2d2e'; 
     Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)'; 
     Chart.defaults.font.family = "'Inter', 'Helvetica', sans-serif"; 
     this.cargarEstadisticas();
@@ -130,9 +129,9 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     this.chartPieInstance = new Chart(this.pieCanvas.nativeElement, {
       type: 'pie',
       data: {
-        labels: ['Comida', 'Transporte', 'Entretenimiento', 'Otros'],
+        labels: ['Sin datos'],
         datasets: [{
-          data: [400, 300, 200, 100],
+          data: [1],
           backgroundColor: ['#ef4444', '#f97316', '#f59e0b', '#eab308'],
           borderColor: 'transparent'
         }]
@@ -189,7 +188,7 @@ export class DashboardGastos implements OnInit, AfterViewInit {
         labels: ['Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre'],
         datasets: [{
           label: 'Gastos Mensuales',
-          data: [1200, 1500, 1100, 1400, 1300, 1600],
+          data: [1],
           borderColor: '#ef4444',
           backgroundColor: 'rgba(239, 68, 68, 0.1)',
           tension: 0.4,
@@ -243,10 +242,10 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['Mercado', 'Gasolina', 'Restaurante', 'Cine', 'Farmacia'],
+        labels: ['sin datos'],
         datasets: [{
           label: 'Monto',
-          data: [350, 300, 250, 150, 100],
+          data: [0],
           backgroundColor: '#ef4444'
         }]
       },
