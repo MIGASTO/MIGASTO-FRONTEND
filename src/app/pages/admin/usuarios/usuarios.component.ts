@@ -1,18 +1,28 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UsuariosService } from '../../../services/usuarios.service';
-import { Navbar } from '../../../components/navbar/navbar';
-import { RouterModule } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
+
+import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
+import { Footer } from '../../../components/footer/footer';
+import { UsuariosService } from '../../../services/usuarios.service';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, Navbar, RouterModule, MatTableModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    MatTableModule, 
+    MatButtonModule, 
+    MatProgressSpinnerModule, 
+    MatTooltipModule,
+    AdminNavbarComponent,
+    Footer
+  ],
   templateUrl: './usuarios.component.html',
 })
 export class UsuariosComponent implements OnInit {
@@ -29,33 +39,46 @@ export class UsuariosComponent implements OnInit {
   cargarUsuarios() {
     this.loading = true;
     this.service.getUsuarios().subscribe({
-      next: (data) => {
-        this.usuarios = data;
+      next: (data: any) => { 
+
+        if (Array.isArray(data)) {
+            this.usuarios = data;
+        } else if (data && data.data && Array.isArray(data.data)) {
+            this.usuarios = data.data;
+        } else {
+            this.usuarios = [];
+        }
+        
         this.loading = false;
       },
       error: (e) => {
-        console.error(e);
         this.loading = false;
       }
     });
   }
 
   cambiarRol(usuario: any) {
-    // Lógica simple: Si es 1 pasa a 2, si es 2 pasa a 1.
+    if (!usuario || !usuario.rol) return;
+
     const nuevoRolId = usuario.rol.id === 1 ? 2 : 1;
     const nombreRol = nuevoRolId === 1 ? 'ADMIN' : 'USUARIO';
+    const nombreUsuario = usuario.perfil?.nombre_completo || usuario.email;
 
-    if (confirm(`¿Estás seguro de cambiar el rol de ${usuario.perfil.nombre_completo} a ${nombreRol}?`)) {
-      this.service.updateUsuario(usuario.id_usuario, { rolId: nuevoRolId }).subscribe(() => {
-        this.cargarUsuarios(); // Recargar para ver cambios
+    if (confirm(`¿Estás seguro de cambiar el rol de ${nombreUsuario} a ${nombreRol}?`)) {
+      this.service.updateUsuario(usuario.id_usuario, { rolId: nuevoRolId }).subscribe({
+        next: () => {
+            this.cargarUsuarios();
+        },
+        error: (err) => alert('Error al cambiar rol')
       });
     }
   }
 
   eliminar(id: number) {
     if (confirm('¿Eliminar usuario permanentemente? Esta acción no se puede deshacer.')) {
-      this.service.deleteUsuario(id).subscribe(() => {
-        this.cargarUsuarios();
+      this.service.deleteUsuario(id).subscribe({
+        next: () => this.cargarUsuarios(),
+        error: (err) => alert('Error al eliminar usuario')
       });
     }
   }

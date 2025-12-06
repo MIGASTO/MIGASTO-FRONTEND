@@ -1,11 +1,11 @@
-import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-genero-dialog',
@@ -19,9 +19,8 @@ import { MatButtonModule } from '@angular/material/button';
     MatIconModule,
     MatButtonModule
   ],
-  templateUrl: './genero-modal.html', // <--- Apunta al archivo HTML
+  templateUrl: './genero-modal.html', 
   styles: [`
-    /* Pequeño ajuste CSS para quitar el espacio inferior extra de los Inputs de Material */
     :host ::ng-deep .mat-mdc-form-field-subscript-wrapper { 
       margin-bottom: 0.5rem; 
     }
@@ -31,7 +30,6 @@ export class GeneroModal {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<GeneroModal>);
 
-  // Inyectamos la data (si es null es CREAR, si tiene objeto es EDITAR)
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.form = this.fb.group({
       nombre: [this.data ? this.data.nombre : '', [Validators.required]]
@@ -44,7 +42,6 @@ export class GeneroModal {
 
   guardar() {
     if (this.form.valid) {
-      // Retornamos el valor del formulario al cerrar
       this.dialogRef.close(this.form.value);
     }
   }

@@ -1,26 +1,27 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TagsService } from '../../../services/tags.service';
-import { Navbar } from '../../../components/navbar/navbar';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
+import { TagsService } from '../../../services/tags.service';
 
 // Imports de Material
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 
 // Importamos el Modal
-import { TagModal} from '../../../components/tag-modal/tag-modal';
+import { Footer } from '../../../components/footer/footer';
+import { TagModal } from '../../../components/formularios/tag-modal/tag-modal';
 
 @Component({
   selector: 'app-tags',
   standalone: true,
   imports: [
-    CommonModule, Navbar, RouterModule,
+    CommonModule, AdminNavbarComponent, RouterModule,
     MatTableModule, MatIconModule, MatButtonModule, 
-    MatDialogModule, MatProgressSpinnerModule
+    MatDialogModule, MatProgressSpinnerModule, Footer
   ],
   templateUrl: './tags.component.html',
 })
@@ -50,18 +51,16 @@ export class TagsComponent implements OnInit {
   abrirModal(tag?: any) {
     const dialogRef = this.dialog.open(TagModal, {
       width: '100%',
-      maxWidth: '400px', // Modal compacto para Tags
+      maxWidth: '400px',
       panelClass: 'custom-dialog-container',
-      data: tag // Si es undefined = Crear, Si es objeto = Editar
+      data: tag 
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (tag) {
-          // Lógica de ACTUALIZAR (Usando el nuevo método del servicio)
           this.service.updateTag(tag.id_tag, result).subscribe(() => this.cargarTags());
         } else {
-          // Lógica de CREAR
           this.service.createTag(result).subscribe(() => this.cargarTags());
         }
       }

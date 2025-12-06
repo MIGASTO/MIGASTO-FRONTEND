@@ -11,14 +11,16 @@ import { Ingresos } from './pages/ingresos/ingresos';
 import { Profile } from './pages/profile/profile';
 
 
+import { adminGuard } from './interceptor/guards/admin.guard';
 import { authGuard } from './interceptor/guards/auth.guard';
-import { ResetPassword } from './pages/auth/reset-password/reset-password';
-import { Prestamos } from './pages/prestamos/prestamos';
-import { Admin } from './components/admin-panel/admin';
-import { UsuariosComponent } from './pages/admin/usuarios/usuarios.component';
-import { TagsComponent } from './pages/admin/tags/tags.component';
+import { AdminHomeComponent } from './pages/admin/admin-home/admin-home';
+import { AdminMovimientos } from './pages/admin/admin-movimientos/admin-movimientos';
 import { GenerosComponent } from './pages/admin/generos/generos.component';
 import { MonedasComponent } from './pages/admin/monedas/monedas.component';
+import { TagsComponent } from './pages/admin/tags/tags.component';
+import { UsuariosComponent } from './pages/admin/usuarios/usuarios.component';
+import { ResetPassword } from './pages/auth/reset-password/reset-password';
+import { Prestamos } from './pages/prestamos/prestamos';
 
 export const routes: Routes = [
 
@@ -30,6 +32,40 @@ export const routes: Routes = [
     { path: 'recuperar-password', component: ResetPassword,},
 
 
+
+    
+    {
+        path: 'admin',
+        canActivate: [adminGuard], 
+        children: [
+            { path: 'dashboard', component: AdminHomeComponent },
+            { path: 'users', component: AdminHomeComponent },
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+
+            {
+                path: 'usuarios',
+                component: UsuariosComponent,
+            },
+            {
+                path: 'tags',
+                component: TagsComponent,
+            },
+            {
+                path: 'generos',
+                component: GenerosComponent,
+            },
+            {
+                path: 'monedas',
+                component: MonedasComponent,
+            },
+            {
+                path: 'movimientos',
+                component: AdminMovimientos, 
+            },
+            {path:'**', component: AdminHomeComponent},
+                
+        ]
+    },
     {
         path:'home',
         component: Home,
@@ -74,31 +110,6 @@ export const routes: Routes = [
     {
         path : 'prestamos',
         component: Prestamos,
-        canActivate: [authGuard]
-    },
-    {
-        path: 'admin',
-        component: Admin,
-        canActivate: [authGuard]
-    },
-    {
-        path: 'usuarios',
-        component: UsuariosComponent,
-        canActivate: [authGuard]
-    },
-    {
-        path: 'tags',
-        component: TagsComponent,
-        canActivate: [authGuard]
-    },
-        {
-        path: 'generos',
-        component: GenerosComponent,
-        canActivate: [authGuard]
-    },
-            {
-        path: 'monedas',
-        component: MonedasComponent,
         canActivate: [authGuard]
     },
 

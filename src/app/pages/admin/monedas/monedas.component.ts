@@ -1,26 +1,27 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MonedasService } from '../../../services/monedas.service';
-import { Navbar } from '../../../components/navbar/navbar';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { MonedasService } from '../../../services/monedas.service';
 
 // Imports de Material
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 
 // Importamos el Modal
-import { MonedaModal} from '../../../components/moneda-modal/moneda-modal';
+import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
+import { Footer } from '../../../components/footer/footer';
+import { MonedaModal } from '../../../components/formularios/moneda-modal/moneda-modal';
 
 @Component({
   selector: 'app-monedas',
   standalone: true,
   imports: [
-    CommonModule, Navbar, RouterModule,
+    CommonModule, AdminNavbarComponent, RouterModule,
     MatTableModule, MatIconModule, MatButtonModule, 
-    MatDialogModule, MatProgressSpinnerModule
+    MatDialogModule, MatProgressSpinnerModule, Footer
   ],
   templateUrl: './monedas.component.html',
 })
@@ -50,7 +51,7 @@ export class MonedasComponent implements OnInit {
   abrirModal(moneda?: any) {
     const dialogRef = this.dialog.open(MonedaModal  , {
       width: '100%',
-      maxWidth: '500px', // Un poco más ancho que Géneros porque hay 2 columnas
+      maxWidth: '500px',
       panelClass: 'custom-dialog-container',
       data: moneda
     });
@@ -58,10 +59,8 @@ export class MonedasComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (moneda) {
-          // Editar
           this.service.updateMoneda(moneda.id_moneda, result).subscribe(() => this.cargarMonedas());
         } else {
-          // Crear
           this.service.createMoneda(result).subscribe(() => this.cargarMonedas());
         }
       }

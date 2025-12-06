@@ -1,0 +1,173 @@
+<section class="min-h-screen flex flex-col bg-stone-100 text-slate-800">
+    
+    <app-admin-navbar></app-admin-navbar>
+
+    <main class="flex-grow p-6 lg:p-8">
+        
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="mb-8 flex justify-between items-end animate-in fade-in slide-in-from-top-4 duration-500">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Panel de Control</h1>
+                    <p class="text-slate-500 mt-1">Resumen general del sistema y métricas clave.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span *ngIf="loading" class="text-xs text-indigo-500 font-bold animate-pulse">ACTUALIZANDO...</span>
+                    <div class="text-sm text-slate-400 font-mono bg-white px-3 py-1 rounded border border-slate-200 shadow-sm">
+                        v1.0.5-beta
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div *ngFor="let stat of stats" class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex items-center gap-4 hover:shadow-md transition group relative overflow-hidden">
+                    
+                    <div *ngIf="stat.loading" class="absolute inset-0 bg-white z-10 flex items-center justify-center">
+                        <div class="animate-spin h-5 w-5 border-2 border-slate-200 border-t-indigo-500 rounded-full"></div>
+                    </div>
+
+                    <div [class]="'w-12 h-12 rounded-lg flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110 ' + stat.color">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" [attr.d]="stat.iconPath" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <p class="text-slate-500 text-xs font-bold uppercase tracking-wider">{{ stat.title }}</p>
+                        <p class="text-2xl font-bold text-slate-800">{{ stat.value | number }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                            </span> Usuarios Recientes
+                        </h3>
+                        <a routerLink="/admin/usuarios" class="text-indigo-600 text-sm font-medium hover:text-indigo-800 hover:underline transition cursor-pointer">Ver directorio completo →</a>
+                    </div>
+                    
+                    <div class="overflow-x-auto flex-grow relative">
+                        <div *ngIf="loading" class="absolute inset-0 bg-white/80 z-10 flex flex-col items-center justify-center text-slate-400">
+                            <div class="animate-spin h-8 w-8 border-4 border-slate-200 border-t-indigo-500 rounded-full mb-2"></div>
+                            <span class="text-xs font-bold">CARGANDO DATOS...</span>
+                        </div>
+
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+                                <tr>
+                                    <th class="px-6 py-3">Usuario</th>
+                                    <th class="px-6 py-3">Fecha</th>
+                                    <th class="px-6 py-3">Rol</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr *ngFor="let user of recentUsers" class="hover:bg-slate-50 transition">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold text-xs">
+                                                {{ user.name.charAt(0) | uppercase }}
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-slate-900">{{ user.name }}</div>
+                                                <div class="text-xs text-slate-500">{{ user.email }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-slate-500 font-mono text-xs">{{ user.date }}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 py-1 rounded-full text-xs font-bold border"
+                                            [ngClass]="user.rolId === 1 ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-slate-100 text-slate-600 border-slate-200'">
+                                            {{ user.status | uppercase }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="!loading && recentUsers.length === 0">
+                                    <td colspan="3" class="px-6 py-8 text-center text-slate-400 italic">
+                                        No hay usuarios registrados aún.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="font-bold text-slate-800 mb-4 text-sm uppercase text-slate-400">Gestión de Catálogos</h3>
+                        <div class="space-y-3">
+                            <button routerLink="/admin/generos" class="w-full text-left px-4 py-3 rounded-lg bg-slate-50 hover:bg-purple-50 hover:text-purple-700 transition flex items-center gap-3 group border border-slate-100 hover:border-purple-100">
+                                <span class="bg-white p-1.5 rounded-md border border-slate-200 group-hover:border-purple-200 shadow-sm text-lg">
+                                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 shadow-inner ring-4 ring-white">
+                                        <mat-icon class="!w-6 !h-6 !text-[25px]">wc</mat-icon>
+                                    </div>
+                                </span>
+                                <div>
+                                    <span class="block font-medium text-slate-700 group-hover:text-purple-700">Géneros</span>
+                                    <span class="text-xs text-slate-400">Editar opciones</span>
+                                </div>
+                            </button>
+                            <button routerLink="/admin/movimientos" class="w-full text-left px-4 py-3 rounded-lg bg-slate-50 hover:bg-purple-50 hover:text-purple-700 transition flex items-center gap-3 group border border-slate-100 hover:border-purple-100">
+                                <span class="bg-white p-1.5 rounded-md border border-slate-200 group-hover:border-violet-200 shadow-sm text-lg">
+                                    <div class="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center text-violet-600 shadow-inner ring-4 ring-white">
+                                        <mat-icon class="!w-6 !h-6 !text-[25px]">swap_vert</mat-icon>
+                                    </div>
+                                </span>
+                                <div>
+                                    <span class="block font-medium text-slate-700 group-hover:text-purple-700">Movimientos</span>
+                                    <span class="text-xs text-slate-400">Movimientos globales</span>
+                                </div>
+                            </button>
+                            <button routerLink="/admin/monedas" class="w-full text-left px-4 py-3 rounded-lg bg-slate-50 hover:bg-emerald-50 hover:text-emerald-700 transition flex items-center gap-3 group border border-slate-100 hover:border-emerald-100">
+                                <span class="bg-white p-1.5 rounded-md border border-slate-200 group-hover:border-emerald-200 shadow-sm text-lg">
+                                    <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 shadow-inner ring-4 ring-white">
+                                        <mat-icon class="!w-6 !h-6 !text-[25px]">attach_money</mat-icon>
+                                    </div>
+                                </span>
+                                <div>
+                                    <span class="block font-medium text-slate-700 group-hover:text-emerald-700">Monedas</span>
+                                    <span class="text-xs text-slate-400">Divisas disponibles</span>
+                                </div>
+                            </button>
+                            <button routerLink="/admin/tags" class="w-full text-left px-4 py-3 rounded-lg bg-slate-50 hover:bg-amber-50 hover:text-amber-700 transition flex items-center gap-3 group border border-slate-100 hover:border-amber-100">
+                                <span class="bg-white p-1.5 rounded-md border border-slate-200 group-hover:border-amber-200 shadow-sm text-lg">
+                                    <div class="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 shadow-inner ring-4 ring-white">
+                                        <mat-icon class="!w-6 !h-6 !text-[25px]">label</mat-icon>
+                                    </div>
+                                </span>
+                                <div>
+                                    <span class="block font-medium text-slate-700 group-hover:text-amber-700">Tags</span>
+                                    <span class="text-xs text-slate-400">Etiquetas globales</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-xl p-6 text-white relative overflow-hidden shadow-lg">
+                        <div class="relative z-10">
+                            <h4 class="font-bold text-lg mb-1 flex items-center gap-2">
+                                <span>🚀</span> Estado del Sistema
+                            </h4>
+                            <p class="text-indigo-200 text-sm mb-4">Todo funcionando correctamente.</p>
+                            <div class="flex gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                <span class="text-xs font-mono text-green-300">ONLINE</span>
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-8 -right-8 w-32 h-32 bg-indigo-600 rounded-full opacity-20 blur-xl"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+    <app-footer></app-footer>
+</section>

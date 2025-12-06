@@ -1,27 +1,29 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GenerosService } from '../../../services/generos.service';
-import { Navbar } from '../../../components/navbar/navbar';
-import { RouterModule } from '@angular/router';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { GeneroModal } from '../../../components/genero-modal/genero-modal';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
+import { RouterModule } from '@angular/router';
+import { AdminNavbarComponent } from "../../../components/admin-navbar/admin-navbar";
+import { Footer } from '../../../components/footer/footer';
+import { GeneroModal } from '../../../components/formularios/genero-modal/genero-modal';
+import { GenerosService } from '../../../services/generos.service';
 
 @Component({
   selector: 'app-generos',
   standalone: true,
   imports: [
-    CommonModule, Navbar, RouterModule, 
-    MatTableModule, MatIconModule, MatButtonModule, MatDialogModule,MatProgressSpinnerModule
-  ],
-  templateUrl: './generos.component.html', // Usamos el HTML de abajo
+    CommonModule, RouterModule, AdminNavbarComponent, Footer,
+    MatTableModule, MatIconModule, MatButtonModule, MatDialogModule, MatProgressSpinnerModule,
+    AdminNavbarComponent
+],
+  templateUrl: './generos.component.html',
 })
 export class GenerosComponent implements OnInit {
   private service = inject(GenerosService);
-  private dialog = inject(MatDialog); // Inyectamos MatDialog
+  private dialog = inject(MatDialog);
 
   generos: any[] = [];
   displayedColumns: string[] = ['id', 'nombre', 'acciones'];
@@ -42,7 +44,6 @@ export class GenerosComponent implements OnInit {
     });
   }
 
-  // ABRIR DIÁLOGO (Crear o Editar)
   abrirModal(genero?: any) {
     const dialogRef = this.dialog.open(GeneroModal, {
       width: '100%',
@@ -50,16 +51,14 @@ export class GenerosComponent implements OnInit {
       panelClass: 'custom-dialog-container',
       enterAnimationDuration: '300ms',
       exitAnimationDuration: '200ms',
-      data: genero // Si pasamos genero es EDITAR, si es undefined es CREAR
+      data: genero 
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (genero) {
-          // Lógica de Actualizar
           this.service.updateGenero(genero.id_genero, result).subscribe(() => this.cargarGeneros());
         } else {
-          // Lógica de Crear
           this.service.createGenero(result).subscribe(() => this.cargarGeneros());
         }
       }

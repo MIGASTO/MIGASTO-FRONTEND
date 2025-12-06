@@ -1,12 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 interface DecodedToken {
   sub: number;
   email: string;
-  rol: string;
+  rol: string; 
   iat: number;
   exp: number; 
 }
@@ -15,9 +16,12 @@ interface DecodedToken {
 export class AuthService {
   private readonly API_URL = 'http://localhost:8080/api/auth';
   private readonly TOKEN_KEY = 'access_token';
+  private readonly USER_KEY = 'usuario'; 
 
-  constructor(private http: HttpClient) {}
+  private loggedIn = new BehaviorSubject<boolean>(this.isLoggedIn());
+  public isLoggedIn$ = this.loggedIn.asObservable();
 
+  constructor(private http: HttpClient, private router: Router) {}
 
   register(data: { email: string; password: string; rolId: number }): Observable<any> {
     return this.http.post(`${this.API_URL}/register`, data);
@@ -27,8 +31,22 @@ export class AuthService {
     return this.http.post(`${this.API_URL}/login`, credentials).pipe(
       tap((response: any) => {
         console.log('🔐 Respuesta del backend al login:', response);
+        
         if (response.access_token) {
           localStorage.setItem(this.TOKEN_KEY, response.access_token);
+        
+          let userToSave = response.user; 
+          
+          if (!userToSave) {
+              const decoded = this.getDecodedToken();
+              userToSave = { 
+                  email: decoded?.email, 
+                  rol: { nombre: decoded?.rol }
+              };
+          }
+
+          localStorage.setItem(this.USER_KEY, JSON.stringify(userToSave));
+          this.loggedIn.next(true);
         }
       })
     );
@@ -44,10 +62,10 @@ export class AuthService {
 
     try {
       const decoded: DecodedToken = jwtDecode(token);
+      if (!decoded.exp) return false;
       
-      if (!decoded.exp) return false; 
-      
-      return Date.now() < decoded.exp * 1000;
+      const isValid = Date.now() < decoded.exp * 1000;
+      return isValid;
     } catch {
       return false; 
     }
@@ -64,12 +82,27 @@ export class AuthService {
   }
 
   getUserRole(): string | null {
+
+    const userString = localStorage.getItem(this.USER_KEY);
+    if (userString) {
+        const user = JSON.parse(userString);
+        return user.rol?.nombre || user.rol || null;
+    }
+
     const decoded = this.getDecodedToken();
     return decoded?.rol || null;
   }
 
+  isAdmin(): boolean {
+      const role = this.getUserRole();
+      return role === 'admin' || role === 'ADMIN';
+  }
+
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this.loggedIn.next(false);
+    this.router.navigate(['/login']);
   }
 
   solicitarRecuperacion(email: string): Observable<any> {
