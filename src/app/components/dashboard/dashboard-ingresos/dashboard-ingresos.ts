@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { Navbar } from '../../../components/navbar/navbar';
 import { BalanceService } from '../../../services/balance.service';
 import { IngresosService } from '../../../services/ingreso.service';
+import { Footer } from '../../footer/footer';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard-ingresos',
   standalone: true,
-  imports: [CommonModule, RouterModule, Navbar],
+  imports: [CommonModule, RouterModule, Navbar, MatIconModule, Footer],
   templateUrl: './dashboard-ingresos.html',
   styleUrls: ['./dashboard-ingresos.css']
 })
@@ -215,7 +217,7 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
     });
   }
 
-  renderBarChart(data: any) {
+renderBarChart(data: any) {
     if (!this.barCanvas) return;
     if (this.chartBarInstance) this.chartBarInstance.destroy();
 
@@ -226,17 +228,41 @@ export class DashboardIngresos implements OnInit, AfterViewInit {
         datasets: [{
           label: 'Monto',
           data: data.map((item: any) => item.monto),
-          backgroundColor: '#10b981'
+          backgroundColor: '#10b981', // Color verde (Emerald)
+          borderRadius: 4 // Un pequeño borde redondeado queda mejor
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false, // IMPORTANTE: Para que respete la altura del div padre
         plugins: {
           legend: { display: false },
-          title: { display: true, text: 'Top Ingresos Más Altos' }
+          title: { display: true, text: 'Top Ingresos Más Altos' },
+          // Tooltip: Muestra el nombre completo al pasar el mouse
+          tooltip: {
+            callbacks: {
+              title: (tooltipItems) => {
+                return tooltipItems[0].label;
+              }
+            }
+          }
         },
         scales: {
-          y: { beginAtZero: true }
+          y: { beginAtZero: true },
+          x: {
+            ticks: {
+              maxRotation: 0, // Evita que se incline
+              minRotation: 0,
+              // Función para recortar el texto si es muy largo
+              callback: function(value, index, values) {
+                const label = this.getLabelForValue(value as number);
+                if (label.length > 15) {
+                  return label.substr(0, 15) + '...';
+                }
+                return label;
+              }
+            }
+          }
         }
       }
     });

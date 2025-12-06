@@ -41,7 +41,7 @@
                 <div class="mt-2 flex justify-end">
                     <button type="button" (click)="pagarTotalidad()"
                         class="text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline flex items-center gap-1 transition">
-                        <span>⚡ Pagar deuda completa</span>
+                        <mat-icon>check_circle_outline</mat-icon><span> Pagar deuda completa</span>
                     </button>
                 </div>
 
@@ -67,7 +67,7 @@
 
         <div *ngIf="step === 'QUESTION'" class="p-8 text-center space-y-6">
             <div class="mx-auto w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mb-4">
-                💰
+                <mat-icon>attach_money</mat-icon>
             </div>
             
             <div>

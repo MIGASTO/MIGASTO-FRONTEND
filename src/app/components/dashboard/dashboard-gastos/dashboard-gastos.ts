@@ -1,17 +1,24 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { Navbar } from '../../../components/navbar/navbar';
 import { BalanceService } from '../../../services/balance.service';
 import { GastosService } from '../../../services/gasto.service';
+import { Footer } from '../../footer/footer';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard-gastos',
   standalone: true,
-  imports: [CommonModule, RouterModule, Navbar],
+  imports: [CommonModule, Footer, RouterModule, Navbar, MatTableModule, MatIconModule, MatButtonModule, 
+    MatDialogModule, MatProgressSpinnerModule],
   templateUrl: './dashboard-gastos.html',
   styleUrls: ['./dashboard-gastos.css']
 })
@@ -208,32 +215,58 @@ export class DashboardGastos implements OnInit, AfterViewInit {
     });
   }
 
-  renderBarChart(data: any) {
-    if (!this.barCanvas) return;
-    if (this.chartBarInstance) this.chartBarInstance.destroy();
+renderBarChart(data: any) {
+  if (!this.barCanvas) return;
+  if (this.chartBarInstance) this.chartBarInstance.destroy();
 
-    this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: data.map((item: any) => item.descripcion),
-        datasets: [{
-          label: 'Monto',
-          data: data.map((item: any) => item.monto),
-          backgroundColor: '#ef4444',
-        }]
+  this.chartBarInstance = new Chart(this.barCanvas.nativeElement, {
+    type: 'bar',
+    data: {
+      labels: data.map((item: any) => item.descripcion),
+      datasets: [{
+        label: 'Monto',
+        data: data.map((item: any) => item.monto),
+        backgroundColor: '#ef4444',
+        borderRadius: 5 // Opcional: bordes redondeados en las barras
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Top Gastos Más Altos' },
+        // Configuración del Tooltip para ver el nombre completo al pasar el mouse
+        tooltip: {
+          callbacks: {
+            title: (tooltipItems) => {
+              return tooltipItems[0].label; // Muestra el nombre completo aquí
+            }
+          }
+        }
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          title: { display: true, text: 'Top Gastos Más Altos' }
-        },
-        scales: {
-          y: { beginAtZero: true }
+      scales: {
+        y: { beginAtZero: true },
+        x: {
+          ticks: {
+            maxRotation: 0, // Obliga a que no rote
+            minRotation: 0,
+            // Función para recortar el texto
+            callback: function(value, index, values) {
+              // Obtenemos el label original
+              const label = this.getLabelForValue(value as number);
+              // Si es muy largo, lo cortamos
+              if (label.length > 15) {
+                return label.substr(0, 15) + '...';
+              }
+              return label;
+            }
+          }
         }
       }
-    });
-  }
+    }
+  });
+}
 
   renderBarChartDummy() {
     if (!this.barCanvas) return;
