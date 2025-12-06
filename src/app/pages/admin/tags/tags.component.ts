@@ -57,9 +57,21 @@ export class TagsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (tag) {
-          this.service.updateTag(tag.id_tag, result).subscribe(() => this.cargarTags());
+          this.service.updateTag(tag.id_tag, result).subscribe({
+            next: () => {
+              this.alertService.actualizado('Tag actualizado correctamente.');
+              this.cargarTags();
+            }
+          }
+          );
         } else {
-          this.service.createTag(result).subscribe(() => this.cargarTags());
+          this.service.createTag(result).subscribe({
+            next: () => {
+              this.alertService.exito('Nuevo tag creado con éxito.');
+              this.cargarTags();
+            },
+            error: (err) => console.error(err)
+          });
         }
       }
     });
@@ -67,13 +79,13 @@ export class TagsComponent implements OnInit {
 
   eliminar(id: number) {
     this.alertService.confirmar({
-        titulo: '¿Eliminar moneda?',
+        titulo: '¿Eliminar tag?',
         mensaje: 'Esta acción no se puede deshacer. ¿Deseas continuar?',
         tipo: 'delete'
     }).subscribe(confirmado => {
         if (confirmado) {
             this.service.deleteTag(id).subscribe(() => {
-                this.alertService.eliminado('La moneda fue eliminada permanentemente.');
+                this.alertService.eliminado('El tag fue eliminado permanentemente.');
                 this.cargarTags();
             });
         }

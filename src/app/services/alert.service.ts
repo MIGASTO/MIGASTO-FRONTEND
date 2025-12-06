@@ -18,7 +18,7 @@ export class AlertService {
     return dialogRef.afterClosed();
   }
 
-  exito(mensaje: string,duracion: number = 1000) {
+  exito(mensaje: string,duracion: number = 1100) {
     this.dialog.open(AlertaComponent, {
       width: '100%',
       maxWidth: '420px',
@@ -31,7 +31,7 @@ export class AlertService {
     });
   }
 
-  actualizado(mensaje: string, duracion: number= 1000) {
+  actualizado(mensaje: string, duracion: number= 1100) {
     this.dialog.open(AlertaComponent, {
       width: '100%',
       maxWidth: '420px',
@@ -44,7 +44,7 @@ export class AlertService {
     });
   }
 
-  eliminado(mensaje: string, duracion: number= 1000) {
+  eliminado(mensaje: string, duracion: number= 1100) {
     this.dialog.open(AlertaComponent, {
       width: '100%',
       maxWidth: '420px',
