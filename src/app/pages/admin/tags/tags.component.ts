@@ -3,17 +3,14 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
 import { TagsService } from '../../../services/tags.service';
-
-// Imports de Material
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
-
-// Importamos el Modal
 import { Footer } from '../../../components/footer/footer';
 import { TagModal } from '../../../components/formularios/tag-modal/tag-modal';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-tags',
@@ -28,6 +25,7 @@ import { TagModal } from '../../../components/formularios/tag-modal/tag-modal';
 export class TagsComponent implements OnInit {
   private service = inject(TagsService);
   private dialog = inject(MatDialog);
+  private alertService = inject(AlertService);
 
   tags: any[] = [];
   displayedColumns: string[] = ['id', 'nombre', 'acciones'];
@@ -68,8 +66,17 @@ export class TagsComponent implements OnInit {
   }
 
   eliminar(id: number) {
-    if (confirm('¿Eliminar esta etiqueta global?')) {
-      this.service.deleteTag(id).subscribe(() => this.cargarTags());
-    }
+    this.alertService.confirmar({
+        titulo: '¿Eliminar moneda?',
+        mensaje: 'Esta acción no se puede deshacer. ¿Deseas continuar?',
+        tipo: 'delete'
+    }).subscribe(confirmado => {
+        if (confirmado) {
+            this.service.deleteTag(id).subscribe(() => {
+                this.alertService.eliminado('La moneda fue eliminada permanentemente.');
+                this.cargarTags();
+            });
+        }
+    });
   }
 }

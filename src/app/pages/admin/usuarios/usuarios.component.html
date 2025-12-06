@@ -1,74 +1,62 @@
-<app-admin-navbar></app-admin-navbar>
-<div class="flex justify-center w-full px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+<section class="min-h-screen bg-stone-100 flex flex-col font-sans text-slate-800">
+  <app-admin-navbar></app-admin-navbar>
 
-  <div class="w-full max-w-6xl bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col my-6">
+  <div class="flex-grow flex flex-col items-center pt-24 pb-10 px-4">
 
-    <div class="px-8 py-6 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-      <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 shadow-sm">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-          </svg>
-        </div>
-        <div>
-          <h3 class="text-xl font-bold text-slate-800 tracking-tight">Directorio de Usuarios</h3>
-          <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mt-0.5">Gestión de Roles y Accesos</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200 shadow-sm">
-        <span class="text-xs font-bold text-slate-400 uppercase">Registros:</span>
-        <span class="text-sm font-bold text-slate-700">{{ usuarios.length }}</span>
-      </div>
-    </div>
-
-    <div *ngIf="loading" class="p-20 flex flex-col items-center justify-center text-slate-400">
-      <mat-spinner diameter="40" class="mb-4"></mat-spinner>
-      <p class="text-xs font-bold tracking-wide animate-pulse">CARGANDO...</p>
-    </div>
-
-    <div *ngIf="!loading" class="overflow-x-auto">
+    <div class="w-full max-w-5xl flex flex-col md:flex-row justify-between items-center mb-8 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
       
-      <table mat-table [dataSource]="usuarios" class="w-full">
+      <div class="flex items-center gap-6">
+        <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 shadow-inner ring-4 ring-white">
+          <mat-icon class="!w-10 !h-10 !text-[40px]">group</mat-icon>
+        </div>
+        <div class="flex flex-col">
+          <h1 class="text-3xl font-bold text-slate-800">Usuarios</h1>
+          <p class="text-slate-500 text-lg">Directorio y gestión de accesos.</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 bg-white px-8 py-4 rounded-2xl shadow-xl shadow-slate-200/50 border-[3px] border-white">
+          <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Registros:</span>
+          <span class="text-2xl font-black text-slate-400">{{ usuarios.length }}</span>
+      </div>
+    </div>
+
+    <div class="w-full max-w-5xl bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-2xl shadow-slate-300/50 border-[6px] border-white overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      <div *ngIf="loading" class="p-12 text-center text-slate-400">
+        <mat-spinner diameter="40" class="mx-auto mb-4"></mat-spinner>
+        <p>Cargando directorio...</p>
+      </div>
+
+      <table *ngIf="!loading" mat-table [dataSource]="usuarios" class="w-full">
 
         <ng-container matColumnDef="perfil">
-          <th mat-header-cell *matHeaderCellDef class="!pl-8 !px-6 !py-4 text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200 text-left"> 
-            Usuario 
-          </th>
-          <td mat-cell *matCellDef="let u" class="!pl-8 !px-6 !py-4 border-b border-slate-100">
-            <div class="flex items-center gap-3">
-              <div class="relative flex-shrink-0">
+          <th mat-header-cell *matHeaderCellDef class="w-[35%] !pl-10 !py-3 text-xs font-bold text-slate-400 uppercase bg-slate-50/50"> Usuario </th>
+          <td mat-cell *matCellDef="let u" class="!pl-10 !py-3">
+            <div class="flex items-center gap-4">
+              <div class="relative flex-shrink-0 shadow-sm rounded-full ring-2 ring-white">
                 <img [src]="u.perfil?.foto_perfil || 'assets/default-avatar.png'" 
-                    class="w-10 h-10 rounded-full object-cover border border-slate-200 bg-slate-100"
-                    alt="Avatar"
-                    onerror="this.src='https://ui-avatars.com/api/?name=User&background=random'">
+                     class="w-10 h-10 rounded-full object-cover bg-slate-100" 
+                     alt="Avatar"
+                     onerror="this.src='https://ui-avatars.com/api/?name=User&background=random'">
               </div>
-              
-              <div>
-                <div class="font-bold text-slate-800 text-sm">{{ u.perfil?.nombre_completo || 'Usuario Sin Nombre' }}</div>
-                <div class="text-[10px] text-slate-400 font-mono">ID: {{ u.id_usuario }}</div>
+              <div class="flex flex-col">
+                <span class="font-bold text-slate-700 text-sm">{{ u.perfil?.nombre_completo || 'Sin Nombre' }}</span>
               </div>
             </div>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="contacto">
-          <th mat-header-cell *matHeaderCellDef class="!px-6 !py-4 text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200 text-left"> 
-            Contacto 
-          </th>
-          <td mat-cell *matCellDef="let u" class="!px-6 !py-4 border-b border-slate-100">
+          <th mat-header-cell *matHeaderCellDef class="w-[30%] !px-4 !py-3 text-xs font-bold text-slate-400 uppercase bg-slate-50/50"> Contacto </th>
+          <td mat-cell *matCellDef="let u" class="!px-4 !py-3">
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-2 text-sm text-slate-600">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-                <span class="truncate max-w-[150px]">{{ u.email }}</span>
+                <mat-icon class="!w-4 !h-4 !text-[16px] text-slate-400">email</mat-icon>
+                <span class="truncate max-w-[180px]">{{ u.email }}</span>
               </div>
               <div class="flex items-center gap-2 text-xs text-slate-500">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-300" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                </svg>
+                <mat-icon class="!w-4 !h-4 !text-[16px] text-slate-300">phone</mat-icon>
                 <span>{{ u.perfil?.telefono || 'Sin teléfono' }}</span>
               </div>
             </div>
@@ -76,43 +64,31 @@
         </ng-container>
 
         <ng-container matColumnDef="rol">
-          <th mat-header-cell *matHeaderCellDef class="!px-6 !py-4 text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200 text-left"> 
-            Rol 
-          </th>
-          <td mat-cell *matCellDef="let u" class="!px-6 !py-4 border-b border-slate-100">
-            <span *ngIf="u.rol?.id === 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> ADMIN
+          <th mat-header-cell *matHeaderCellDef class="w-[15%] !px-4 !py-3 text-xs font-bold text-slate-400 uppercase bg-slate-50/50"> Rol </th>
+          <td mat-cell *matCellDef="let u" class="!px-4 !py-3">
+            <span *ngIf="u.rol?.id === 1" class="font-bold text-xs bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-100 flex w-fit items-center gap-2">
+              <mat-icon class="!w-4 !h-4 !text-[16px]">admin_panel_settings</mat-icon> ADMIN
             </span>
-            <span *ngIf="u.rol?.id !== 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
-              <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> USUARIO
+            <span *ngIf="u.rol?.id !== 1" class="font-bold text-xs bg-slate-50 text-slate-600 px-3 py-1.5 rounded-lg border border-slate-200 flex w-fit items-center gap-2">
+               <mat-icon class="!w-4 !h-4 !text-[16px]">person</mat-icon> USUARIO
             </span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef class="!pr-8 !px-6 !py-4 text-right text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200"> 
-            Acciones 
-          </th>
-          <td mat-cell *matCellDef="let u" class="!pr-8 !px-6 !py-4 border-b border-slate-100 text-right">
-            
-            <div class="flex justify-end gap-2">
-              
+          <th mat-header-cell *matHeaderCellDef class="w-[20%] !pr-10 !py-3 text-right text-xs font-bold text-slate-400 uppercase bg-slate-50/50 tracking-wider">  </th>
+          <td mat-cell *matCellDef="let u" class="!pr-10 !py-3 text-right">
+            <div class="flex justify-end gap-4">
               <button (click)="cambiarRol(u)" 
-                      class="p-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
-                      title="Cambiar Rol">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
+                      matTooltip="Cambiar Rol"
+                      class="w-9 h-9 flex items-center justify-center rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white transition-all shadow-sm">
+                <mat-icon class="!w-4 !h-4 !text-[16px]">manage_accounts</mat-icon>
               </button>
-
               <button (click)="eliminar(u.id_usuario)" 
-                      class="p-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-200 transition shadow-sm"
-                      title="Eliminar Usuario">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+                      matTooltip="Eliminar Usuario"
+                      class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                <mat-icon class="!w-4 !h-4 !text-[16px]">delete</mat-icon>
               </button>
-
             </div>
           </td>
         </ng-container>
@@ -120,13 +96,12 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 transition-colors"></tr>
       </table>
-
-      <div *ngIf="!loading && usuarios.length === 0" class="py-12 text-center opacity-60">
-        <p class="text-4xl grayscale mb-2">🍃</p>
-        <p class="text-slate-500 font-bold">No se encontraron usuarios</p>
+      
+      <div *ngIf="!loading && usuarios.length === 0" class="p-12 text-center text-slate-400 flex flex-col items-center">
+         <mat-icon class="!w-12 !h-12 !text-[48px] text-slate-200 mb-2">person_off</mat-icon>
+         <p>No se encontraron usuarios registrados.</p>
       </div>
-
     </div>
   </div>
-</div>
   <app-footer></app-footer>
+</section>

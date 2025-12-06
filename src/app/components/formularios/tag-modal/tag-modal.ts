@@ -25,12 +25,12 @@ export class TagModal {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
     this.form = this.fb.group({
-      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.minLength(3)]]
+      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.minLength(3)]],
     });
   }
 
   form = this.fb.group({
-    nombre: ['', [Validators.required, Validators.minLength(3)]]
+    nombre: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   guardar() {

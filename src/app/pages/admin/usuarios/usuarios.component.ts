@@ -9,6 +9,8 @@ import { RouterModule } from '@angular/router';
 import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
 import { Footer } from '../../../components/footer/footer';
 import { UsuariosService } from '../../../services/usuarios.service';
+import { MatIcon } from '@angular/material/icon';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -21,12 +23,14 @@ import { UsuariosService } from '../../../services/usuarios.service';
     MatProgressSpinnerModule, 
     MatTooltipModule,
     AdminNavbarComponent,
+    MatIcon,
     Footer
   ],
   templateUrl: './usuarios.component.html',
 })
 export class UsuariosComponent implements OnInit {
   private service = inject(UsuariosService);
+  private alertService = inject(AlertService);
   displayedColumns: string[] = ['perfil', 'contacto', 'rol', 'acciones'];
   
   usuarios: any[] = [];
@@ -57,22 +61,31 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  cambiarRol(usuario: any) {
-    if (!usuario || !usuario.rol) return;
+cambiarRol(usuario: any) {
+  if (!usuario || !usuario.rol) return;
 
-    const nuevoRolId = usuario.rol.id === 1 ? 2 : 1;
-    const nombreRol = nuevoRolId === 1 ? 'ADMIN' : 'USUARIO';
-    const nombreUsuario = usuario.perfil?.nombre_completo || usuario.email;
-
-    if (confirm(`¿Estás seguro de cambiar el rol de ${nombreUsuario} a ${nombreRol}?`)) {
+  const nuevoRolId = usuario.rol.id === 1 ? 2 : 1;
+  const nombreRol = nuevoRolId === 1 ? 'ADMIN' : 'USUARIO';
+  const nombreUsuario = usuario.perfil?.nombre_completo || usuario.email;
+  this.alertService.confirmar({
+    titulo: 'Confirmar cambio de Rol',
+    mensaje: `¿Estás seguro de cambiar el rol de ${nombreUsuario} a ${nombreRol}?`,
+    tipo: 'update'
+  }).subscribe(confirmado => {
+    
+    if (confirmado) {
       this.service.updateUsuario(usuario.id_usuario, { rolId: nuevoRolId }).subscribe({
         next: () => {
-            this.cargarUsuarios();
+          this.alertService.actualizado(`El rol de ${nombreUsuario} ha sido cambiado a ${nombreRol}.`);
+          this.cargarUsuarios();
         },
-        error: (err) => alert('Error al cambiar rol')
+        error: (err) => {
+          this.alertService.exito('⚠️ Error: No se pudo cambiar el rol. Intente de nuevo.',); 
+        }
       });
     }
-  }
+  });
+}
 
   eliminar(id: number) {
     if (confirm('¿Eliminar usuario permanentemente? Esta acción no se puede deshacer.')) {

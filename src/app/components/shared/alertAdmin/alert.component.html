@@ -1,0 +1,44 @@
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden font-sans border border-slate-200">
+
+        <div
+            class="p-5 flex items-center justify-center gap-3 header-text-white"
+            [ngClass]="{
+               
+                'bg-red-600': tipo === 'delete' || titulo === 'ELIMINADO',
+               
+                'bg-slate-900': tipo === 'update' || (tipo === 'success' && titulo !== 'ELIMINADO')
+            }"
+        >
+            <mat-icon class="!text-[28px]">{{ tipo === 'delete' || titulo === 'ELIMINADO' ? 'warning' : 'check_circle' }}</mat-icon>
+            <h2 class="text-xl font-bold uppercase tracking-wide">{{ titulo }}</h2>
+        </div>
+
+        <div class="p-8 text-slate-700 text-center text-lg font-medium leading-relaxed">
+            {{ mensaje }}
+        </div>
+
+        <div 
+            *ngIf="tipo !== 'success'" 
+            class="flex justify-center gap-3 p-5 border-t border-slate-100 bg-slate-50/50"
+        >
+
+            <button
+                *ngIf="tipo === 'delete' || tipo === 'update'" 
+                class="px-5 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-colors"
+                (click)="cerrar(false)"
+            >Cancelar</button>
+
+            <button
+                class="px-8 py-2.5 rounded-xl font-bold text-white shadow-md hover:-translate-y-0.5 transition-transform"
+                [ngClass]="{
+                    'bg-slate-900 hover:bg-slate-800': tipo !== 'delete',
+                    'bg-red-600 hover:bg-red-700': tipo === 'delete'
+                }"
+                (click)="cerrar(true)"
+            >
+                {{ tipo === 'delete' ? 'Confirmar' : 'Aceptar' }}
+            </button>
+        </div>
+    </div>
+</div>
