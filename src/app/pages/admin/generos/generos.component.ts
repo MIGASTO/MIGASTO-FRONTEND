@@ -10,6 +10,7 @@ import { AdminNavbarComponent } from "../../../components/admin-navbar/admin-nav
 import { Footer } from '../../../components/footer/footer';
 import { GeneroModal } from '../../../components/formularios/genero-modal/genero-modal';
 import { GenerosService } from '../../../services/generos.service';
+import { AlertService } from '../../../services/alert.service';
 
 @Component({
   selector: 'app-generos',
@@ -24,6 +25,7 @@ import { GenerosService } from '../../../services/generos.service';
 export class GenerosComponent implements OnInit {
   private service = inject(GenerosService);
   private dialog = inject(MatDialog);
+  private alertService = inject(AlertService);
 
   generos: any[] = [];
   displayedColumns: string[] = ['id', 'nombre', 'acciones'];
@@ -57,17 +59,36 @@ export class GenerosComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (genero) {
-          this.service.updateGenero(genero.id_genero, result).subscribe(() => this.cargarGeneros());
+        this.service.updateGenero(genero.id_genero, result).subscribe({
+        next: () => {
+        this.alertService.actualizado('El genero ha sido actualizado correctamente.');
+        this.cargarGeneros();
+  }});
         } else {
-          this.service.createGenero(result).subscribe(() => this.cargarGeneros());
+          this.service.createGenero(result).subscribe({
+            next: () => {
+              this.alertService.exito('Nueva genero registrado en el sistema.');
+              this.cargarGeneros();
+            }
+          });
         }
       }
     });
   }
 
   eliminar(id: number) {
-    if (confirm('¿Estás seguro de eliminar este género?')) {
-      this.service.deleteGenero(id).subscribe(() => this.cargarGeneros());
-    }
+    this.alertService.confirmar({
+        titulo: '¿Eliminar genero?',
+        mensaje: 'Esta acción no se puede deshacer. ¿Deseas continuar?',
+        tipo: 'delete'
+    }).subscribe(confirmado => {
+        if (confirmado) {
+            this.service.deleteGenero(id).subscribe(() => {
+                this.alertService.eliminado('El genero fue eliminado permanentemente.');
+                this.cargarGeneros();
+            });
+        }
+    });
   }
+  
 }

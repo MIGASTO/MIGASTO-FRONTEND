@@ -13,6 +13,7 @@ export class TagsService {
 
   // Admin crea tags globales
   createTag(data: { nombre: string }): Observable<any> {
+    console.log('Creating tag with data:', data);
     return this.http.post<any>(this.apiUrl, data);
   }
 
