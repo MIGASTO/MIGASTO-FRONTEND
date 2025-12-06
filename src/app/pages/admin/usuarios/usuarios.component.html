@@ -1,0 +1,132 @@
+<app-admin-navbar></app-admin-navbar>
+<div class="flex justify-center w-full px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+  <div class="w-full max-w-6xl bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col my-6">
+
+    <div class="px-8 py-6 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center text-indigo-600 shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-slate-800 tracking-tight">Directorio de Usuarios</h3>
+          <p class="text-slate-500 text-xs font-medium uppercase tracking-wider mt-0.5">Gestión de Roles y Accesos</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-slate-200 shadow-sm">
+        <span class="text-xs font-bold text-slate-400 uppercase">Registros:</span>
+        <span class="text-sm font-bold text-slate-700">{{ usuarios.length }}</span>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="p-20 flex flex-col items-center justify-center text-slate-400">
+      <mat-spinner diameter="40" class="mb-4"></mat-spinner>
+      <p class="text-xs font-bold tracking-wide animate-pulse">CARGANDO...</p>
+    </div>
+
+    <div *ngIf="!loading" class="overflow-x-auto">
+      
+      <table mat-table [dataSource]="usuarios" class="w-full">
+
+        <ng-container matColumnDef="perfil">
+          <th mat-header-cell *matHeaderCellDef class="!pl-8 !px-6 !py-4 text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200 text-left"> 
+            Usuario 
+          </th>
+          <td mat-cell *matCellDef="let u" class="!pl-8 !px-6 !py-4 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+              <div class="relative flex-shrink-0">
+                <img [src]="u.perfil?.foto_perfil || 'assets/default-avatar.png'" 
+                    class="w-10 h-10 rounded-full object-cover border border-slate-200 bg-slate-100"
+                    alt="Avatar"
+                    onerror="this.src='https://ui-avatars.com/api/?name=User&background=random'">
+              </div>
+              
+              <div>
+                <div class="font-bold text-slate-800 text-sm">{{ u.perfil?.nombre_completo || 'Usuario Sin Nombre' }}</div>
+                <div class="text-[10px] text-slate-400 font-mono">ID: {{ u.id_usuario }}</div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="contacto">
+          <th mat-header-cell *matHeaderCellDef class="!px-6 !py-4 text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200 text-left"> 
+            Contacto 
+          </th>
+          <td mat-cell *matCellDef="let u" class="!px-6 !py-4 border-b border-slate-100">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-2 text-sm text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                </svg>
+                <span class="truncate max-w-[150px]">{{ u.email }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-slate-300" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                </svg>
+                <span>{{ u.perfil?.telefono || 'Sin teléfono' }}</span>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="rol">
+          <th mat-header-cell *matHeaderCellDef class="!px-6 !py-4 text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200 text-left"> 
+            Rol 
+          </th>
+          <td mat-cell *matCellDef="let u" class="!px-6 !py-4 border-b border-slate-100">
+            <span *ngIf="u.rol?.id === 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-100">
+              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> ADMIN
+            </span>
+            <span *ngIf="u.rol?.id !== 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span> USUARIO
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef class="!pr-8 !px-6 !py-4 text-right text-xs uppercase font-bold text-slate-500 bg-slate-50 border-b border-slate-200"> 
+            Acciones 
+          </th>
+          <td mat-cell *matCellDef="let u" class="!pr-8 !px-6 !py-4 border-b border-slate-100 text-right">
+            
+            <div class="flex justify-end gap-2">
+              
+              <button (click)="cambiarRol(u)" 
+                      class="p-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 transition shadow-sm"
+                      title="Cambiar Rol">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </button>
+
+              <button (click)="eliminar(u.id_usuario)" 
+                      class="p-1.5 rounded bg-white border border-slate-200 text-slate-500 hover:text-red-600 hover:border-red-200 transition shadow-sm"
+                      title="Eliminar Usuario">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 transition-colors"></tr>
+      </table>
+
+      <div *ngIf="!loading && usuarios.length === 0" class="py-12 text-center opacity-60">
+        <p class="text-4xl grayscale mb-2">🍃</p>
+        <p class="text-slate-500 font-bold">No se encontraron usuarios</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+  <app-footer></app-footer>

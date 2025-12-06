@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -16,7 +15,8 @@ export class Login {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  loginError: string | null = null; 
+  loginError: string | null = null;
+  loading: boolean = false;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -24,36 +24,42 @@ export class Login {
   });
 
   onLogin() {
-    this.loginError = null; 
+    this.loginError = null;
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    this.auth.login(this.loginForm.value as { email: string; password: string }).subscribe({
-      next: res => {
+    this.loading = true;
 
-        try {
-          const tokenRecibido = res.access_token;
-          const decodedToken: any = jwtDecode(tokenRecibido);
-          
-          console.log('--- DECODIFICACIÓN INMEDIATA ---');
-          console.log('Token decodificado en Login:', decodedToken);
-          console.log('¿Tiene "exp"?_ ', decodedToken.hasOwnProperty('exp'));
-          console.log('--- FIN DE DEPURACIÓN ---');
+    const credentials = {
+      email: this.loginForm.value.email!,
+      password: this.loginForm.value.password!
+    };
 
-        } catch (e) {
-          console.error('Error decodificando el token en el login', e);
+    this.auth.login(credentials).subscribe({
+      next: (res) => {
+        this.loading = false;
+
+        if (this.auth.isAdmin()) {
+            console.log('👑 Rol Admin detectado. Redirigiendo al panel de control...');
+            this.router.navigate(['/admin/dashboard']);
+        } else {
+            console.log('👤 Usuario estándar. Redirigiendo a home...');
+            this.router.navigate(['/home']);
         }
-
-        console.log('✅ Login correcto. Redirigiendo a /home...');
-        this.router.navigate(['/home']);
       },
-      error: err => {
-        const message = err?.error?.message || 'Error de conexión o credenciales inválidas.';
-        console.error('⚠️ Error al iniciar sesión:', message, err);
-        this.loginError = message; 
+      error: (err) => {
+        this.loading = false;
+
+        if (err.status === 401 || err.status === 403) {
+            this.loginError = 'Correo o contraseña incorrectos.';
+        } else if (err.status === 0) {
+            this.loginError = 'No hay conexión con el servidor. Revisa tu internet o si el backend está encendido.';
+        } else {
+            this.loginError = err.error?.message || 'Ocurrió un error inesperado. Intenta de nuevo.';
+        }
       },
     });
   }

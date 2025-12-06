@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AbonoService } from '../../services/abono.service';
-import { Prestamo } from '../../services/prestamos.service';
+import { AbonoService } from '../../../services/abono.service';
+import { Prestamo } from '../../../services/prestamos.service';
 
 @Component({
   selector: 'app-abono-modal',

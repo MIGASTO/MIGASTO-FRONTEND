@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Footer } from '../../components/footer/footer';
+import { AbonoModal } from '../../components/formularios/abono-modal/abono-modal';
 import { HistorialAbonosModal } from '../../components/historial-abonos-modal/historial-abonos-modal';
 import { Navbar } from '../../components/navbar/navbar';
 import { Prestamo, PrestamosService } from '../../services/prestamos.service';
-import { AbonoModal } from '../abono-modal/abono-modal';
 
 @Component({
   selector: 'app-prestamos',
