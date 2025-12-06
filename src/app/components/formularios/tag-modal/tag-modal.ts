@@ -23,19 +23,38 @@ export class TagModal {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<TagModal>);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
-    this.form = this.fb.group({
-      nombre: [this.data ? this.data.nombre : '', [Validators.required, Validators.minLength(3)]],
-    });
-  }
-
+  // Definición del formulario con el nuevo campo y validación
   form = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
+    // 1=Ingreso, 2=Gasto. Asumimos 2 por defecto.
+    tipo_categoria: [2, [Validators.required]], 
   });
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    if (this.data) {
+      // Para la EDICIÓN, necesitamos determinar qué ID de categoría tiene el tag actual.
+      // El API devuelve 'tipo_categoria' como string ("gasto" o "ingreso").
+      const categoriaId = this.data.tipo_categoria === 'ingreso' ? 1 : 2;
+
+      this.form.patchValue({
+        nombre: this.data.nombre,
+        tipo_categoria: categoriaId, // Usamos el ID para el select
+      });
+    }
+  }
 
   guardar() {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+      const formValue = this.form.value;
+      
+      // Mapeo del ID a los datos que el API espera:
+      // Tu API espera: { id_categoria: 2, nombre: "abono" }
+      const payload = {
+        id_categoria: formValue.tipo_categoria, // 1 ó 2
+        nombre: formValue.nombre // Ej: "abono"
+      };
+
+      this.dialogRef.close(payload);
     }
   }
 
