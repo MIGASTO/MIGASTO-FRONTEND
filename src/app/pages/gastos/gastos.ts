@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { GastoForm } from '../../components/formularios/gastos-form/gastos-form';
@@ -9,7 +10,7 @@ import { GastosService } from '../../services/gasto.service';
 @Component({
   selector: 'app-gastos',
   standalone: true,
-  imports: [CommonModule, GastoForm, Navbar, RouterModule, Footer],
+  imports: [CommonModule, GastoForm, Navbar, RouterModule, Footer, MatIconModule],
   templateUrl: './gastos.html',
 })
 export class Gastos {

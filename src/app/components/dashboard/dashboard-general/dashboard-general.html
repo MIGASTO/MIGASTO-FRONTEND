@@ -1,0 +1,162 @@
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative">
+  
+  <app-navbar></app-navbar>
+
+  <main class="flex-grow w-full max-w-[1600px] mx-auto p-6 lg:p-8 pt-20">
+
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+      
+      <div class="text-left w-full md:w-auto">
+        <div class="flex items-center gap-3">
+            <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
+                <span class="text-3xl"><mat-icon class="!w-10 !h-10 !text-[40px] bg-indigo-700">grid_view</mat-icon></span>
+            </div>
+            <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">
+              Visión <span class="text-indigo-600">General</span>
+            </h2>
+        </div>
+        <p class="text-slate-500 text-lg mt-2 ml-1">
+          Estado actual de tu salud financiera.
+        </p>
+      </div>
+
+      <div class="flex gap-2 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
+        <button
+          class="bg-indigo-50 text-indigo-700 px-5 py-2.5 rounded-xl font-bold shadow-sm flex items-center gap-2 border border-indigo-100"
+        >
+          <span><mat-icon>account_balance</mat-icon></span>General
+        </button>
+        
+        <button
+          (click)="navegarA('/gastos/dashboard')"
+          class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 transition flex items-center gap-2"
+        >
+          <span><mat-icon>trending_down</mat-icon></span> Gastos
+        </button>
+
+        <button
+          (click)="navegarA('/ingresos/dashboard')"
+          class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition flex items-center gap-2"
+        >
+          <span><mat-icon>trending_up</mat-icon></span> Ingresos
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="cargando" class="text-center py-20 opacity-60">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-indigo-500 mx-auto mb-4"></div>
+      <p class="text-slate-500 text-xl font-medium">Calculando balance...</p>
+    </div>
+
+    <div *ngIf="!cargando" class="space-y-8 animate-in fade-in duration-500">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300 relative overflow-hidden">
+            <div class="absolute right-0 top-0 h-full w-1" [ngClass]="balanceTotal >= 0 ? 'bg-indigo-500' : 'bg-red-500'"></div>
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Saldo Disponible</h3>
+                <span class="text-indigo-100 bg-indigo-600 p-1.5 rounded-lg text-xs"><mat-icon>account_balance_wallet</mat-icon></span>
+            </div>
+            <p class="text-4xl font-black tracking-tight" [ngClass]="balanceTotal >= 0 ? 'text-indigo-600' : 'text-red-500'">
+              ${{ balanceTotal | number:'1.0-0' }}
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Ingresos</h3>
+            <span class="text-emerald-100 bg-emerald-600 p-1.5 rounded-lg text-xs"><mat-icon>trending_up</mat-icon></span>
+          </div>
+          <p class="text-4xl font-black text-emerald-600 tracking-tight">
+            ${{ totalIngresos | number:'1.0-0' }}
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Gastos</h3>
+            <span class="text-red-100 bg-red-500 p-1.5 rounded-lg text-xs"><mat-icon>trending_down</mat-icon></span>
+          </div>
+          <p class="text-4xl font-black text-red-500 tracking-tight">
+            ${{ totalGastos | number:'1.0-0' }}
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Margen Ahorro</h3>
+              <span class="text-amber-100 bg-amber-500 p-1.5 rounded-lg text-xs"><mat-icon>savings</mat-icon></span>
+            </div>
+            <p class="text-4xl font-black text-slate-700 tracking-tight">
+              {{ ahorroPorcentaje | number:'1.0-1' }}%
+            </p>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
+                <div class="bg-amber-500 h-full rounded-full transition-all duration-1000" [style.width.%]="ahorroPorcentaje > 0 ? ahorroPorcentaje : 0"></div>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col h-[450px]">
+            <h3 class="text-lg font-bold text-slate-700 mb-6 text-center border-b border-slate-100 pb-3">
+              Tendencia: Ingresos vs Gastos
+            </h3>
+            <div class="flex-grow relative w-full h-full">
+              <canvas #comparisonCanvas></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100 flex flex-col h-[450px]">
+            <h3 class="text-lg font-bold text-slate-700 mb-6 text-center border-b border-slate-100 pb-3">
+              Proporción
+            </h3>
+            <div class="flex-grow relative w-full h-full flex items-center justify-center">
+                <canvas #balanceCanvas></canvas>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100">
+          <div class="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
+              <div class="text-sky-600 flex items-center gap-2">
+                  <span class="text-2xl"><mat-icon>workspace_premium</mat-icon></span>
+                  <h3 class="text-lg font-bold text-slate-700">Movimientos Destacados (Top 5)</h3>
+              </div>
+          </div>
+          
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-xs text-slate-400 uppercase border-b border-slate-100">
+                        <th class="py-3 font-bold">Tipo</th>
+                        <th class="py-3 font-bold">Descripción</th>
+                        <th class="py-3 font-bold text-right">Monto</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <tr *ngFor="let mov of ultimosMovimientos" class="border-b border-slate-50 last:border-0 hover:bg-slate-50 transition">
+                        <td class="py-3">
+                            <span *ngIf="mov.tipo === 'ingreso'" class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-lg text-xs font-bold border border-emerald-200">INGRESO</span>
+                            <span *ngIf="mov.tipo === 'gasto'" class="bg-red-50 text-red-700 px-2 py-1 rounded-lg text-xs font-bold border border-red-200">GASTO</span>
+                        </td>
+                        <td class="py-3 font-medium text-slate-600">{{ mov.descripcion }}</td>
+                        <td [class]="'py-3 font-bold text-right ' + (mov.tipo === 'ingreso' ? 'text-emerald-600' : 'text-red-500')">
+                            {{ mov.tipo === 'ingreso' ? '+' : '-' }} ${{ mov.monto | number:'1.0-0' }}
+                        </td>
+                    </tr>
+                    <tr *ngIf="ultimosMovimientos.length === 0">
+                        <td colspan="3" class="py-8 text-center text-slate-400 italic">No hay movimientos recientes.</td>
+                    </tr>
+                </tbody>
+            </table>
+          </div>
+      </div>
+
+    </div>
+  </main>
+  <app-footer></app-footer>
+</section>

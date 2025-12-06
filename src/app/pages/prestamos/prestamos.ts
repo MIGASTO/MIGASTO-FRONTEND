@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from "@angular/material/icon";
 import { Footer } from '../../components/footer/footer';
 import { AbonoModal } from '../../components/formularios/abono-modal/abono-modal';
 import { HistorialAbonosModal } from '../../components/historial-abonos-modal/historial-abonos-modal';
@@ -10,7 +11,7 @@ import { Prestamo, PrestamosService } from '../../services/prestamos.service';
 @Component({
   selector: 'app-prestamos',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Navbar, AbonoModal, HistorialAbonosModal, Footer],
+  imports: [CommonModule, ReactiveFormsModule, Navbar, AbonoModal, HistorialAbonosModal, Footer, MatIconModule],
   templateUrl: './prestamos.html',
 })
 export class Prestamos implements OnInit {

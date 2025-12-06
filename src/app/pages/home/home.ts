@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
@@ -9,7 +10,7 @@ import { BalanceService, BalanceSummary } from '../../services/balance.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, Navbar, HttpClientModule, Footer], 
+  imports: [CommonModule, RouterModule, Navbar, HttpClientModule, Footer, MatIconModule], 
   templateUrl: './home.html',
 })
 export class Home implements OnInit {

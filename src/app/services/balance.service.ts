@@ -1,7 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http'; // <--- IMPORTANTE: HttpParams
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
 
 export interface BalanceSummary {
   totalGastos: number;
@@ -40,15 +39,30 @@ export class BalanceService {
 
   constructor(private http: HttpClient) {}
 
-  obtenerResumen(): Observable<BalanceSummary> {
-    return this.http.get<BalanceSummary>(`${this.apiUrl}/balance`);
+  obtenerResumen(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/balance`);
   }
 
-  obtenerEstadisticasGastos(): Observable<EstadisticasGastos> {
-    return this.http.get<EstadisticasGastos>(`${this.apiUrl}/estadisticas/gastos`);
+  // CORRECCIÓN AQUÍ 👇
+  obtenerEstadisticasGastos(fechaInicio?: string, fechaFin?: string): Observable<any> {
+    let params = new HttpParams();
+
+    // Si existen las fechas, las agregamos
+    if (fechaInicio) params = params.set('fechaInicio', fechaInicio);
+    if (fechaFin) params = params.set('fechaFin', fechaFin);
+
+    // ¡IMPORTANTE! Pasamos { params } como segundo argumento
+    return this.http.get<any>(`${this.apiUrl}/estadisticas/gastos`, { params });
   }
 
-  obtenerEstadisticasIngresos(): Observable<EstadisticasIngresos> {
-    return this.http.get<EstadisticasIngresos>(`${this.apiUrl}/estadisticas/ingresos`);
+  // CORRECCIÓN AQUÍ 👇
+  obtenerEstadisticasIngresos(fechaInicio?: string, fechaFin?: string): Observable<any> {
+    let params = new HttpParams();
+
+    if (fechaInicio) params = params.set('fechaInicio', fechaInicio);
+    if (fechaFin) params = params.set('fechaFin', fechaFin);
+
+    // ¡IMPORTANTE! Pasamos { params } como segundo argumento
+    return this.http.get<any>(`${this.apiUrl}/estadisticas/ingresos`, { params });
   }
 }

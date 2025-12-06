@@ -7,7 +7,7 @@
             <div class="text-left w-full md:w-auto">
                 <div class="flex items-center gap-3">
                     <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200">
-                        <span class="text-3xl">📊</span>
+                        <span class="text-3xl"><mat-icon class="!w-10 !h-10 !text-[40px] bg-red-700">trending_down</mat-icon></span>
                     </div>
                     <h2 class="text-4xl font-extrabold text-slate-800 tracking-tight">
                         Dashboard de <span class="text-red-500">Gastos</span>
@@ -20,22 +20,22 @@
 
             <div class="flex gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-200">
                 <button
-                    (click)="navegarA('/home')"
-                    class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-50 hover:text-sky-600 transition flex items-center gap-2"
+                    (click)="navegarA('/dashboard-general')"
+                    class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-slate-50 hover:text-indigo-700 transition flex items-center gap-2"
                 >
-                    🏠 General
+                    <mat-icon>account_balance</mat-icon>General
                 </button>
                 <button
                     (click)="navegarA('/ingresos/dashboard')"
                     class="px-5 py-2.5 rounded-xl font-bold text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition flex items-center gap-2"
                 >
-                    💰 Ingresos
+                    <mat-icon>trending_up</mat-icon>Ingresos
                 </button>
                 <button
                     (click)="navegarA('/gastos')"
                     class="bg-red-100 text-red-700 px-5 py-2.5 rounded-xl font-bold shadow-sm flex items-center gap-2 border border-red-200"
                 >
-                    📉 Gestionar
+                    <mat-icon>receipt_long</mat-icon>Gestionar
                 </button>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Gastos</h3>
-                        <span class="text-red-100 bg-red-600 p-1.5 rounded-lg text-xs">💸</span>
+                        <span class="text-red-100 bg-red-600 p-1.5 rounded-lg text-xs"><mat-icon>money-off</mat-icon></span>
                     </div>
                     <p class="text-4xl font-black text-red-500 tracking-tight">
                         ${{ totalGastos | number:'1.0-0' }}
@@ -62,7 +62,7 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Promedio / Gasto</h3>
-                        <span class="text-orange-100 bg-orange-500 p-1.5 rounded-lg text-xs">📉</span>
+                        <span class="text-orange-100 bg-orange-500 p-1.5 rounded-lg text-xs"><mat-icon>equalizer</mat-icon></span>
                     </div>
                     <p class="text-4xl font-black text-orange-500 tracking-tight">
                         ${{ promedioGastos | number:'1.0-0' }}
@@ -72,7 +72,7 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 hover:shadow-xl transition duration-300">
                     <div class="flex justify-between items-start mb-2">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">N° Transacciones</h3>
-                        <span class="text-yellow-100 bg-yellow-500 p-1.5 rounded-lg text-xs">#️⃣</span>
+                        <span class="text-yellow-100 bg-yellow-500 p-1.5 rounded-lg text-xs"><mat-icon>list_alt</mat-icon></span>
                     </div>
                     <p class="text-4xl font-black text-slate-700 tracking-tight">
                         {{ cantidadGastos }}
@@ -113,8 +113,8 @@
             </div>
 
             <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-100">
-                <div class="flex items-center gap-2 mb-6 border-b border-slate-100 pb-3">
-                    <span class="text-2xl">⚠️</span>
+                <div class="text-red-700 flex items-center gap-2 mb-6 border-b border-slate-100 pb-3">
+                    <span class="text-2xl"><mat-icon>warning</mat-icon></span>
                     <h3 class="text-lg font-bold text-slate-700">Top Gastos Más Altos</h3>
                 </div>
                 <div class="relative w-full h-[300px]">
@@ -124,8 +124,5 @@
 
         </div>
     </main>
-
-    <footer class="p-4 bg-stone-200 text-center text-sm text-slate-600 border-t border-white/10">
-        © 2025 MiGasto - Todos los derechos reservados
-    </footer>
+    <app-footer></app-footer>
 </section>

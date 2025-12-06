@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './components/dashboard/dashboard';
 import { DashboardGastos } from './components/dashboard/dashboard-gastos/dashboard-gastos';
 import { DashboardIngresos } from './components/dashboard/dashboard-ingresos/dashboard-ingresos';
 import { ProfileForm } from './components/formularios/profile-form/profile-form';
@@ -11,6 +10,7 @@ import { Ingresos } from './pages/ingresos/ingresos';
 import { Profile } from './pages/profile/profile';
 
 
+import { DashboardGeneral } from './components/dashboard/dashboard-general/dashboard-general';
 import { adminGuard } from './interceptor/guards/admin.guard';
 import { authGuard } from './interceptor/guards/auth.guard';
 import { AdminHomeComponent } from './pages/admin/admin-home/admin-home';
@@ -72,8 +72,8 @@ export const routes: Routes = [
         canActivate: [authGuard] 
     },
     {
-        path:'dashboard',
-        component: Dashboard,
+        path:'dashboard-general',
+        component: DashboardGeneral,
         canActivate: [authGuard] 
     },
     {

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { IngresoForm } from '../../components/formularios/ingresos-form/ingresos-form';
@@ -9,7 +10,7 @@ import { IngresosService } from '../../services/ingreso.service';
 @Component({
   selector: 'app-ingresos',
   standalone: true,
-  imports: [CommonModule, IngresoForm, Navbar, RouterModule, Footer],
+  imports: [CommonModule, IngresoForm, Navbar, RouterModule, Footer, MatIconModule],
   templateUrl: './ingresos.html',
 })
 export class Ingresos {

@@ -87,7 +87,7 @@
                     <div class="pt-3 mt-4 border-t border-slate-100">
 
                         <span *ngIf="p.fecha_limite" class="block mb-2 text-xs text-slate-400 flex items-center gap-1">
-                            📅 Límite: {{ p.fecha_limite | date:'mediumDate' }}
+                            <mat-icon>today_icon</mat-icon> Límite: {{ p.fecha_limite | date:'mediumDate' }}
                         </span>
 
                         <div class="flex items-center justify-between">
@@ -118,7 +118,7 @@
                         
                                 <span *ngIf="p.estado === 'pagado'" 
                                     class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold border border-slate-200">
-                                    ✅ Pagado
+                                    Pagado <mat-icon class="!w-4 !h-4 !text-[16px]">done_all</mat-icon>
                                 </span>
                             </div>
                         </div>
