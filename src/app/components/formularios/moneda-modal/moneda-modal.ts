@@ -1,11 +1,11 @@
-import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, Inject, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-moneda-dialog',
@@ -40,7 +40,6 @@ export class MonedaModal {
 
   guardar() {
     if (this.form.valid) {
-      // Forzamos el código a mayúsculas antes de enviar
       const value = {
         ...this.form.value,
         codigo: this.form.value.codigo?.toUpperCase()

@@ -1,24 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { IngresoForm } from '../../components/formularios/ingresos-form/ingresos-form';
 import { Navbar } from '../../components/navbar/navbar';
+import { AlertService } from '../../services/alert.service';
 import { IngresosService } from '../../services/ingreso.service';
 
 @Component({
   selector: 'app-ingresos',
   standalone: true,
-  imports: [CommonModule, IngresoForm, Navbar, RouterModule, Footer, MatIconModule],
+  imports: [CommonModule, Navbar, RouterModule, Footer, MatIconModule, MatDialogModule], 
   templateUrl: './ingresos.html',
 })
 export class Ingresos {
   ingresos: any[] = [];
-  mostrarFormulario = false;
-  ingresoSeleccionado: any = null;
-
-  constructor(private ingresosService: IngresosService) {}
+  
+  constructor(
+    private ingresosService: IngresosService,
+    private alertService: AlertService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit() {
     this.cargarIngresos();
@@ -28,6 +32,22 @@ export class Ingresos {
     this.ingresosService.obtenerIngresos().subscribe({
       next: (data) => (this.ingresos = data),
       error: (err) => console.error('Error al cargar ingresos:', err),
+    });
+  }
+
+  abrirFormulario(ingresoEditar?: any) {
+    const dialogRef = this.dialog.open(IngresoForm, {
+      width: '95%',
+      maxWidth: '600px',
+      disableClose: true,
+      data: ingresoEditar ? { ...ingresoEditar } : null
+    });
+
+    // CUANDO SE CIERRA EL MODAL
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        this.guardarIngreso(resultado);
+      }
     });
   }
 
@@ -42,45 +62,47 @@ export class Ingresos {
       fecha: fechaFormateada,
       id_categoria: ingreso.id_categoria,
       id_moneda: ingreso.id_moneda ?? null,
-      tags: Array.isArray(ingreso.tags)
-        ? ingreso.tags
-        : ingreso.tags
-        ? [ingreso.tags]
-        : [],
+      tags: Array.isArray(ingreso.tags) ? ingreso.tags : [],
     };
 
     if (ingreso.id_movimiento) {
-      this.ingresosService
-        .actualizarIngreso(ingreso.id_movimiento, datosActualizados)
+      this.ingresosService.actualizarIngreso(ingreso.id_movimiento, datosActualizados)
         .subscribe({
-          next: () => this.cargarIngresos(),
-          error: (err) => console.error('Error al actualizar ingreso:', err),
+          next: () => {
+            this.cargarIngresos();
+            this.alertService.actualizado('Ingreso actualizado correctamente');
+          },
+          error: (err) => console.error(err),
         });
     } else {
-      this.ingresosService
-        .crearIngreso(datosActualizados)
-        .subscribe(() => this.cargarIngresos());
+      this.ingresosService.crearIngreso(datosActualizados)
+        .subscribe({
+          next: () => {
+            this.cargarIngresos();
+            this.alertService.exito('Ingreso registrado correctamente');
+          },
+          error: (err) => console.error(err)
+        });
     }
-
-    this.cerrarFormulario();
-  }
-
-  editarIngreso(ingreso: any) {
-    this.ingresoSeleccionado = { ...ingreso };
-    this.mostrarFormulario = true;
   }
 
   eliminarIngreso(ingreso: any) {
-    if (confirm('¿Deseas eliminar este ingreso?')) {
-      this.ingresosService
-        .eliminarIngreso(ingreso.id_movimiento)
-        .subscribe(() => this.cargarIngresos());
-    }
-  }
-
-  cerrarFormulario() {
-    this.ingresoSeleccionado = null;
-    this.mostrarFormulario = false;
+    this.alertService.confirmar({
+      titulo: '¿Eliminar Ingreso?',
+      mensaje: 'Esta acción no se puede deshacer.',
+      tipo: 'delete'
+    }).subscribe((confirmado) => {
+      if (confirmado) {
+        this.ingresosService.eliminarIngreso(ingreso.id_movimiento)
+          .subscribe({
+            next: () => {
+              this.cargarIngresos();
+              this.alertService.eliminado('Ingreso eliminado correctamente');
+            },
+            error: (err) => console.error(err)
+          });
+      }
+    });
   }
 
   getTagNames(ingreso: any): string {

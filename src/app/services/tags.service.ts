@@ -11,17 +11,22 @@ export class TagsService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  // Admin crea tags globales
-  createTag(data: { nombre: string }): Observable<any> {
-    console.log('Creating tag with data:', data);
+  getTagsGastos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/gastos`);
+  }
+
+  getTagsIngresos(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/ingresos`);
+  }
+
+  createTag(data: { nombre: string, id_categoria: number }): Observable<any> {
     return this.http.post<any>(this.apiUrl, data);
   }
 
-  updateTag(id: number, data: { nombre: string }): Observable<any> {
-  return this.http.patch<any>(`${this.apiUrl}/${id}`, data);
+  updateTag(id: number, data: any): Observable<any> {
+    return this.http.patch<any>(`${this.apiUrl}/${id}`, data);
   }
 
-  
   deleteTag(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }

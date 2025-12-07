@@ -227,7 +227,7 @@ renderBarChart(data: any) {
         label: 'Monto',
         data: data.map((item: any) => item.monto),
         backgroundColor: '#ef4444',
-        borderRadius: 5 // Opcional: bordes redondeados en las barras
+        borderRadius: 5 
       }]
     },
     options: {
@@ -236,11 +236,10 @@ renderBarChart(data: any) {
       plugins: {
         legend: { display: false },
         title: { display: true, text: 'Top Gastos Más Altos' },
-        // Configuración del Tooltip para ver el nombre completo al pasar el mouse
         tooltip: {
           callbacks: {
             title: (tooltipItems) => {
-              return tooltipItems[0].label; // Muestra el nombre completo aquí
+              return tooltipItems[0].label; 
             }
           }
         }
@@ -249,13 +248,10 @@ renderBarChart(data: any) {
         y: { beginAtZero: true },
         x: {
           ticks: {
-            maxRotation: 0, // Obliga a que no rote
+            maxRotation: 0, 
             minRotation: 0,
-            // Función para recortar el texto
             callback: function(value, index, values) {
-              // Obtenemos el label original
               const label = this.getLabelForValue(value as number);
-              // Si es muy largo, lo cortamos
               if (label.length > 15) {
                 return label.substr(0, 15) + '...';
               }
