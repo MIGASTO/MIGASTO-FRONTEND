@@ -8,6 +8,8 @@ import { HistorialAbonosModal } from '../../components/historial-abonos-modal/hi
 import { Navbar } from '../../components/navbar/navbar';
 import { Prestamo, PrestamosService } from '../../services/prestamos.service';
 
+import { AlertService } from '../../services/alert.service';
+
 @Component({
   selector: 'app-prestamos',
   standalone: true,
@@ -17,6 +19,7 @@ import { Prestamo, PrestamosService } from '../../services/prestamos.service';
 export class Prestamos implements OnInit {
   private fb = inject(FormBuilder);
   private prestamosService = inject(PrestamosService);
+  private alertService = inject(AlertService);
   
 
   prestamos: Prestamo[] = [];
@@ -40,8 +43,6 @@ export class Prestamos implements OnInit {
     
     this.prestamosService.getPrestamosDetails().subscribe({
       next: (response: any) => {
-        
-
         if (response.data && Array.isArray(response.data)) {
           this.prestamos = response.data;
         } 
@@ -51,7 +52,6 @@ export class Prestamos implements OnInit {
         else {
           this.prestamos = [];
         }
-
         this.loading = false;
       },
       error: (err) => {
@@ -75,23 +75,35 @@ export class Prestamos implements OnInit {
 
     this.prestamosService.crearPrestamo(nuevo).subscribe({
       next: () => {
+        this.alertService.exito('Préstamo creado correctamente');
         this.prestamoForm.reset();
         this.cargarPrestamos(); 
       },
       error: (err) => {
         console.error(err);
         this.loading = false;
-        alert('Error al crear préstamo');
+        this.alertService.confirmar({
+            titulo: 'ERROR',
+            mensaje: 'No se pudo crear el préstamo. Intente nuevamente.',
+            tipo: 'update'
+        });
       }
     });
   }
 
   eliminarPrestamo(id: number) {
-    if (confirm('¿Eliminar este préstamo y todos sus abonos?')) {
-      this.prestamosService.eliminarPrestamo(id).subscribe(() => {
-        this.cargarPrestamos();
-      });
-    }
+    this.alertService.confirmar({
+        titulo: '¿ELIMINAR PRÉSTAMO?',
+        mensaje: 'Se borrará el préstamo y todo su historial de abonos. Esta acción no se puede deshacer.',
+        tipo: 'delete'
+    }).subscribe((confirmado) => {
+        if (confirmado) {
+            this.prestamosService.eliminarPrestamo(id).subscribe(() => {
+                this.alertService.eliminado('Préstamo eliminado permanentemente');
+                this.cargarPrestamos();
+            });
+        }
+    });
   }
 
   abrirModalAbono(prestamo: Prestamo) {
@@ -104,6 +116,7 @@ export class Prestamos implements OnInit {
 
   onAbonoExitoso() {
     this.cerrarModal();
+    this.alertService.exito('Abono registrado con éxito');
     this.cargarPrestamos(); 
   }
 
@@ -121,6 +134,7 @@ export class Prestamos implements OnInit {
   cerrarHistorial() {
     this.historialIdSeleccionado = null;
   }
+  
   onHistorialChange() {
     this.cargarPrestamos();
   }

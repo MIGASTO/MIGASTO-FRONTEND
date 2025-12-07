@@ -21,6 +21,7 @@ import { TagsComponent } from './pages/admin/tags/tags.component';
 import { UsuariosComponent } from './pages/admin/usuarios/usuarios.component';
 import { ResetPassword } from './pages/auth/reset-password/reset-password';
 import { Prestamos } from './pages/prestamos/prestamos';
+import { TagsUser } from './pages/tags-user/tags-user';
 
 export const routes: Routes = [
 
@@ -110,6 +111,12 @@ export const routes: Routes = [
     {
         path : 'prestamos',
         component: Prestamos,
+        canActivate: [authGuard]
+    },
+
+    {
+        path : 'tags-user',
+        component: TagsUser,
         canActivate: [authGuard]
     },
 

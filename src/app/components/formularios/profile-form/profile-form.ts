@@ -5,6 +5,8 @@ import { Navbar } from '../../../components/navbar/navbar';
 import { PerfilService } from '../../../services/profile.service';
 import { Footer } from '../../footer/footer';
 
+import { AlertService } from '../../../services/alert.service';
+
 @Component({
   imports: [Navbar, ReactiveFormsModule, RouterModule, Footer],
   selector: 'app-profile-form',
@@ -16,6 +18,7 @@ export class ProfileForm implements OnInit {
   constructor(
     private fb: FormBuilder,
     private perfilService: PerfilService,
+    private alertService: AlertService,
     private router: Router
   ) {}
 
@@ -39,10 +42,17 @@ export class ProfileForm implements OnInit {
 
     this.perfilService.actualizarPerfil(this.form.value).subscribe({
       next: () => {
-        alert('Perfil actualizado correctamente');
+        this.alertService.actualizado('Perfil actualizado correctamente');
         this.router.navigate(['/profile']);
       },
-      error: (err) => console.error('Error al actualizar perfil:', err),
+      error: (err) => {
+        console.error('Error al actualizar perfil:', err);
+        this.alertService.confirmar({
+            titulo: 'ERROR',
+            mensaje: 'No se pudo actualizar el perfil.',
+            tipo: 'update'
+        });
+      }
     });
   }
 }

@@ -228,17 +228,16 @@ renderBarChart(data: any) {
         datasets: [{
           label: 'Monto',
           data: data.map((item: any) => item.monto),
-          backgroundColor: '#10b981', // Color verde (Emerald)
-          borderRadius: 4 // Un pequeño borde redondeado queda mejor
+          backgroundColor: '#10b981',
+          borderRadius: 4 
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false, // IMPORTANTE: Para que respete la altura del div padre
+        maintainAspectRatio: false, 
         plugins: {
           legend: { display: false },
           title: { display: true, text: 'Top Ingresos Más Altos' },
-          // Tooltip: Muestra el nombre completo al pasar el mouse
           tooltip: {
             callbacks: {
               title: (tooltipItems) => {
@@ -251,9 +250,8 @@ renderBarChart(data: any) {
           y: { beginAtZero: true },
           x: {
             ticks: {
-              maxRotation: 0, // Evita que se incline
+              maxRotation: 0,
               minRotation: 0,
-              // Función para recortar el texto si es muy largo
               callback: function(value, index, values) {
                 const label = this.getLabelForValue(value as number);
                 if (label.length > 15) {

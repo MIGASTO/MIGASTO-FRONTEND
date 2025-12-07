@@ -6,11 +6,11 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
+import { MatIcon } from '@angular/material/icon';
 import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
 import { Footer } from '../../../components/footer/footer';
-import { UsuariosService } from '../../../services/usuarios.service';
-import { MatIcon } from '@angular/material/icon';
 import { AlertService } from '../../../services/alert.service';
+import { UsuariosService } from '../../../services/usuarios.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -87,12 +87,22 @@ cambiarRol(usuario: any) {
   });
 }
 
+
+
   eliminar(id: number) {
-    if (confirm('¿Eliminar usuario permanentemente? Esta acción no se puede deshacer.')) {
-      this.service.deleteUsuario(id).subscribe({
-        next: () => this.cargarUsuarios(),
-        error: (err) => alert('Error al eliminar usuario')
-      });
-    }
+    this.alertService.confirmar({
+        titulo: '¿Eliminar Usuario?',
+        mensaje: 'Esta acción no se puede deshacer. ¿Deseas continuar?',
+        tipo: 'delete'
+    }).subscribe(confirmado => {
+        if (confirmado) {
+            this.service.deleteUsuario(id).subscribe(() => {
+                this.alertService.eliminado('El usuario fue eliminado permanentemente.');
+                this.cargarUsuarios();
+            });
+        } else {
+          this.alertService.exito('⚠️ Error: No se pudo eliminar el usuario. Intente de nuevo.',); 
+        }
+    }); 
   }
 }
