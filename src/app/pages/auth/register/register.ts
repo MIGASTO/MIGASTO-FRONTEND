@@ -3,6 +3,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { GenerosService } from '../../../services/generos.service';
 
 @Component({
   selector: 'app-register',
@@ -14,14 +15,10 @@ export class Register implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private genero = inject(GenerosService);
 
 
-  generos = [
-    { id: 1, nombre: 'Masculino' },
-    { id: 2, nombre: 'Femenino' },
-    { id: 3, nombre: 'Otro' },
-    { id: 4, nombre: 'Prefiero no decirlo' }
-  ];
+  generos: any[] = [];
 
   registerError: string | null = null;
 
@@ -36,7 +33,9 @@ export class Register implements OnInit {
   });
 
   ngOnInit() {
-
+      this.genero.getGeneros().subscribe({
+      next: (data) => this.generos = data
+    });
   }
 
   onSubmit() {
