@@ -60,17 +60,14 @@ export class TagsUser implements OnInit {
     });
   }
 
-  // CORRECCIÓN PRINCIPAL AQUÍ 👇
   guardarTag(datosFormulario: any, idTagExistente?: number) {
-    
-    // Creamos el payload INCLUYENDO id_categoria
+
     const payload = {
         nombre: datosFormulario.nombre,
-        id_categoria: Number(datosFormulario.id_categoria) // <--- ESTO FALTABA
+        id_categoria: Number(datosFormulario.id_categoria)
     };
 
     if (idTagExistente) {
-      // --- ACTUALIZAR ---
       this.service.updateTag(idTagExistente, payload).subscribe({
         next: () => {
           this.alertService.actualizado('Etiqueta actualizada correctamente.');
@@ -79,7 +76,6 @@ export class TagsUser implements OnInit {
         error: (err) => this.manejarError(err)
       });
     } else {
-      // --- CREAR ---
       this.service.createTag(payload).subscribe({
         next: () => {
           this.alertService.exito('Nueva etiqueta creada con éxito.');

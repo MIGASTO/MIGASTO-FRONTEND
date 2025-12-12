@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
-import { TagsService } from '../../../services/tags.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
+import { RouterModule } from '@angular/router';
+import { AdminNavbarComponent } from '../../../components/admin-navbar/admin-navbar';
 import { Footer } from '../../../components/footer/footer';
 import { TagModal } from '../../../components/formularios/tag-modal/tag-modal';
 import { AlertService } from '../../../services/alert.service';
+import { TagsService } from '../../../services/tags.service';
 
 @Component({
   selector: 'app-tags',
@@ -28,13 +28,17 @@ export class TagsComponent implements OnInit {
   private alertService = inject(AlertService);
 
   tags: any[] = [];
-  displayedColumns: string[] = ['id', 'nombre', 'acciones'];
+  displayedColumns: string[] = ['id', 'nombre','tipo' ,'acciones'];
   loading = false;
 
   ngOnInit() {
     this.cargarTags();
   }
 
+  tipoMap: Record<number, string>= {
+    2: 'Gasto',
+    1: 'Ingreso'
+  };
   cargarTags() {
     this.loading = true;
     this.service.getTags().subscribe({
