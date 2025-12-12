@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Footer } from '../../components/footer/footer';
 import { Navbar } from '../../components/navbar/navbar';
+import { GenerosService } from '../../services/generos.service';
 import { PerfilService } from '../../services/profile.service';
 
 @Component({
@@ -12,8 +13,13 @@ import { PerfilService } from '../../services/profile.service';
 })
 export class Profile implements OnInit {
   usuario: any = {};
+  generos: any[] = [];
 
-  constructor(private perfilService: PerfilService, private router: Router) {}
+  constructor(
+    private perfilService: PerfilService,
+    private router: Router,
+    private generosService: GenerosService
+  ) {}
 
   ngOnInit() {
     const token = localStorage.getItem('token');
@@ -22,11 +28,28 @@ export class Profile implements OnInit {
       return;
     }
 
+    this.generosService.getGeneros().subscribe({
+      next: (generos) => {
+        this.generos = generos;
+        this.cargarPerfil();
+      },
+      error: (err) => console.error("Error cargando géneros:", err),
+    });
+  }
+
+  cargarPerfil() {
     this.perfilService.obtenerPerfil().subscribe({
       next: (res) => {
+
+        const idGenero = res.id_genero ?? res.genero?.id_genero;
+
+        const generoEncontrado = this.generos.find(
+          g => g.id_genero === idGenero
+        );
+
         this.usuario = {
           ...res,
-          generoTexto: this.obtenerGenero(res.genero?.id_genero),
+          generoTexto: generoEncontrado ? generoEncontrado.nombre : "No especificado",
         };
       },
       error: (err) => {
@@ -34,20 +57,5 @@ export class Profile implements OnInit {
         if (err.status === 401) this.router.navigate(['/login']);
       },
     });
-  }
-
-  obtenerGenero(id: number): string {
-    switch (id) {
-      case 1:
-        return 'Masculino';
-      case 2:
-        return 'Femenino';
-      case 3:
-        return 'Otro';
-      case 4:
-        return 'Prefiero no decirlo';
-      default:
-        return 'No especificado';
-    }
   }
 }

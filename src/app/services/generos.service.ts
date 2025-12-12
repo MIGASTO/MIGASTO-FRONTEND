@@ -20,8 +20,6 @@ export class GenerosService {
   }
 
   deleteGenero(id: number): Observable<any> {
-    // Según tu documentación usabas PATCH para borrar, pero pondré DELETE que es lo estándar.
-    // Si tu back exige PATCH, cámbialo aquí.
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }
