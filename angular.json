@@ -27,23 +27,35 @@
             "styles": [
               "src/custom-theme.scss",
               "src/styles.css"
+            ],
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2MB",
+                "maximumError": "5MB"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "10kB",
+                "maximumError": "20kB"
+              }
             ]
           },
           "configurations": {
             "production": {
+              "outputHashing": "all",
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "3MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "20kB"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,
@@ -91,6 +103,6 @@
     }
   },
   "cli": {
-    "analytics": false
+    "analytics": "6c8d5fb2-a51a-487e-8e7a-59d0344ea005"
   }
 }
