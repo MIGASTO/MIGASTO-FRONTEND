@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": "angular",
+  "outputDirectory": "dist/MiGasto-Frontend",
+  "env": {
+    "ANGULAR_ENVIRONMENT": "production"
+  },
+  "routes": [
+    {
+      "src": "^/.*",
+      "dest": "/index.html",
+      "status": 200
+    }
+  ]
+}
