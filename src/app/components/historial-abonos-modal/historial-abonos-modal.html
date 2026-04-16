@@ -1,0 +1,90 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="bg-slate-800 p-4 text-white flex justify-between items-center shrink-0">
+            <div>
+                <h3 class="text-lg font-bold">Historial de Pagos</h3>
+                <p *ngIf="prestamo" class="text-slate-400 text-xs">
+                    Préstamo de: <span class="text-white font-semibold">{{ prestamo.prestamista }}</span>
+                </p>
+            </div>
+            <button (click)="cerrar.emit()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+                ✕
+            </button>
+        </div>
+
+        <div class="p-0 overflow-y-auto flex-1 bg-slate-50">
+            <div *ngIf="loading" class="p-10 text-center text-slate-500">
+                <span class="animate-spin inline-block text-2xl mb-2">↻</span>
+                <p>Cargando movimientos...</p>
+            </div>
+
+            <table *ngIf="!loading && abonos.length > 0" class="w-full text-sm text-left">
+                <thead class="text-xs text-slate-500 uppercase bg-slate-100 border-b border-slate-200 sticky top-0">
+                    <tr>
+                        <th class="px-6 py-3">Fecha</th>
+                        <th class="px-6 py-3">Monto</th>
+                        <th class="px-6 py-3 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 bg-white">
+                    <tr *ngFor="let abono of abonos" class="hover:bg-slate-50 transition">
+
+                        <td class="px-6 py-4 font-medium text-slate-600">
+                            {{ abono.fecha_creacion | date:'dd/MM/yyyy HH:mm' }}
+                        </td>
+
+                        <td class="px-6 py-4">
+                            <div *ngIf="editandoId !== abono.id_abono">
+                                <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+                                    + $ {{ abono.monto | number }}
+                                </span>
+                            </div>
+
+                            <div *ngIf="editandoId === abono.id_abono" class="flex items-center gap-2">
+                                <input type="number" [(ngModel)]="montoEdicion" 
+                                    class="w-24 p-1 border border-sky-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500 font-bold text-slate-700">
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-4 text-right">
+                            <div *ngIf="editandoId !== abono.id_abono" class="flex justify-end gap-2">
+                                <button (click)="iniciarEdicion(abono)" 
+                                    class="p-2 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition" 
+                                    title="Editar monto">
+                                    ✎
+                                </button>
+                                <button (click)="eliminarAbono(abono.id_abono, abono.monto)" 
+                                    class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                                    title="Eliminar abono">
+                                    🗑
+                                </button>
+                            </div>
+
+                            <div *ngIf="editandoId === abono.id_abono" class="flex justify-end gap-2">
+                                <button (click)="guardarEdicion(abono)" 
+                                    class="px-3 py-1 bg-sky-600 text-white text-xs font-bold rounded-lg hover:bg-sky-700 shadow-sm">
+                                    Guardar
+                                </button>
+                                <button (click)="cancelarEdicion()" 
+                                    class="px-3 py-1 bg-white border border-slate-300 text-slate-500 text-xs font-bold rounded-lg hover:bg-slate-50">
+                                    Cancelar
+                                </button>
+                            </div>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="!loading && abonos.length === 0" class="p-10 text-center opacity-60">
+                <p class="text-4xl mb-2">📭</p>
+                <p class="text-slate-600 font-medium">Este préstamo aún no tiene abonos registrados.</p>
+            </div>
+        </div>
+
+        <div *ngIf="prestamo" class="bg-slate-50 p-4 border-t border-slate-200 text-right text-xs text-slate-500">
+            Total Pagado: <span class="font-bold text-slate-800 text-sm ml-1">$ {{ prestamo.monto_pagado | number }}</span>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,115 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+    
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform scale-100">
+        
+        <!-- HEADER -->
+        <div class="bg-sky-600 p-6 text-white transition-colors duration-300"
+            [ngClass]="{'bg-emerald-600': step === 'QUESTION'}">
+            <h3 class="text-xl font-bold">
+                {{ step === 'FORM' ? 'Registrar Abono' : '¿Registrar en Gastos?' }}
+            </h3>
+            <p *ngIf="step === 'FORM'" class="text-sky-100 text-sm">
+                Préstamo de: <span class="font-semibold">{{ prestamo.prestamista }}</span>
+            </p>
+        </div>
+
+        <div *ngIf="step === 'FORM'" class="p-6 space-y-6">
+
+            <div class="flex justify-between items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
+                <div>
+                    <p class="text-xs text-slate-500 uppercase font-bold">Por Pagar</p>
+                    <p class="text-xl font-bold text-slate-800">$ {{ prestamo.monto_restante | number }}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-slate-500 uppercase font-bold">Total Préstamo</p>
+                    <p class="text-sm font-medium text-slate-600">$ {{ prestamo.monto_total | number }}</p>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-slate-700 mb-2">Monto del Abono</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-slate-400 font-bold">$</span>
+                    <input 
+                        type="number" 
+                        [formControl]="montoControl"
+                        class="w-full pl-8 pr-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:border-sky-600 focus:ring-4 focus:ring-sky-500/10 transition text-lg font-bold text-slate-700"
+                        placeholder="0"
+                    />
+                </div>
+
+                <div class="mt-2 flex justify-end">
+                    <button type="button" (click)="pagarTotalidad()"
+                        class="text-xs font-bold text-sky-600 hover:text-sky-700 hover:underline flex items-center gap-1 transition">
+                        <mat-icon>check_circle_outline</mat-icon><span> Pagar deuda completa</span>
+                    </button>
+                </div>
+
+                <div *ngIf="montoControl.invalid && (montoControl.dirty || montoControl.touched)" class="mt-2 text-red-500 text-xs font-medium">
+                    <span *ngIf="montoControl.errors?.['required']">Ingresa un monto.</span>
+                    <span *ngIf="montoControl.errors?.['min']">El monto debe ser positivo.</span>
+                    <span *ngIf="montoControl.errors?.['max']">No puedes abonar más de lo que debes.</span>
+                </div>
+            </div>
+
+            <div *ngIf="preferenciaGuardada" class="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-center justify-between text-xs animate-in fade-in slide-in-from-top-2">
+                <div class="text-amber-800">
+                    <span class="block font-bold">⚠️ Modo Automático Activo</span>
+                    <span>Gasto automático: <strong>{{ preferenciaGuardada }}</strong></span>
+                </div>
+                <button (click)="eliminarPreferencia()" 
+                    class="px-2 py-1 bg-white border border-amber-200 rounded text-amber-700 font-bold hover:bg-amber-100 transition shadow-sm">
+                    Desactivar
+                </button>
+            </div>
+
+        </div>
+
+        <div *ngIf="step === 'QUESTION'" class="p-8 text-center space-y-6">
+            <div class="mx-auto w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mb-4">
+                <mat-icon>attach_money</mat-icon>
+            </div>
+            
+            <div>
+                <h4 class="text-xl font-bold text-slate-800 mb-2">¡Abono realizado con éxito!</h4>
+                <p class="text-slate-500">
+                    ¿Deseas registrar este pago automáticamente en tus Gastos?
+                </p>
+            </div>
+
+            <div class="flex items-center justify-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <input 
+                    type="checkbox" 
+                    id="prefCheck" 
+                    [(ngModel)]="recordarDecision"
+                    class="w-5 h-5 text-sky-600 rounded border-slate-300 focus:ring-sky-500 cursor-pointer">
+                <label for="prefCheck" class="text-sm text-slate-600 cursor-pointer select-none">
+                    Recordar mi elección y no volver a preguntar
+                </label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button (click)="responderPregunta('NO')" 
+                    class="px-4 py-3 rounded-xl border-2 border-slate-200 text-slate-600 font-bold hover:bg-slate-100 transition">
+                    No, gracias
+                </button>
+                <button (click)="responderPregunta('SI')"
+                    class="px-4 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-lg shadow-emerald-200 transition">
+                    Sí, registrar
+                </button>
+            </div>
+        </div>
+
+        <div *ngIf="step === 'FORM'" class="p-4 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
+            <button (click)="cancelar.emit()"
+                class="px-5 py-2.5 rounded-xl text-slate-600 font-bold hover:bg-slate-200 transition">
+                Cancelar
+            </button>
+            <button [disabled]="montoControl.invalid || loading" (click)="confirmarAbono()"
+                class="px-6 py-2.5 rounded-xl bg-sky-600 text-white font-bold shadow-lg shadow-sky-200 hover:bg-sky-700 disabled:bg-slate-300 disabled:shadow-none transition flex items-center gap-2">
+                <span *ngIf="loading" class="animate-spin">↻</span>
+                {{ loading ? 'Procesando...' : 'Confirmar Abono' }}
+            </button>
+        </div>
+    </div>
+</div>

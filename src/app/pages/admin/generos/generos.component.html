@@ -1,0 +1,78 @@
+<section class="min-h-screen bg-stone-100 flex flex-col font-sans text-white">
+  <app-admin-navbar></app-admin-navbar>
+
+  <div class="flex-grow flex flex-col items-center pt-24 pb-10 px-4">
+
+    <div class="w-full max-w-3xl flex flex-col md:flex-row justify-between items-center mb-8 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
+        
+        <div class="flex items-center gap-6">
+            <div class="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 shadow-inner ring-4 ring-white">
+                <mat-icon class="!w-10 !h-10 !text-[40px]">wc</mat-icon>
+            </div>
+            
+            <div class="flex flex-col">
+                <h1 class="text-3xl font-bold text-slate-800">Géneros</h1>
+                <p class="text-slate-500 text-lg">Catálogo de clasificación.</p>
+            </div>
+        </div>
+
+        <button (click)="abrirModal()" 
+                class="group flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-xl hover:bg-purple-600 hover:shadow-purple-200 transition-all duration-300 transform hover:-translate-y-1">
+            <mat-icon class="transition-transform group-hover:rotate-90">add</mat-icon>
+            <span class="font-bold">Nuevo Género</span>
+        </button>
+    </div>
+
+    <div class="w-full max-w-3xl bg-white/90 backdrop-blur-xl rounded-[2.5rem] shadow-2xl shadow-slate-300/50 border-[6px] border-white overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
+        
+        <div *ngIf="loading" class="p-12 text-center text-slate-400">
+            <mat-spinner diameter="40" class="mx-auto mb-4"></mat-spinner>
+            <p>Cargando datos...</p>
+        </div>
+
+        <table *ngIf="!loading" mat-table [dataSource]="generos" class="w-full">
+
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef class="w-[15%] !pl-8 !py-3 text-xs font-bold text-slate-400 uppercase bg-slate-50/50"> ID </th>
+                <td mat-cell *matCellDef="let element" class="!pl-8 !py-3 text-slate-400 font-mono text-xs"> 
+                    #{{element.id_genero}} 
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="nombre">
+                <th mat-header-cell *matHeaderCellDef class="w-[55%] !py-3 text-xs font-bold text-slate-400 uppercase bg-slate-50/50"> Nombre </th>
+                <td mat-cell *matCellDef="let element" class="!py-3"> 
+                    <span class="font-bold text-slate-700 bg-purple-50 text-purple-700 px-3 py-1 rounded-lg border border-purple-100">
+                        {{element.nombre}}
+                    </span>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="acciones">
+                <th mat-header-cell *matHeaderCellDef class="w-[30%] !pr-8 !py-3 text-right text-xs font-bold text-slate-400 uppercase bg-slate-50/50 tracking-wider"> Acciones </th>
+                <td mat-cell *matCellDef="let element"class="!pr-8 !py-3 text-right">
+                    <div class="flex justify-end gap-2">
+                        <button (click)="abrirModal(element)" 
+                                class="w-9 h-9 flex items-center justify-center rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-500 hover:text-white transition-all shadow-sm">
+                            <mat-icon class="!w-4 !h-4 !text-[16px]">edit</mat-icon>
+                        </button>
+                        <button (click)="eliminar(element.id_genero)" 
+                                class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                            <mat-icon class="!w-4 !h-4 !text-[16px]">delete</mat-icon>
+                        </button>
+                    </div>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 transition-colors"></tr>
+        </table>
+        
+        <div *ngIf="!loading && generos.length === 0" class="p-10 text-center text-slate-400">
+            No hay géneros registrados.
+        </div>
+    </div>
+
+  </div>
+  <app-footer></app-footer>
+</section>

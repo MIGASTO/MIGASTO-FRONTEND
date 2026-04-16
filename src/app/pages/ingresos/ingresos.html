@@ -1,0 +1,120 @@
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative">
+  
+  <app-navbar></app-navbar>
+
+  <main class="flex-grow container mx-auto p-4 lg:p-8 pt-20">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-sky-950/70 drop-shadow-md">Gestión de Ingresos</h1>
+      <p class="text-slate-800/50 mt-2 text-lg">
+        Registra, edita y elimina tus <span class="font-semibold text-slate-600">ingresos personales</span>.
+      </p>
+    </div>
+
+    <div class="mb-8 text-center">
+      <button
+        routerLink="/ingresos/dashboard"
+        class="bg-gradient-to-r from-emerald-500 to-emerald-700 hover:from-emerald-600 hover:to-emerald-800 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200 transition transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 flex items-center gap-2 mx-auto"
+      >
+        <mat-icon>dashboard</mat-icon> Ver Dashboard de Ingresos
+      </button>
+    </div>
+
+    <div class="w-full max-w-5xl mx-auto bg-white rounded-2xl shadow-xl p-6 border border-white/50">
+      
+      <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 border-b border-slate-100 pb-4">
+        
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-600 text-xl">
+                <mat-icon>trending_up</mat-icon>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-700">Lista de Ingresos</h3>
+        </div>
+
+        <button 
+            (click)="abrirFormulario()" 
+            class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-md shadow-emerald-200 flex items-center gap-2 transition hover:-translate-y-0.5 active:scale-95"
+        >
+          <mat-icon>add</mat-icon> Nuevo Ingreso
+        </button>
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600">
+              <thead class="bg-slate-100 text-slate-500 uppercase font-bold text-xs">
+                <tr>
+                  <th class="py-4 px-4">#</th>
+                  <th class="py-4 px-4">Descripción</th>
+                  <th class="py-4 px-4">Monto</th>
+                  <th class="py-4 px-4">Fecha</th>
+                  <th class="py-4 px-4">Moneda</th>
+                  <th class="py-4 px-4">Tags</th>
+                  <th class="py-4 px-4 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr
+                  *ngFor="let ingreso of ingresos; let i = index"
+                  class="hover:bg-slate-50 transition duration-150 group"
+                >
+                  <td class="py-4 px-4 font-bold text-slate-400">{{ i + 1 }}</td>
+                  
+                  <td class="py-4 px-4 font-medium text-slate-800">
+                      {{ ingreso.descripcion }}
+                  </td>
+                  
+                  <td class="py-4 px-4 font-bold text-emerald-600">
+                      ${{ ingreso.monto | number }}
+                  </td>
+                  
+                  <td class="py-4 px-4 text-slate-500">
+                      {{ ingreso.fecha | date: 'mediumDate' }}
+                  </td>
+                  
+                  <td class="py-4 px-4">
+                      <span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs font-bold border border-slate-200">
+                          {{ ingreso.moneda?.codigo || '—' }}
+                      </span>
+                  </td>
+                  
+                  <td class="py-4 px-4">
+                      <span *ngIf="getTagNames(ingreso) !== '—'" class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-full border border-emerald-100 font-medium">
+                          {{ getTagNames(ingreso) }}
+                      </span>
+                      <span *ngIf="getTagNames(ingreso) === '—'" class="text-slate-300 italic text-xs">Sin tags</span>
+                  </td>
+                  
+                  <td class="py-4 px-4 text-center">
+                    <div class="flex items-center justify-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                        <button
+                          class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-lg transition"
+                          title="Editar"
+                          (click)="abrirFormulario(ingreso)" 
+                        >
+                          <mat-icon class="!w-5 !h-5 !text-[20px]">edit</mat-icon>
+                        </button>
+                        
+                        <button
+                          class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+                          title="Eliminar"
+                          (click)="eliminarIngreso(ingreso)"
+                        >
+                          <mat-icon class="!w-5 !h-5 !text-[20px]">delete</mat-icon>
+                        </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        
+        <div *ngIf="ingresos.length === 0" class="p-12 text-center opacity-60 bg-slate-50">
+          <p class="text-4xl mb-2 grayscale">🍃</p>
+          <p class="text-slate-500 font-medium text-lg">No tienes ingresos registrados aún.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-footer></app-footer>
+</section>

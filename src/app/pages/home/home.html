@@ -1,0 +1,94 @@
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative">
+    <app-navbar></app-navbar>
+
+    <main class="flex-grow flex flex-col items-center text-center p-6 lg:p-10 pt-24">
+        
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-4 text-sky-950/80 drop-shadow-md">
+            Bienvenido a <span class="text-sky-600">MiGasto</span>
+        </h2>
+        <p class="text-lg mb-12 text-slate-500 max-w-xl font-medium">
+            Tu centro de control financiero. Visualiza tus <span class="text-slate-700 font-bold">ingresos, gastos</span> y el balance en tiempo real.
+        </p>
+
+        <div *ngIf="loading" class="mt-8 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-4 border-sky-500 mb-4"></div>
+            <p class="text-slate-500">Cargando resumen...</p>
+        </div>
+
+        <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-600 p-6 rounded-2xl shadow-lg w-full max-w-4xl mt-4">
+            <p class="font-bold text-lg mb-1">¡Atención!</p>
+            <p>{{ error }}</p>
+        </div>
+
+        <div *ngIf="resumen && !loading && !error" class="w-full max-w-5xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 border-b-4 border-b-emerald-500 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+                    <h3 class="text-xl font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                        <span><mat-icon>trending_up</mat-icon></span> Ingresos
+                    </h3>
+                    <p class="text-4xl font-black text-emerald-600 tracking-tighter">
+                        ${{ resumen.totalIngresos | number }}
+                    </p>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 border-b-4 border-b-red-500 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+                    <h3 class="text-xl font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                        <span><mat-icon>trending_down</mat-icon></span> Gastos
+                    </h3>
+                    <p class="text-4xl font-black text-red-500 tracking-tighter">
+                        ${{ resumen.totalGastos | number }}
+                    </p>
+                </div>
+
+                <div class="p-8 rounded-3xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition duration-300 border-b-4"
+                    [ngClass]="{
+                        'bg-white border-slate-100 border-b-sky-500': true,
+                        'ring-2 ring-emerald-100': resumen.balance >= 0,
+                        'ring-2 ring-red-100': resumen.balance < 0
+                    }">
+                    <h3 class="text-xl font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center justify-center gap-2">
+                        <span><mat-icon>account_balance</mat-icon></span> Balance
+                    </h3>
+                    <p class="text-4xl font-black tracking-tighter"
+                        [class.text-emerald-600]="resumen.balance >= 0"
+                        [class.text-red-500]="resumen.balance < 0">
+                        ${{ resumen.balance | number }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 p-5 rounded-2xl text-center font-bold shadow-md border"
+                [ngClass]="{
+                    'bg-emerald-50 text-emerald-700 border-emerald-200': resumen.balance > 0,
+                    'bg-red-50 text-red-700 border-red-200': resumen.balance < 0,
+                    'bg-slate-50 text-slate-600 border-slate-200': resumen.balance === 0
+                }">
+                {{ balanceMessage }}
+            </div>
+
+            <div class="flex justify-center gap-4 mt-12 flex-wrap">
+                <button routerLink="/ingresos/dashboard" 
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-emerald-200 transition transform hover:scale-105 flex items-center gap-2">
+                    <span><mat-icon>trending_up</mat-icon></span> Ver Ingresos
+                </button>
+                <button routerLink="/gastos/dashboard" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-xl font-bold shadow-lg shadow-red-200 transition transform hover:scale-105 flex items-center gap-2">
+                    <span><mat-icon>trending_down</mat-icon></span> Ver Gastos
+                </button>
+            </div>
+        </div>
+
+        <div class="mt-12">
+            <button
+                routerLink="/dashboard-general"
+                class="text-sky-600 font-bold hover:text-sky-800 hover:underline transition"
+            >
+                Ir al Dashboard Completo →
+            </button>
+        </div>
+    </main>
+
+    <app-footer></app-footer>
+</section>

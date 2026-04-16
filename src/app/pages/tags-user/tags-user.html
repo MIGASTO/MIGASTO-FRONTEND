@@ -1,0 +1,117 @@
+<section class="min-h-screen flex flex-col bg-stone-100 text-white relative font-sans">
+    
+    <app-navbar></app-navbar>
+
+    <main class="flex-grow container mx-auto p-4 lg:p-8 pt-20">
+        
+        <div class="text-center mb-10">
+        <h1 class="text-4xl md:text-5xl font-bold text-sky-950/70 drop-shadow-sm tracking-tight">Mis Etiquetas</h1>
+        <p class="text-slate-500 mt-3 text-lg max-w-2xl mx-auto">
+            Organiza tus finanzas creando <span class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">categorías personalizadas</span>.
+        </p>
+        </div>
+
+        <div class="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-6 md:p-8 border border-white">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 border-b border-slate-100 pb-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 shadow-sm transform rotate-3">
+                    <mat-icon class="scale-125">style</mat-icon>
+                </div>
+                <div>
+                <h3 class="text-2xl font-bold text-slate-800">Listado de Tags</h3>
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wide">
+                    {{ tags.length }} {{ tags.length === 1 ? 'Etiqueta' : 'Etiquetas' }}
+                </p>
+                </div>
+            </div>
+
+            <button 
+                (click)="abrirModal()" 
+                class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-slate-300 flex items-center gap-2 transition-all hover:-translate-y-1 active:scale-95 group"
+            >
+            <div class="bg-slate-700 rounded-lg p-1 group-hover:bg-slate-600 transition">
+                <mat-icon class="!w-4 !h-4 !text-[16px] flex items-center justify-center">add</mat-icon>
+            </div>
+            <span>Nueva Etiqueta</span>
+            </button>
+        </div>
+
+        <div *ngIf="loading" class="py-12 flex justify-center">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-amber-100 border-t-amber-500"></div>
+        </div>
+
+        <div *ngIf="!loading" class="overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/30">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                <thead class="bg-slate-100/80 text-slate-400 uppercase font-bold text-xs tracking-wider">
+                    <tr>
+                    <th class="py-5 px-6 w-16">#</th>
+                    <th class="py-5 px-6">Nombre de Etiqueta</th>
+                    <th class="py-5 px-6 text-center">Categoría</th> <th class="py-5 px-6 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 bg-white">
+                    <tr
+                    *ngFor="let tag of tags; let i = index"
+                    class="hover:bg-amber-50/40 transition duration-200 group"
+                    >
+                    <td class="py-4 px-6 font-bold text-slate-300">{{ i + 1 }}</td>
+                    
+                    <td class="py-4 px-6">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🏷️</span>
+                            <div class="flex flex-col">
+                                <span class="font-bold text-slate-700 text-base group-hover:text-amber-700 transition">
+                                {{ tag.nombre }}
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="py-4 px-6 text-center">
+                        <span *ngIf="tag.id_categoria == 1" class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-100">
+                            <mat-icon>trending_up</mat-icon> Ingreso
+                        </span>
+                        <span *ngIf="tag.id_categoria == 2" class="inline-flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1 rounded-full text-xs font-bold border border-red-100">
+                            <mat-icon>trending_down</mat-icon> Gasto
+                        </span>
+                    </td>
+                    
+                    <td class="py-4 px-6 text-right">
+                        <div class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 translate-x-2 sm:group-hover:translate-x-0">
+                            <button
+                            class="w-9 h-9 flex items-center justify-center text-slate-400 bg-white border border-slate-100 hover:text-indigo-600 hover:border-indigo-200 hover:bg-indigo-50 rounded-xl transition shadow-sm"
+                            title="Editar"
+                            (click)="abrirModal(tag)"
+                            >
+                            <mat-icon class="!w-5 !h-5 !text-[20px]">edit</mat-icon>
+                            </button>
+                            
+                            <button
+                            class="w-9 h-9 flex items-center justify-center text-slate-400 bg-white border border-slate-100 hover:text-red-500 hover:border-red-200 hover:bg-red-50 rounded-xl transition shadow-sm"
+                            title="Eliminar"
+                            (click)="eliminar(tag)"
+                            >
+                            <mat-icon class="!w-5 !h-5 !text-[20px]">delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            
+            <div *ngIf="tags.length === 0" class="py-16 text-center">
+            <div class="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <mat-icon class="text-slate-300 !w-10 !h-10 !text-[40px]">label_off</mat-icon>
+            </div>
+            <p class="text-slate-500 font-medium text-lg">No hay etiquetas creadas.</p>
+            <button (click)="abrirModal()" class="text-amber-600 font-bold hover:underline mt-2 text-sm">Crear la primera</button>
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <app-footer></app-footer>
+</section>
