@@ -1,0 +1,14 @@
+.git
+.gitignore
+README.md
+node_modules
+npm-debug.log
+.env
+.env.local
+.next
+.turbo
+dist
+coverage
+*.spec.ts
+karma.conf.js
+tsconfig.spec.json
