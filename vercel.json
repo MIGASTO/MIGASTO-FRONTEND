@@ -1,16 +1,14 @@
 {
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "framework": "angular",
-  "outputDirectory": "dist/MiGasto-Frontend",
-  "env": {
-    "ANGULAR_ENVIRONMENT": "production"
-  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ],
   "routes": [
     {
-      "src": "^/.*",
-      "dest": "/index.html",
-      "status": 200
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
