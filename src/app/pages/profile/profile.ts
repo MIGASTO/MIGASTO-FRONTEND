@@ -22,7 +22,7 @@ export class Profile implements OnInit {
   ) {}
 
   ngOnInit() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (!token) {
       this.router.navigate(['/login']);
       return;
